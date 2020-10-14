@@ -16,7 +16,7 @@
   "scripts": {
     "build": "rimraf dist && tsc --project tsconfig.build.json",
     "format": "prettier --write .",
-    "lint": "eslint . --fix",
+    "lint": "eslint .",
     "test": "jest"
   },
   "files": [
@@ -57,7 +57,9 @@
     "eslint-plugin-eslint-comments": "^3.2.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jest": "^24.1.0",
+    "husky": "^4.3.0",
     "jest": "^26.5.3",
+    "lint-staged": "^10.4.0",
     "prettier": "^2.1.2",
     "rimraf": "^3.0.2",
     "typescript": "^4.0.3"
@@ -125,10 +127,20 @@
       }
     ]
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
   "jest": {
     "transform": {
       "^.+\\.[t|j]sx?$": "babel-jest"
     }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write ."
+    ]
   },
   "prettier": {
     "singleQuote": true,
