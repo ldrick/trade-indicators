@@ -1,0 +1,140 @@
+{
+  "name": "@ldrick/trade-indicators",
+  "version": "1.0.0",
+  "description": "Trade Indicators",
+  "license": "MIT",
+  "repository": "ldrick/trade-indicators",
+  "author": {
+    "name": "Ricky Lippmann",
+    "email": "ricky.lippmann@gmail.com"
+  },
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">= 14.0",
+    "yarn": ">= 1.22"
+  },
+  "scripts": {
+    "build": "rimraf dist && tsc --project tsconfig.build.json",
+    "format": "prettier --write .",
+    "lint": "eslint . --fix",
+    "test": "jest"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "average",
+    "dema",
+    "dma",
+    "ema",
+    "exponential-moving-average",
+    "indicator",
+    "moving-average",
+    "signals",
+    "simple-moving-average",
+    "sma",
+    "smma",
+    "technical",
+    "technical-indicators",
+    "trading",
+    "trade indicators"
+  ],
+  "devDependencies": {
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "@babel/preset-typescript": "^7.10.4",
+    "@types/jest": "^26.0.14",
+    "@types/node": "^14.11.8",
+    "@typescript-eslint/eslint-plugin": "^4.4.1",
+    "@typescript-eslint/parser": "^4.4.1",
+    "core-js": "^3.6.5",
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-airbnb-typescript": "^11.0.0",
+    "eslint-config-prettier": "^6.12.0",
+    "eslint-import-resolver-node": "^0.3.4",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.1.0",
+    "jest": "^26.5.3",
+    "prettier": "^2.1.2",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.0.3"
+  },
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "corejs": 3,
+          "useBuiltIns": "usage"
+        }
+      ],
+      "@babel/preset-typescript"
+    ]
+  },
+  "eslintConfig": {
+    "ignorePatterns": [
+      "**/node_modules/",
+      "/.yarn",
+      "/.pnp.*",
+      "/dist"
+    ],
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "extends": [
+      "airbnb-base",
+      "plugin:eslint-comments/recommended",
+      "prettier"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "*.ts?(x)"
+        ],
+        "extends": [
+          "airbnb-typescript/base",
+          "plugin:@typescript-eslint/eslint-recommended",
+          "plugin:@typescript-eslint/recommended",
+          "plugin:@typescript-eslint/recommended-requiring-type-checking",
+          "plugin:eslint-comments/recommended",
+          "prettier/@typescript-eslint",
+          "prettier"
+        ],
+        "parserOptions": {
+          "project": "./tsconfig.json",
+          "warnOnUnsupportedTypeScriptVersion": false
+        },
+        "rules": {
+          "import/prefer-default-export": "off",
+          "import/no-default-export": "error"
+        }
+      },
+      {
+        "files": [
+          "*.spec*.[jt]s?(x)"
+        ],
+        "extends": [
+          "plugin:jest/recommended"
+        ]
+      }
+    ]
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    }
+  },
+  "prettier": {
+    "singleQuote": true,
+    "printWidth": 100,
+    "trailingComma": "all",
+    "arrowParens": "always",
+    "endOfLine": "lf"
+  }
+}
