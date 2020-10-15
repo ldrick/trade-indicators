@@ -32,7 +32,7 @@ jobs:
       - name: Build Package
         run: yarn build
       - name: Publish Package
-        run: yarn publish --access public
+        run: yarn npm publish --access public
         env:
           YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name:
