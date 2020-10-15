@@ -20,10 +20,22 @@ jobs:
           node-version: ${{ matrix.node-version }}
           registry-url: https://registry.npmjs.org/
       - name: Install Dependencies
-        run: yarn
+        run: yarn install --immutable
+      - name: Lint
+        run: yarn lint
+      - name: Test
+        run: yarn test
+      - name: Setup Git
+        run: git config --global user.name "GitHub CI bot" && git config --global user.email "github-ci-bot@example.com"
+      - name: Set Verion ${{ github.event.release.tag_name }}
+        run: yarn version ${{ github.event.release.tag_name }}
       - name: Build Package
         run: yarn build
       - name: Publish Package
-        run: npm publish --access public
+        run: yarn publish --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name:
+        run: git push
+        env:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
