@@ -35,7 +35,7 @@ wma(prices, period);
 In TypeScript:
 
 ```typescript
-import { dema, ema, sma, smma, tema, wma } from "@ldrick/trade-indicators"
+import { dema, ema, sma, smma, tema, wma } from '@ldrick/trade-indicators';
 
 const prices = [3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5];
 const period = 3;
