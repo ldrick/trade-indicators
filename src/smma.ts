@@ -1,3 +1,3 @@
-import { ema } from './ema';
+import { dma } from './dma';
 
-export const smma = (values: number[], period = 20): number[] => ema(values, period * 2 - 1);
+export const smma = (values: number[], period = 20): number[] => dma(values, period, 1 / period);
