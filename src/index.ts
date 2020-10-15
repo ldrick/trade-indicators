@@ -1,5 +1,4 @@
 export { dema } from './dema';
-export { dma } from './dma';
 export { ema } from './ema';
 export { NotEnoughDataError } from './NotEnoughDataError';
 export { sma } from './sma';
