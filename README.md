@@ -2,11 +2,13 @@
 
 > Trade Indicators written in Typescript
 >
+> - Average True Range (atr)
 > - Double Exponential Moving Average (dema)
 > - Exponential Moving Average (ema)
 > - Simple Moving Average (sma)
 > - Smoothed Moving Average (smma)
 > - Triple Exponential Moving Average (tema)
+> - True Range (trueRange)
 > - Weighted Moving Average (wma)
 
 ## Install

@@ -1,7 +1,8 @@
-export { dema } from './dema';
-export { ema } from './ema';
-export { NotEnoughDataError } from './NotEnoughDataError';
-export { sma } from './sma';
-export { smma } from './smma';
-export { tema } from './tema';
-export { wma } from './wma';
+export { dema } from './averages/dema';
+export { ema } from './averages/ema';
+export { sma } from './averages/sma';
+export { smma } from './averages/smma';
+export { tema } from './averages/tema';
+export { wma } from './averages/wma';
+export { NotEnoughDataError } from './errors/NotEnoughDataError';
+export { adx } from './movements/adx';

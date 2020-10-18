@@ -1,5 +1,5 @@
-import { dema, NotEnoughDataError } from '../src';
-import * as prices from './prices.json';
+import { dema, NotEnoughDataError } from '../../src';
+import * as prices from '../prices.json';
 
 describe('dema', () => {
   it('throws if period is to big for data length', () => {

@@ -1,5 +1,5 @@
-import { NotEnoughDataError, tema } from '../src';
-import * as prices from './prices.json';
+import { NotEnoughDataError, tema } from '../../src';
+import * as prices from '../prices.json';
 
 describe('tema', () => {
   it('throws if period is to big for data length', () => {

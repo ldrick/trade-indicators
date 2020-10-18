@@ -1,5 +1,5 @@
-import { ema, NotEnoughDataError } from '../src';
-import * as prices from './prices.json';
+import { ema, NotEnoughDataError } from '../../src';
+import * as prices from '../prices.json';
 
 describe('ema', () => {
   it('throws if period is above data length', () => {
