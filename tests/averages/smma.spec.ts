@@ -1,5 +1,5 @@
-import { NotEnoughDataError, smma } from '../src';
-import * as prices from './prices.json';
+import { NotEnoughDataError, smma } from '../../src';
+import * as prices from '../prices.json';
 
 describe('smma', () => {
   it('throws if period is above data length', () => {

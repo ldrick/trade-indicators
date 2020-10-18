@@ -1,4 +1,5 @@
-import { NotEnoughDataError } from './NotEnoughDataError';
+import { NotEnoughDataError } from '../errors/NotEnoughDataError';
+import { clear } from '../utils/array';
 
 const wavg = (values: number[]): number => {
   const dividend = values.reduce(
@@ -14,13 +15,15 @@ export const wma = (values: number[], period = 20): number[] => {
     throw new NotEnoughDataError();
   }
 
-  return values.map((_value, index, array) => {
-    const pointer = index + 1;
+  return values
+    .map((_value, index, array) => {
+      const pointer = index + 1;
 
-    if (pointer < period) {
-      return 0;
-    }
+      if (pointer < period) {
+        return null;
+      }
 
-    return wavg(array.slice(pointer - period, pointer));
-  });
+      return wavg(array.slice(pointer - period, pointer));
+    })
+    .filter(clear);
 };
