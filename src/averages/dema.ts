@@ -5,7 +5,7 @@ export const dema = (values: number[], period = 20): number[] => {
   const minLength = 2 * period - 1;
 
   if (values.length < minLength) {
-    throw new NotEnoughDataError();
+    throw new NotEnoughDataError('dema', period, minLength);
   }
 
   // calculate ema

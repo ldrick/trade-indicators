@@ -2,7 +2,7 @@ import { NotEnoughDataError, tema } from '../../src';
 import * as prices from '../prices.json';
 
 describe('tema', () => {
-  it('throws if period is to big for data length', () => {
+  it('throws if not enough data to calculate for period', () => {
     expect(() => tema([1, 2], 3)).toThrowError(NotEnoughDataError);
   });
 

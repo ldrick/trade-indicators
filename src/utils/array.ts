@@ -1,1 +1,1 @@
-export const clear = (val: unknown): boolean => val !== null;
+export const clear = (val: number): boolean => Number.isFinite(val);

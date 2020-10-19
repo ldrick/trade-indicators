@@ -2,7 +2,7 @@ import { ema, NotEnoughDataError } from '../../src';
 import * as prices from '../prices.json';
 
 describe('ema', () => {
-  it('throws if period is above data length', () => {
+  it('throws if not enough data to calculate for period', () => {
     expect(() => ema([1, 2], 3)).toThrowError(NotEnoughDataError);
   });
 

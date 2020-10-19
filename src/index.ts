@@ -5,4 +5,8 @@ export { smma } from './averages/smma';
 export { tema } from './averages/tema';
 export { wma } from './averages/wma';
 export { NotEnoughDataError } from './errors/NotEnoughDataError';
+export { UnequalArraySizesError } from './errors/UnequalArraySizesError';
 export { adx } from './movements/adx';
+export { atr } from './movements/atr';
+export { mdi } from './movements/mdi';
+export { pdi } from './movements/pdi';

@@ -5,7 +5,7 @@ export const tema = (values: number[], period = 20): number[] => {
   const minLength = 3 * period - 2;
 
   if (values.length < minLength) {
-    throw new NotEnoughDataError();
+    throw new NotEnoughDataError('tema', period, minLength);
   }
 
   // calculate ema
