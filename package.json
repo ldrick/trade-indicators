@@ -131,6 +131,9 @@
     }
   },
   "jest": {
+    "roots": [
+      "<rootDir>/tests"
+    ],
     "transform": {
       "^.+\\.[t|j]sx?$": "babel-jest"
     },
