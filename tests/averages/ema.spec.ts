@@ -10,8 +10,6 @@ describe('ema', () => {
     [10, prices.ema.p10],
     [20, prices.ema.p20],
   ])('calculates the Exponential Moving Average with period %p', (period, results) => {
-    const outcome = ema(prices.close, period).map((value) => value.toFixed(8));
-    const expected = results.map((value) => value.toFixed(8));
-    expect(outcome).toEqual(expected);
+    expect(ema(prices.close, period)).toEqualFixedPrecision(results);
   });
 });

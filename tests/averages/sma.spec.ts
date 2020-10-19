@@ -10,8 +10,6 @@ describe('sma', () => {
     [10, prices.sma.p10],
     [20, prices.sma.p20],
   ])('calculates the Simple Moving Average with period %p', (period, results) => {
-    const outcome = sma(prices.close, period).map((value) => value.toFixed(8));
-    const expected = results.map((value) => value.toFixed(8));
-    expect(outcome).toEqual(expected);
+    expect(sma(prices.close, period)).toEqualFixedPrecision(results);
   });
 });

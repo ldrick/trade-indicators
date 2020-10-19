@@ -10,8 +10,6 @@ describe('dema', () => {
     [10, prices.dema.p10],
     [20, prices.dema.p20],
   ])('calculates the Double Exponential Moving Average with period %p', (period, results) => {
-    const outcome = dema(prices.close, period).map((value) => value.toFixed(8));
-    const expected = results.map((value) => value.toFixed(8));
-    expect(outcome).toEqual(expected);
+    expect(dema(prices.close, period)).toEqualFixedPrecision(results);
   });
 });
