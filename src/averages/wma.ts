@@ -12,7 +12,7 @@ const wavg = (values: number[]): number => {
 
 export const wma = (values: number[], period = 20): number[] => {
   if (values.length < period) {
-    throw new NotEnoughDataError();
+    throw new NotEnoughDataError('wma', period, period);
   }
 
   return values
@@ -20,7 +20,7 @@ export const wma = (values: number[], period = 20): number[] => {
       const pointer = index + 1;
 
       if (pointer < period) {
-        return null;
+        return Infinity;
       }
 
       return wavg(array.slice(pointer - period, pointer));
