@@ -30,13 +30,13 @@ jobs:
       - name: Setup Git
         run: git config --global user.name "GitHub CI bot" && git config --global user.email "github-ci-bot@example.com"
       - name: Set Version ${{ github.event.release.tag_name }}
-        run: yarn version ${{ github.event.release.tag_name }}
+        run: npm version ${{ github.event.release.tag_name }}
       - name: Build Package
         run: yarn build
       - name: Publish Package
-        run: yarn npm publish --access public
+        run: npm publish --access public
         env:
-          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name:
         run: git push
         env:
