@@ -3,3 +3,4 @@
 .pnp.*
 
 dist/
+coverage/
