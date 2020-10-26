@@ -13,7 +13,10 @@ jobs:
         node-version: [14.x]
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
@@ -30,14 +33,14 @@ jobs:
       - name: Setup Git
         run: git config --global user.name "GitHub CI bot" && git config --global user.email "github-ci-bot@example.com"
       - name: Set Version ${{ github.event.release.tag_name }}
-        run: npm version ${{ github.event.release.tag_name }}
+        run: yarn version ${{ github.event.release.tag_name }}
       - name: Build Package
         run: yarn build
       - name: Publish Package
-        run: npm publish --access public
+        run: yarn npm publish --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name:
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Push
         run: git push
         env:
           github-token: ${{ secrets.GITHUB_TOKEN }}
