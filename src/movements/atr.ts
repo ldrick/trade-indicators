@@ -4,8 +4,8 @@ import { UnequalArraySizesError } from '../errors/UnequalArraySizesError';
 import { clear } from '../utils/array';
 import { HighLowClose } from './interfaces';
 
-const trueRange = (values: HighLowClose): number[] => {
-  return values.high
+const trueRange = (values: HighLowClose): number[] =>
+  values.high
     .map((high, index) => {
       if (index === 0) {
         return Infinity;
@@ -19,7 +19,6 @@ const trueRange = (values: HighLowClose): number[] => {
       );
     })
     .filter(clear);
-};
 
 export const atr = (values: HighLowClose, period: number): number[] => {
   if (values.close.length !== values.high.length && values.close.length !== values.low.length) {

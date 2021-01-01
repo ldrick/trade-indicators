@@ -13,7 +13,5 @@ export const dema = (values: number[], period = 20): number[] => {
   // calculate ema(ema)
   const ema2 = ema(ema1, period);
 
-  return ema2.map((value, index) => {
-    return 2 * ema1[index + period - 1] - value;
-  });
+  return ema2.map((value, index) => 2 * ema1[index + period - 1] - value);
 };

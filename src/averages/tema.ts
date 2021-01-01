@@ -15,7 +15,7 @@ export const tema = (values: number[], period = 20): number[] => {
   // calculate ema(ema(ema))
   const ema3 = ema(ema2, period);
 
-  return ema3.map((value, index) => {
-    return 3 * ema1[index + 2 * (period - 1)] - 3 * ema2[index + period - 1] + value;
-  });
+  return ema3.map(
+    (value, index) => 3 * ema1[index + 2 * (period - 1)] - 3 * ema2[index + period - 1] + value,
+  );
 };
