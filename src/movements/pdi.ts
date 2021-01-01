@@ -5,8 +5,8 @@ import { clear } from '../utils/array';
 import { atr } from './atr';
 import { HighLowClose } from './interfaces';
 
-const pdm = (values: HighLowClose) => {
-  return values.high
+const pdm = (values: HighLowClose) =>
+  values.high
     .map((high, index) => {
       if (index === 0) {
         return Infinity;
@@ -18,7 +18,6 @@ const pdm = (values: HighLowClose) => {
       return up > down && up > 0 ? up : 0;
     })
     .filter(clear);
-};
 
 export const pdi = (values: HighLowClose, period: number): number[] => {
   if (values.close.length !== values.high.length && values.close.length !== values.low.length) {
