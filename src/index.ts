@@ -1,12 +1,3 @@
-export { dema } from './averages/dema';
-export { ema } from './averages/ema';
-export { sma } from './averages/sma';
-export { smma } from './averages/smma';
-export { tema } from './averages/tema';
-export { wma } from './averages/wma';
-export { NotEnoughDataError } from './errors/NotEnoughDataError';
-export { UnequalArraySizesError } from './errors/UnequalArraySizesError';
-export { adx } from './movements/adx';
-export { atr } from './movements/atr';
-export { mdi } from './movements/mdi';
-export { pdi } from './movements/pdi';
+export { dema, dma, ema, macd, sma, smma, tema, wma } from './averages';
+export { adx, atr } from './movements';
+export { unwrap } from './utils';
