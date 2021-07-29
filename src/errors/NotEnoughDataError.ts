@@ -1,9 +1,7 @@
 export class NotEnoughDataError extends Error {
-  constructor(indicator: string, period: number, min: number) {
-    super(
-      `Not enough data to calculate ${indicator}. Need at least ${min} values for period size ${period}`,
-    );
-    Object.setPrototypeOf(this, new.target.prototype);
+  constructor(period: number, required: number) {
+    super(`Need at least ${required} values for period size ${period}`);
     this.name = 'NotEnoughDataError';
+    Object.setPrototypeOf(this, new.target.prototype);
   }
 }
