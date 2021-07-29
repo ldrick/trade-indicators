@@ -1,9 +1,12 @@
-export {};
+import { NumberObject } from '../../src/types';
 
 declare global {
   namespace jest {
     interface Matchers<R> {
-      toEqualFixedPrecision(expected: number[], decimals = 8): R;
+      eitherRightToEqualFixedPrecision(
+        expected: readonly number[] | NumberObject,
+        decimals = 12,
+      ): R;
     }
   }
 }
