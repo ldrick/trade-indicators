@@ -1,29 +1,29 @@
-import { NotEnoughDataError } from '../errors/NotEnoughDataError';
-import { clear } from '../utils/array';
+import { Big } from 'big.js';
+import { apply as AP, either as E, option as O, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
+import { pipe } from 'fp-ts/lib/function';
+import { arrayToBig } from '../utils';
+import { validateData, validatePeriod } from '../validations';
+import { wamean } from './wamean';
 
-const wavg = (values: number[]): number => {
-  const dividend = values.reduce(
-    (accumulator, current, index) => accumulator + current * (index + 1),
-    0,
+const calculate = (values: readonly Big[], period: number): readonly Big[] =>
+  values.reduce(
+    (reduced, _value, index, array) =>
+      pipe(
+        index + 1 >= period
+          ? RNEA.fromReadonlyArray(array.slice(reduced.length, index + 1))
+          : O.none,
+        O.map((part) => [...reduced, wamean(part)]),
+        O.getOrElse(() => reduced),
+      ),
+    <readonly Big[]>[],
   );
-  const divisor = values.reduce((accumulator, _current, index) => accumulator + index + 1, 0);
-  return dividend / divisor;
-};
 
-export const wma = (values: number[], period = 20): number[] => {
-  if (values.length < period) {
-    throw new NotEnoughDataError('wma', period, period);
-  }
-
-  return values
-    .map((_value, index, array) => {
-      const pointer = index + 1;
-
-      if (pointer < period) {
-        return Infinity;
-      }
-
-      return wavg(array.slice(pointer - period, pointer));
-    })
-    .filter(clear);
-};
+export const wma = (values: readonly number[], period = 20): E.Either<Error, readonly Big[]> =>
+  pipe(
+    AP.sequenceS(E.Apply)({
+      periodV: validatePeriod(period, 'period'),
+      valuesV: validateData(values, period, period),
+    }),
+    E.bind('valuesB', ({ valuesV }) => arrayToBig(valuesV)),
+    E.map(({ valuesB, periodV }) => calculate(valuesB, periodV)),
+  );
