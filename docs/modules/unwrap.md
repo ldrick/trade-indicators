@@ -6,7 +6,7 @@ parent: Modules
 
 ## Overview
 
-It might be easier to use `trade-indicators` within an existing project, by handling Errors with Promises. Therefor `unwrap` provides a way to transform each Result of the other Modules to respective `Promise<readonly number[]>` or ``Promise<Record<string, readonly number[]>>`.
+It might be easier to use `trade-indicators` within an existing project, by handling Errors with Promises. Therefor `unwrap` provides a way to transform each Result of the other Modules to respective `Promise<readonly number[]>` or `Promise<Record<string, readonly number[]>>`.
 
 ## Signature
 
