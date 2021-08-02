@@ -24,9 +24,9 @@
 
 ## Install
 
-`npm install @ldrick/trade-indicators fp-ts` \
+`npm install @ldrick/trade-indicators fp-ts big.js` \
 or \
-`yarn add @ldrick/trade-indicators fp-ts`
+`yarn add @ldrick/trade-indicators fp-ts big.js`
 
 ## Usage
 
