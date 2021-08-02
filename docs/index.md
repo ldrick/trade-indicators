@@ -1,4 +1,12 @@
-# trade-indicators
+---
+title: Introduction
+permalink: /
+nav_order: 1
+has_children: false
+has_toc: false
+---
+
+## Trade Indicators
 
 > Trade Indicators written in pure functional Typescript. \
 > Results will be Either<Error, Big[] | BigObject> using: \
