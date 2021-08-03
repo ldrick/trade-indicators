@@ -16,6 +16,14 @@ const calculate = (fast: readonly Big[], slow: readonly Big[]): readonly Big[] =
   return slow.map((value, index) => shortened[index].sub(value));
 };
 
+/**
+ * The Moving Average Convergence Divergence (MACD) is the relationship of
+ * two Exponential Moving Averages (EMA) with different periods.
+ * It generates crosses with the generated signal EMA which can be used
+ * to indicate uptrends or downtrends.
+ *
+ * @public
+ */
 export const macd = (
   values: readonly number[],
   fastPeriod = 12,

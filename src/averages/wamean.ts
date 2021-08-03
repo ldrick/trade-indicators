@@ -1,6 +1,9 @@
 import { Big } from 'big.js';
 import { readonlyNonEmptyArray as RNEA } from 'fp-ts';
 
+/**
+ * Weighted Arithmetic Mean.
+ */
 export const wamean = (values: RNEA.ReadonlyNonEmptyArray<Big>): Big => {
   const dividend = values.reduce(
     (reduced, value, index) => reduced.add(value.mul(index + 1)),

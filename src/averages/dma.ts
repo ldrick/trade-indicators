@@ -21,6 +21,10 @@ const getDefaultFactor = (period: number): E.Either<Error, Big> =>
 const factorToBig = (period: number, factor?: number): E.Either<Error, Big> =>
   factor ? numberToBig(factor) : getDefaultFactor(period);
 
+/**
+ * DMA without checks and conversion.
+ * Only for internal use.
+ */
 export const dmaC = (values: readonly Big[], period: number, factor: Big): readonly Big[] =>
   values.reduce(
     (reduced, value, index, array) =>
@@ -38,6 +42,14 @@ export const dmaC = (values: readonly Big[], period: number, factor: Big): reado
     <readonly Big[]>[],
   );
 
+/**
+ * The Dynamic Moving Average (DMA) is the base implementation for the
+ * Exponential Moving Average (EMA) and the Smoothed Moving Average (SMMA) by providing a factor.
+ * It can be used to identify support and resistance levels.
+ * Also prices above the DMA can indicate uptrends, prices below can indicate downtrends.
+ *
+ * @public
+ */
 export const dma = (
   values: readonly number[],
   period = 20,
