@@ -6,7 +6,7 @@ parent: Modules
 
 ## Overview
 
-The Triple Exponential Moving Average (TEMA) uses three Exponantial Moving Average (EMA) to reduce noise and still get close to latest prices. It can be used to identify support and resistance levels. Also prices above the TEMA can indicate uptrends, prices below can indicate downtrends.
+The Triple Exponential Moving Average (TEMA) uses three Exponential Moving Average (EMA) to reduce noise and still get close to latest prices. It can be used to identify support and resistance levels. Also prices above the TEMA can indicate uptrends, prices below can indicate downtrends.
 
 ## Signature
 

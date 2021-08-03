@@ -46,23 +46,24 @@
   "devDependencies": {
     "@babel/cli": "^7.14.8",
     "@babel/core": "^7.14.8",
-    "@babel/preset-env": "^7.14.8",
+    "@babel/preset-env": "^7.14.9",
     "@babel/preset-typescript": "^7.14.5",
     "@types/big.js": "^6.1.1",
     "@types/jest": "^26.0.24",
-    "@typescript-eslint/eslint-plugin": "^4.28.5",
-    "@typescript-eslint/parser": "^4.28.5",
+    "@typescript-eslint/eslint-plugin": "^4.29.0",
+    "@typescript-eslint/parser": "^4.29.0",
     "babel-jest": "^27.0.6",
-    "core-js": "^3.15.2",
-    "eslint": "^7.31.0",
+    "core-js": "^3.16.0",
+    "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-airbnb-typescript": "^12.3.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-import-resolver-node": "^0.3.4",
     "eslint-plugin-eslint-comments": "^3.2.0",
-    "eslint-plugin-functional": "^3.3.0",
+    "eslint-plugin-functional": "^3.5.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-jest": "^24.4.0",
+    "eslint-plugin-jsdoc": "^36.0.6",
     "husky": "^7.0.1",
     "jest": "^27.0.6",
     "jest-diff": "^27.0.6",
@@ -118,6 +119,8 @@
           "plugin:@typescript-eslint/recommended",
           "plugin:@typescript-eslint/recommended-requiring-type-checking",
           "plugin:eslint-comments/recommended",
+          "plugin:jsdoc/recommended",
+          "plugin:eslint-comments/recommended",
           "prettier"
         ],
         "parserOptions": {
@@ -126,7 +129,33 @@
         },
         "rules": {
           "import/prefer-default-export": "off",
-          "import/no-default-export": "error"
+          "import/no-default-export": "error",
+          "jsdoc/require-returns": "off",
+          "jsdoc/require-param": "off",
+          "jsdoc/require-jsdoc": [
+            "warn",
+            {
+              "publicOnly": {
+                "esm": true
+              },
+              "require": {
+                "ArrowFunctionExpression": true,
+                "ClassDeclaration": true,
+                "ClassExpression": true,
+                "FunctionDeclaration": true,
+                "FunctionExpression": true,
+                "MethodDefinition": false
+              }
+            }
+          ],
+          "jsdoc/require-description": [
+            "warn",
+            {
+              "contexts": [
+                "any"
+              ]
+            }
+          ]
         }
       },
       {
@@ -176,7 +205,15 @@
     "setupFilesAfterEnv": [
       "<rootDir>/tests/config/jest.setup.ts"
     ],
-    "collectCoverage": true
+    "collectCoverage": true,
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    }
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [

@@ -18,6 +18,14 @@ const calculate = (
       .add(value),
   );
 
+/**
+ * The Triple Exponential Moving Average (TEMA) uses three Exponential Moving Average (EMA)
+ * to reduce noise and still get close to latest prices.
+ * It can be used to identify support and resistance levels.
+ * Also prices above the TEMA can indicate uptrends, prices below can indicate downtrends.
+ *
+ * @public
+ */
 export const tema = (values: readonly number[], period = 20): E.Either<Error, readonly Big[]> =>
   pipe(
     AP.sequenceS(E.Apply)({

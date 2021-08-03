@@ -22,17 +22,29 @@ const trueRange = (values: HighLowCloseB): readonly Big[] =>
         ];
   }, <readonly Big[]>[]);
 
+/**
+ * ATR without checks and conversion.
+ * Only for internal use.
+ */
 export const atrC = (values: HighLowCloseB, period: number): E.Either<Error, readonly Big[]> => {
   const tr = trueRange(values);
   return smmaC(tr, period);
 };
 
+/**
+ * The Average True Range (ATR) a period of the True Range Indicator,
+ * being the greatest out of current high minus the current low,
+ * the absolute value of current high minus previous close
+ * and the absolute value of the current low minus the prevous close.
+ *
+ * @public
+ */
 export const atr = (values: HighLowClose, period = 14): E.Either<Error, readonly Big[]> =>
   pipe(
     AP.sequenceS(E.Apply)({
       periodV: validatePeriod(period, 'period'),
       valuesV: validateData(values, period + 1, period),
     }),
-    E.bind('valuesB', ({ valuesV }) => objectToBig<HighLowCloseB>(valuesV)),
+    E.bind('valuesB', ({ valuesV }) => objectToBig(valuesV)),
     E.chain(({ valuesB, periodV }) => atrC(valuesB, periodV)),
   );
