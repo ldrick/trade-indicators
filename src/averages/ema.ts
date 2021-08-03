@@ -12,6 +12,10 @@ const getFactor = (period: number): E.Either<Error, Big> =>
     E.map((periodB) => new Big(2).div(periodB.add(1))),
   );
 
+/**
+ * EMA without checks and conversion.
+ * Only for internal use.
+ */
 export const emaC = (values: readonly Big[], period: number): E.Either<Error, readonly Big[]> =>
   pipe(
     period,
@@ -19,6 +23,14 @@ export const emaC = (values: readonly Big[], period: number): E.Either<Error, re
     E.map((factorB) => dmaC(values, period, factorB)),
   );
 
+/**
+ * The Exponential Moving Average (EMA) takes newer values weighted into account
+ * and reacts closer to the prices compared to the Simple Moving Average (SMA).
+ * It can be used to identify support and resistance levels.
+ * Also prices above the EMA can indicate uptrends, prices below can indicate downtrends.
+ *
+ * @public
+ */
 export const ema = (values: readonly number[], period = 20): E.Either<Error, readonly Big[]> =>
   pipe(
     AP.sequenceS(E.Apply)({

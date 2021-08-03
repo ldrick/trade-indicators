@@ -6,7 +6,7 @@ parent: Modules
 
 ## Overview
 
-The Double Exponential Moving Average (DEMA) uses two Exponantial Moving Average (EMA) to reduce noise. It can be used to identify support and resistance levels. Also prices above the DEMA can indicate uptrends, prices below can indicate downtrends.
+The Double Exponential Moving Average (DEMA) uses two Exponential Moving Average (EMA) to reduce noise. It can be used to identify support and resistance levels. Also prices above the DEMA can indicate uptrends, prices below can indicate downtrends.
 
 ## Signature
 

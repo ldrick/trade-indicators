@@ -31,6 +31,9 @@ const validateEqualArraySizes = <A extends ValuesInput>(values: A): E.Either<Err
   return verifier ? E.right(values) : E.left(new UnequalArraySizesError());
 };
 
+/**
+ * Validate an data `Array` or `Object`
+ */
 export const validateData = <A extends ValuesInput>(
   values: A,
   required: number,

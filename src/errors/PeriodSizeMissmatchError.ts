@@ -1,3 +1,6 @@
+/**
+ * Error for comparable periods, where one must exceed the other.
+ */
 export class PeriodSizeMissmatchError extends Error {
   constructor(periodBig: string, periodShort: string) {
     super(`Period ${periodBig} must be greater than ${periodShort}`);
