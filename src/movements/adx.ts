@@ -53,6 +53,14 @@ const calculation = (pdi: readonly Big[], mdi: readonly Big[]): readonly Big[] =
     return dividend.div(sum);
   }, <readonly Big[]>[]);
 
+/**
+ * The Average Directional Index (ADX) determines trend strength.
+ * It also delivers Plus Directional Movement Indicator (PDI)
+ * and Minus Directional Movement Indicator (MDI).
+ * Crossings of these three values can be used to determine trend changes.
+ *
+ * @public
+ */
 export const adx = (
   values: HighLowClose,
   period = 14,
@@ -69,7 +77,7 @@ export const adx = (
       periodV: validatePeriod(period, 'period'),
       valuesV: validateData(values, 2 * period + 1, period),
     }),
-    E.bind('valuesB', ({ valuesV }) => objectToBig<HighLowCloseB>(valuesV)),
+    E.bind('valuesB', ({ valuesV }) => objectToBig(valuesV)),
     E.bind('pdi', ({ valuesB, periodV }) => directionalIndex(valuesB, periodV, 'up')),
     E.bind('mdi', ({ valuesB, periodV }) => directionalIndex(valuesB, periodV, 'down')),
     E.bind('smoothed', ({ pdi, mdi, periodV }) => {

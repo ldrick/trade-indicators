@@ -6,7 +6,7 @@ parent: Modules
 
 ## Overview
 
-The Exponantial Moving Average (EMA) takes newer values weighted into account and reacts closer to the prices compared to the Simple Moving Average (SMA). It can be used to identify support and resistance levels. Also prices above the EMA can indicate uptrends, prices below can indicate downtrends.
+The Exponential Moving Average (EMA) takes newer values weighted into account and reacts closer to the prices compared to the Simple Moving Average (SMA). It can be used to identify support and resistance levels. Also prices above the EMA can indicate uptrends, prices below can indicate downtrends.
 
 ## Signature
 

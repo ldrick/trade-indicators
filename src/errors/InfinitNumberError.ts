@@ -1,3 +1,6 @@
+/**
+ * Error for `Number` is not finit.
+ */
 export class InfinitNumberError extends Error {
   constructor() {
     super(`Given value(s) must be finit.`);

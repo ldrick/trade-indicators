@@ -8,6 +8,13 @@ import { emaC } from './ema';
 const calculate = (one: readonly Big[], two: readonly Big[], period: number): readonly Big[] =>
   two.map((value, index) => one[index + period - 1].mul(2).sub(value));
 
+/**
+ * The Double Exponential Moving Average (DEMA) uses two Exponential Moving Average (EMA)
+ * to reduce noise. It can be used to identify support and resistance levels.
+ * Also prices above the DEMA can indicate uptrends, prices below can indicate downtrends.
+ *
+ * @public
+ */
 export const dema = (values: readonly number[], period = 20): E.Either<Error, readonly Big[]> =>
   pipe(
     AP.sequenceS(E.Apply)({

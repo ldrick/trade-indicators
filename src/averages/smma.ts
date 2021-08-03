@@ -12,6 +12,10 @@ const getFactor = (period: number): E.Either<Error, Big> =>
     E.map((periodB) => new Big(1).div(periodB)),
   );
 
+/**
+ * SMMA without checks and conversion.
+ * Only for internal use.
+ */
 export const smmaC = (values: readonly Big[], period: number): E.Either<Error, readonly Big[]> =>
   pipe(
     period,
@@ -19,6 +23,13 @@ export const smmaC = (values: readonly Big[], period: number): E.Either<Error, r
     E.map((factorB) => dmaC(values, period, factorB)),
   );
 
+/**
+ * The Smoothed Moving Average (SMMA) is like the Exponential Moving Average (EMA),
+ * with just a “smoother” factor. It can be used to identify support and resistance levels.
+ * Also prices above the SMMA can indicate uptrends, prices below can indicate downtrends.
+ *
+ * @public
+ */
 export const smma = (values: readonly number[], period = 20): E.Either<Error, readonly Big[]> =>
   pipe(
     AP.sequenceS(E.Apply)({

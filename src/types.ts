@@ -1,24 +1,18 @@
 import { Big } from 'big.js';
 
 export type Movement = 'up' | 'down';
-export type ValuesInput = readonly number[] | NumberObject;
-
-export interface NumberObject {
-  [x: string]: readonly number[];
-}
-
-export interface BigObject {
-  [x: string]: readonly Big[];
-}
+export type ValuesInput = Readonly<number[]> | NumberObject;
+export type NumberObject = Readonly<Record<string, Readonly<number[]>>>;
+export type BigObject = Readonly<Record<string, Readonly<Big[]>>>;
 
 export interface HighLowClose extends NumberObject {
-  readonly high: readonly number[];
-  readonly low: readonly number[];
-  readonly close: readonly number[];
+  high: Readonly<number[]>;
+  low: Readonly<number[]>;
+  close: Readonly<number[]>;
 }
 
 export interface HighLowCloseB extends BigObject {
-  readonly high: readonly Big[];
-  readonly low: readonly Big[];
-  readonly close: readonly Big[];
+  high: Readonly<Big[]>;
+  low: Readonly<Big[]>;
+  close: Readonly<Big[]>;
 }

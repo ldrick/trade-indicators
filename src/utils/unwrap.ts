@@ -12,12 +12,14 @@ const mapBigObject = (values: BigObject): NumberObject =>
     {},
   );
 
-export function unwrap(values: E.Either<Error, readonly Big[]>): Promise<readonly number[]>;
-export function unwrap(values: E.Either<Error, BigObject>): Promise<NumberObject>;
-export function unwrap(
+/**
+ * Provides a way to transform each Result of the other Modules to respective
+ * `Promise<readonly number[]>` or `Promise<Record<string, readonly number[]>>`.
+ */
+export const unwrap = (
   values: E.Either<Error, readonly Big[] | BigObject>,
-): Promise<readonly number[] | NumberObject> {
-  return pipe(
+): Promise<readonly number[] | NumberObject> =>
+  pipe(
     values,
     E.fold(
       (error) => Promise.reject(error),
@@ -27,4 +29,3 @@ export function unwrap(
           : Promise.resolve(mapBigObject(result)),
     ),
   );
-}
