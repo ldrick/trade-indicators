@@ -1,23 +1,24 @@
-name: Publish npm Package
+name: Publish Node.js Package
 on:
   release:
     types: [created]
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Use Node.js
+      - name: Setup publish to npmjs.org
         uses: actions/setup-node@v2
         with:
           node-version: '14.x'
-          registry-url: 'https://registry.npmjs.org/'
+          registry-url: 'https://registry.npmjs.org'
       - name: Install Dependencies
         run: yarn install --immutable
-      - name: Typesafe
+      - name: Typecheck
         run: yarn tsc --noEmit
       - name: Lint
         run: yarn lint
@@ -27,16 +28,16 @@ jobs:
         run: yarn version ${{ github.event.release.tag_name }}
       - name: Build Package
         run: yarn build
-      - name: Publish Package
+      - name: Publish Package to npmjs.org
         run: yarn npm publish --access public
         env:
           YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Push package.json
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add ./package.json
-          git commit -m "update package.json to ${{ github.event.release.tag_name }}"
-          git push origin HEAD:main
+      - name: Setup publish to Github Packages
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+          registry-url: 'https://npm.pkg.github.com'
+      - name: Publish Package to Github Packages
+        run: yarn npm publish --access public
         env:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
