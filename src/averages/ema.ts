@@ -5,7 +5,7 @@ import { arrayToBig, numberToBig } from '../utils';
 import { validateData, validatePeriod } from '../validations';
 import { dmaC } from './dma';
 
-const getFactor = (period: number): E.Either<Error, Big> =>
+const factor = (period: number): E.Either<Error, Big> =>
   pipe(
     period,
     numberToBig,
@@ -14,12 +14,13 @@ const getFactor = (period: number): E.Either<Error, Big> =>
 
 /**
  * EMA without checks and conversion.
- * Only for internal use.
+ *
+ * @internal
  */
 export const emaC = (values: readonly Big[], period: number): E.Either<Error, readonly Big[]> =>
   pipe(
     period,
-    getFactor,
+    factor,
     E.map((factorB) => dmaC(values, period, factorB)),
   );
 

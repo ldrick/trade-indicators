@@ -15,6 +15,8 @@ const mapBigObject = (values: BigObject): NumberObject =>
 /**
  * Provides a way to transform each Result of the other Modules to respective
  * `Promise<readonly number[]>` or `Promise<Record<string, readonly number[]>>`.
+ *
+ * @public
  */
 export const unwrap = (
   values: E.Either<Error, readonly Big[] | BigObject>,

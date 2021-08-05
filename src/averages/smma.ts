@@ -14,7 +14,8 @@ const getFactor = (period: number): E.Either<Error, Big> =>
 
 /**
  * SMMA without checks and conversion.
- * Only for internal use.
+ *
+ * @internal
  */
 export const smmaC = (values: readonly Big[], period: number): E.Either<Error, readonly Big[]> =>
   pipe(

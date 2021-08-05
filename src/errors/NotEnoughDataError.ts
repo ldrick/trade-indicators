@@ -1,5 +1,7 @@
 /**
  * Error for `Array.length` to small.
+ *
+ * @internal
  */
 export class NotEnoughDataError extends Error {
   constructor(period: number, required: number) {

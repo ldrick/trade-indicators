@@ -1,5 +1,7 @@
 /**
  * Error for `Number` is not finit.
+ *
+ * @internal
  */
 export class InfinitNumberError extends Error {
   constructor() {

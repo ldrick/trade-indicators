@@ -3,6 +3,8 @@ import { NotPositiveIntegerError } from '../errors';
 
 /**
  * Validate period parameter
+ *
+ * @internal
  */
 export const validatePeriod = (period: number, name: string): E.Either<Error, number> =>
   period > 0 && Number.isInteger(period)

@@ -24,7 +24,8 @@ const trueRange = (values: HighLowCloseB): readonly Big[] =>
 
 /**
  * ATR without checks and conversion.
- * Only for internal use.
+ *
+ * @internal
  */
 export const atrC = (values: HighLowCloseB, period: number): E.Either<Error, readonly Big[]> => {
   const tr = trueRange(values);

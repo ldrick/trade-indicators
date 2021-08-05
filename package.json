@@ -8,7 +8,9 @@
     "name": "Ricky Lippmann",
     "email": "ricky.lippmann@gmail.com"
   },
+  "homepage": "https://github.com/ldrick/trade-indicators",
   "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "engines": {
     "node": ">= 14.0",
     "yarn": ">= 1.22"
@@ -45,9 +47,9 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.14.8",
-    "@babel/core": "^7.14.8",
-    "@babel/preset-env": "^7.14.9",
-    "@babel/preset-typescript": "^7.14.5",
+    "@babel/core": "^7.15.0",
+    "@babel/preset-env": "^7.15.0",
+    "@babel/preset-typescript": "^7.15.0",
     "@types/big.js": "^6.1.1",
     "@types/jest": "^26.0.24",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
@@ -153,6 +155,14 @@
             {
               "contexts": [
                 "any"
+              ]
+            }
+          ],
+          "jsdoc/check-tag-names": [
+            "warn",
+            {
+              "definedTags": [
+                "internal"
               ]
             }
           ]

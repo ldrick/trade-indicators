@@ -5,27 +5,35 @@ import { BigObject, HighLowClose, HighLowCloseB, NumberObject } from '../types';
 
 /**
  * Like `Math.max()` just for `Big`.
+ *
+ * @internal
  */
 export const max = (values: readonly Big[]): Big =>
   values.reduce((reduced, value) => (value.gt(reduced) ? value : reduced), new Big(0));
 
 /**
  * Safely convert `number` to `Big`.
+ *
+ * @internal
  */
 export const numberToBig = (value: number): E.Either<Error, Big> =>
   E.tryCatch(
     () => new Big(value),
-    (reason) => reason as Error,
+    (e) => E.toError(e),
   );
 
 /**
  * Safely convert `Readonly<number[]>` to `Readonly<Big[]>`.
+ *
+ * @internal
  */
 export const arrayToBig = E.traverseArray(numberToBig);
 
 /**
  * Safely convert `Readonly<Record<string, Readonly<number[]>>>`
  * to `Readonly<Record<string, Readonly<Big[]>>>`.
+ *
+ * @internal
  */
 // prettier-ignore
 export const objectToBig = ((

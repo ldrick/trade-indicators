@@ -33,6 +33,8 @@ const validateEqualArraySizes = <A extends ValuesInput>(values: A): E.Either<Err
 
 /**
  * Validate an data `Array` or `Object`
+ *
+ * @internal
  */
 export const validateData = <A extends ValuesInput>(
   values: A,

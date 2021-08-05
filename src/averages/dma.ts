@@ -1,5 +1,5 @@
 import { Big } from 'big.js';
-import { apply as AP, either as E, option as O, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
+import { apply as AP, either as E, readonlyArray as RA } from 'fp-ts/lib';
 import { pipe } from 'fp-ts/lib/function';
 import { InfinitNumberError } from '../errors';
 import { arrayToBig, numberToBig, previous } from '../utils';
@@ -11,7 +11,7 @@ const validateFactor = (factor?: number): E.Either<Error, number | undefined> =>
     ? E.right(factor)
     : E.left(new InfinitNumberError());
 
-const getDefaultFactor = (period: number): E.Either<Error, Big> =>
+const defaultFactor = (period: number): E.Either<Error, Big> =>
   pipe(
     period,
     numberToBig,
@@ -19,28 +19,29 @@ const getDefaultFactor = (period: number): E.Either<Error, Big> =>
   );
 
 const factorToBig = (period: number, factor?: number): E.Either<Error, Big> =>
-  factor ? numberToBig(factor) : getDefaultFactor(period);
+  factor ? numberToBig(factor) : defaultFactor(period);
 
 /**
  * DMA without checks and conversion.
- * Only for internal use.
+ *
+ * @internal
  */
-export const dmaC = (values: readonly Big[], period: number, factor: Big): readonly Big[] =>
-  values.reduce(
-    (reduced, value, index, array) =>
-      pipe(
-        index + 1 >= period ? RNEA.fromReadonlyArray(array.slice(0, period)) : O.none,
-        O.map((firstPart) => {
-          const prev = previous(reduced);
-          return [
-            ...reduced,
-            reduced.length === 0 ? amean(firstPart) : value.sub(prev).mul(factor).add(prev),
-          ];
-        }),
-        O.getOrElse(() => reduced),
-      ),
-    <readonly Big[]>[],
-  );
+export const dmaC = (values: readonly Big[], period: number, factor: Big): readonly Big[] => {
+  const [init, rest] = RA.splitAt(period)(values);
+
+  if (RA.isNonEmpty(init)) {
+    return pipe(
+      rest,
+      RA.reduce([amean(init)], (reduced, value) => {
+        const prev = previous(reduced);
+
+        return [...reduced, value.sub(prev).mul(factor).add(prev)];
+      }),
+    );
+  }
+
+  return [];
+};
 
 /**
  * The Dynamic Moving Average (DMA) is the base implementation for the
