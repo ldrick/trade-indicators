@@ -1,6 +1,11 @@
 import { Big } from 'big.js';
-import { apply as AP, either as E, option as O, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
+import {
+  apply as AP,
+  either as E,
+  function as F,
+  option as O,
+  readonlyNonEmptyArray as RNEA,
+} from 'fp-ts/lib';
 import { arrayToBig } from '../utils';
 import { validateData, validatePeriod } from '../validations';
 import { wamean } from './wamean';
@@ -8,7 +13,7 @@ import { wamean } from './wamean';
 const calculate = (values: ReadonlyArray<Big>, period: number): ReadonlyArray<Big> =>
   values.reduce(
     (reduced, _value, index, array) =>
-      pipe(
+      F.pipe(
         index + 1 >= period
           ? RNEA.fromReadonlyArray(array.slice(reduced.length, index + 1))
           : O.none,
@@ -30,7 +35,7 @@ export const wma = (
   values: ReadonlyArray<number>,
   period = 20,
 ): E.Either<Error, ReadonlyArray<Big>> =>
-  pipe(
+  F.pipe(
     AP.sequenceS(E.Apply)({
       periodV: validatePeriod(period, 'period'),
       valuesV: validateData(values, period, period),

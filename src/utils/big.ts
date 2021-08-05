@@ -1,6 +1,5 @@
 import { Big } from 'big.js';
-import { either as E, readonlyRecord as RR } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
+import { either as E, function as F, readonlyRecord as RR } from 'fp-ts/lib';
 import { BigObject, HighLowClose, HighLowCloseB, NumberObject } from '../types';
 
 /**
@@ -39,6 +38,6 @@ export const arrayToBig = E.traverseArray(numberToBig);
 export const objectToBig = ((
   obj: NumberObject | HighLowClose,
 ): E.Either<Error, BigObject | HighLowCloseB> =>
-  pipe(obj, RR.traverse(E.Applicative)(arrayToBig))) as
+  F.pipe(obj, RR.traverse(E.Applicative)(arrayToBig))) as
   ((obj: HighLowClose) => E.Either<Error, HighLowCloseB>) &
   ((obj: NumberObject) => E.Either<Error, BigObject>);

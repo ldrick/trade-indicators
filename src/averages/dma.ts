@@ -1,6 +1,5 @@
 import { Big } from 'big.js';
-import { apply as AP, either as E, readonlyArray as RA } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
+import { apply as AP, either as E, function as F, readonlyArray as RA } from 'fp-ts/lib';
 import { InfinitNumberError } from '../errors';
 import { arrayToBig, numberToBig, previous } from '../utils';
 import { validateData, validatePeriod } from '../validations';
@@ -12,7 +11,7 @@ const validateFactor = (factor?: number): E.Either<Error, number | undefined> =>
     : E.left(new InfinitNumberError());
 
 const defaultFactor = (period: number): E.Either<Error, Big> =>
-  pipe(
+  F.pipe(
     period,
     numberToBig,
     E.map((periodB) => new Big(2).div(periodB.add(1))),
@@ -34,7 +33,7 @@ export const dmaC = (
   const [init, rest] = RA.splitAt(period)(values);
 
   if (RA.isNonEmpty(init)) {
-    return pipe(
+    return F.pipe(
       rest,
       RA.reduce([amean(init)], (reduced, value) => {
         const prev = previous(reduced);
@@ -60,7 +59,7 @@ export const dma = (
   period = 20,
   factor?: number,
 ): E.Either<Error, ReadonlyArray<Big>> =>
-  pipe(
+  F.pipe(
     AP.sequenceS(E.Apply)({
       periodV: validatePeriod(period, 'period'),
       valuesV: validateData(values, period, period),

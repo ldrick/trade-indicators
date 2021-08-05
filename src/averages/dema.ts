@@ -1,6 +1,5 @@
 import { Big } from 'big.js';
-import { apply as AP, either as E } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
+import { apply as AP, either as E, function as F } from 'fp-ts/lib';
 import { arrayToBig } from '../utils';
 import { validateData, validatePeriod } from '../validations';
 import { emaC } from './ema';
@@ -22,7 +21,7 @@ export const dema = (
   values: ReadonlyArray<number>,
   period = 20,
 ): E.Either<Error, ReadonlyArray<Big>> =>
-  pipe(
+  F.pipe(
     AP.sequenceS(E.Apply)({
       periodV: validatePeriod(period, 'period'),
       valuesV: validateData(values, 2 * period - 1, period),

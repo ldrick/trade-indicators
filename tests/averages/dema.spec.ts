@@ -1,4 +1,4 @@
-import { left } from 'fp-ts/lib/Either';
+import { either as E } from 'fp-ts/lib';
 import { dema } from '../../src';
 import { InfinitNumberError, NotEnoughDataError, NotPositiveIntegerError } from '../../src/errors';
 import * as prices from '../prices.json';
@@ -7,18 +7,18 @@ describe('dema', () => {
   test.each([{ p: NaN }, { p: Infinity }, { p: -Infinity }, { p: -1 }, { p: 0 }, { p: 1.5 }])(
     'fails if period is not a positive integer $p',
     ({ p }) => {
-      expect(dema([], p)).toStrictEqual(left(new NotPositiveIntegerError('period')));
+      expect(dema([], p)).toStrictEqual(E.left(new NotPositiveIntegerError('period')));
     },
   );
 
   it('fails if not enough data to calculate for period', () => {
-    expect(dema([1, 2], 3)).toStrictEqual(left(new NotEnoughDataError(3, 5)));
+    expect(dema([1, 2], 3)).toStrictEqual(E.left(new NotEnoughDataError(3, 5)));
   });
 
   test.each([{ v: [0, 0, NaN, 0] }, { v: [0, 0, Infinity, 0] }, { v: [0, 0, -Infinity, 0] }])(
     'fails if values contains a infinit value $v',
     ({ v }) => {
-      expect(dema(v, 2)).toStrictEqual(left(new InfinitNumberError()));
+      expect(dema(v, 2)).toStrictEqual(E.left(new InfinitNumberError()));
     },
   );
 

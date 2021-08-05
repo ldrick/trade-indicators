@@ -1,4 +1,4 @@
-import { left } from 'fp-ts/lib/Either';
+import { either as E } from 'fp-ts/lib';
 import { macd } from '../../src';
 import {
   InfinitNumberError,
@@ -29,23 +29,23 @@ describe('macd', () => {
     { p: [1, 1.5], n: 'slowPeriod' },
     { p: [1, 1, 1.5], n: 'signalPeriod' },
   ])('fails if any period is not a positive integer $p', ({ p, n }) => {
-    expect(macd([], ...p)).toStrictEqual(left(new NotPositiveIntegerError(n)));
+    expect(macd([], ...p)).toStrictEqual(E.left(new NotPositiveIntegerError(n)));
   });
 
   it('fails if slowPeriod is lower or equal fastPeriod', () => {
     expect(macd([], 3, 1)).toStrictEqual(
-      left(new PeriodSizeMissmatchError('slowPeriod', 'fastPeriod')),
+      E.left(new PeriodSizeMissmatchError('slowPeriod', 'fastPeriod')),
     );
   });
 
   it('fails if not enough data to calculate for periods', () => {
-    expect(macd([1, 2])).toStrictEqual(left(new NotEnoughDataError(35, 35)));
+    expect(macd([1, 2])).toStrictEqual(E.left(new NotEnoughDataError(35, 35)));
   });
 
   test.each([{ v: [0, 0, NaN, 0] }, { v: [0, 0, Infinity, 0] }, { v: [0, 0, -Infinity, 0] }])(
     'fails if values contains a infinit value $v',
     ({ v }) => {
-      expect(macd(v, 2, 3, 1)).toStrictEqual(left(new InfinitNumberError()));
+      expect(macd(v, 2, 3, 1)).toStrictEqual(E.left(new InfinitNumberError()));
     },
   );
 

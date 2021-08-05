@@ -23,8 +23,6 @@ export function unwrap(
 ## Example
 
 ```typescript
-import { either as E } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
 import { ema, macd, unwrap } from '@ldrick/trade-indicators';
 
 const emaResult = ema([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5], 3);

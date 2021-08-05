@@ -1,6 +1,5 @@
 import { Big } from 'big.js';
-import { either as E } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
+import { either as E, function as F } from 'fp-ts/lib';
 import { BigObject, NumberObject } from '../types';
 
 const mapBigArray = (values: ReadonlyArray<Big>): ReadonlyArray<number> =>
@@ -21,7 +20,7 @@ const mapBigObject = (values: BigObject): NumberObject =>
 export const unwrap = (
   values: E.Either<Error, ReadonlyArray<Big> | BigObject>,
 ): Promise<ReadonlyArray<number> | NumberObject> =>
-  pipe(
+  F.pipe(
     values,
     E.fold(
       (error) => Promise.reject(error),

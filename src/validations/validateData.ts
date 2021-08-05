@@ -1,5 +1,4 @@
-import { either as E } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
+import { either as E, function as F } from 'fp-ts/lib';
 import { InfinitNumberError, NotEnoughDataError, UnequalArraySizesError } from '../errors';
 import { ValuesInput } from '../types';
 
@@ -41,7 +40,7 @@ export const validateData = <A extends ValuesInput>(
   required: number,
   period: number,
 ): E.Either<Error, A> =>
-  pipe(
+  F.pipe(
     validateLength(values, required, period),
     E.chain(validateEqualArraySizes),
     E.chain(validateFinity),

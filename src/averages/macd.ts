@@ -1,6 +1,5 @@
 import { Big } from 'big.js';
-import { apply as AP, either as E, readonlyRecord as RR } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
+import { apply as AP, either as E, function as F, readonlyRecord as RR } from 'fp-ts/lib';
 import { PeriodSizeMissmatchError } from '../errors';
 import { arrayToBig, trimLeft } from '../utils';
 import { validateData, validatePeriod } from '../validations';
@@ -30,7 +29,7 @@ export const macd = (
   slowPeriod = 26,
   signalPeriod = 9,
 ): E.Either<Error, RR.ReadonlyRecord<'macd' | 'signal', ReadonlyArray<Big>>> =>
-  pipe(
+  F.pipe(
     AP.sequenceS(E.Apply)({
       fastPeriodV: validatePeriod(fastPeriod, 'fastPeriod'),
       slowPeriodV: validatePeriod(slowPeriod, 'slowPeriod'),

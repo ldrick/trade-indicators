@@ -1,4 +1,4 @@
-import { left } from 'fp-ts/lib/Either';
+import { either as E } from 'fp-ts/lib';
 import { tema } from '../../src';
 import { InfinitNumberError, NotEnoughDataError, NotPositiveIntegerError } from '../../src/errors';
 import * as prices from '../prices.json';
@@ -7,18 +7,18 @@ describe('tema', () => {
   test.each([{ p: NaN }, { p: Infinity }, { p: -Infinity }, { p: -1 }, { p: 0 }, { p: 1.5 }])(
     'fails if period is not a positive integer $p',
     ({ p }) => {
-      expect(tema([], p)).toStrictEqual(left(new NotPositiveIntegerError('period')));
+      expect(tema([], p)).toStrictEqual(E.left(new NotPositiveIntegerError('period')));
     },
   );
 
   it('fails if not enough data to calculate for period', () => {
-    expect(tema([1, 2], 3)).toStrictEqual(left(new NotEnoughDataError(3, 7)));
+    expect(tema([1, 2], 3)).toStrictEqual(E.left(new NotEnoughDataError(3, 7)));
   });
 
   test.each([{ v: [0, 0, NaN, 0] }, { v: [0, 0, Infinity, 0] }, { v: [0, 0, -Infinity, 0] }])(
     'fails if values contains a infinit value $v',
     ({ v }) => {
-      expect(tema(v, 2)).toStrictEqual(left(new InfinitNumberError()));
+      expect(tema(v, 2)).toStrictEqual(E.left(new InfinitNumberError()));
     },
   );
 

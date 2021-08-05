@@ -1,6 +1,5 @@
 import { Big } from 'big.js';
-import { either as E } from 'fp-ts/lib/';
-import { pipe } from 'fp-ts/lib/function';
+import { either as E, function as F } from 'fp-ts/lib';
 import { diff, DiffOptions } from 'jest-diff';
 import { matcherHint, printExpected, printReceived } from 'jest-matcher-utils';
 import { BigObject, NumberObject } from '../../src/types';
@@ -51,7 +50,7 @@ const eitherRightToEqualFixedPrecision = <E>(
     Object.keys(exp).every((k) => compareArrays(exp[k], rec[k]));
 
   return {
-    pass: pipe(
+    pass: F.pipe(
       received,
       E.fold(
         () => false,
@@ -62,7 +61,7 @@ const eitherRightToEqualFixedPrecision = <E>(
       ),
     ),
     message: () =>
-      pipe(
+      F.pipe(
         received,
         E.fold(
           () => `Either expected to be right, but was left.`,

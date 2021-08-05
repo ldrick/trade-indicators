@@ -1,4 +1,4 @@
-import { left } from 'fp-ts/lib/Either';
+import { either as E } from 'fp-ts/lib';
 import { adx } from '../../src';
 import {
   InfinitNumberError,
@@ -13,21 +13,21 @@ describe('adx', () => {
     'fails if period is not a positive integer $p',
     ({ p }) => {
       expect(adx({ close: [1.3], high: [1.5], low: [0.9] }, p)).toStrictEqual(
-        left(new NotPositiveIntegerError('period')),
+        E.left(new NotPositiveIntegerError('period')),
       );
     },
   );
 
   it('fails if not enough data to calculate for period', () => {
     expect(adx({ close: [1.3], high: [1.5], low: [0.9] }, 3)).toStrictEqual(
-      left(new NotEnoughDataError(3, 7)),
+      E.left(new NotEnoughDataError(3, 7)),
     );
   });
 
   it('fails if data given has unequal sizes', () => {
     expect(
       adx({ close: [1.3, 2.1, 2, 3, 1.9], high: [1.5, 2.4, 2.8, 2.3], low: [0.9, 1.5, 2.3] }, 1),
-    ).toStrictEqual(left(new UnequalArraySizesError()));
+    ).toStrictEqual(E.left(new UnequalArraySizesError()));
   });
 
   test.each([
@@ -53,7 +53,7 @@ describe('adx', () => {
       },
     },
   ])('fails if any value is a infinit value $v', ({ v }) => {
-    expect(adx(v, 2)).toStrictEqual(left(new InfinitNumberError()));
+    expect(adx(v, 2)).toStrictEqual(E.left(new InfinitNumberError()));
   });
 
   it('calculates the Average Directional Index with default period', () => {

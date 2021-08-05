@@ -34,15 +34,14 @@ In TypeScript:
 
 ```typescript
 import { Big } from 'big.js';
-import { either as E } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
+import { either as E, function as F } from 'fp-ts/lib';
 import { ema, unwrap } from '@ldrick/trade-indicators';
 
 const prices = [3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5];
 const period = 3;
 
 // possible usage to pipe the Result E.Either<Error, ReadonlyArray<Big>>
-const expMovingAverage = pipe(
+const expMovingAverage = F.pipe(
   ema(prices, period),
   E.getOrElse(() => <ReadonlyArray<Big>>[]),
 );

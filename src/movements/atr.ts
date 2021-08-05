@@ -1,6 +1,5 @@
 import Big from 'big.js';
-import { apply as AP, either as E } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
+import { apply as AP, either as E, function as F } from 'fp-ts/lib';
 import { smmaC } from '../averages/smma';
 import { HighLowClose, HighLowCloseB } from '../types';
 import { max, objectToBig } from '../utils';
@@ -44,7 +43,7 @@ export const atrC = (
  * @public
  */
 export const atr = (values: HighLowClose, period = 14): E.Either<Error, ReadonlyArray<Big>> =>
-  pipe(
+  F.pipe(
     AP.sequenceS(E.Apply)({
       periodV: validatePeriod(period, 'period'),
       valuesV: validateData(values, period + 1, period),

@@ -1,6 +1,5 @@
 import { Big } from 'big.js';
-import { apply as AP, either as E, readonlyRecord as RR } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
+import { apply as AP, either as E, function as F, readonlyRecord as RR } from 'fp-ts/lib';
 import { smmaC } from '../averages/smma';
 import { HighLowClose, HighLowCloseB, Movement } from '../types';
 import { objectToBig, trimLeft } from '../utils';
@@ -31,7 +30,7 @@ const directionalIndex = (
   period: number,
   move: Movement,
 ): E.Either<Error, ReadonlyArray<Big>> =>
-  pipe(
+  F.pipe(
     E.bindTo('dm')(E.right(directionalMovement(values, move))),
     E.bind('dividends', ({ dm }) => smmaC(dm, period)),
     E.bind('divisors', () => atrC(values, period)),
@@ -65,7 +64,7 @@ export const adx = (
   values: HighLowClose,
   period = 14,
 ): E.Either<Error, RR.ReadonlyRecord<'adx' | 'mdi' | 'pdi', ReadonlyArray<Big>>> =>
-  pipe(
+  F.pipe(
     AP.sequenceS(E.Apply)({
       periodV: validatePeriod(period, 'period'),
       valuesV: validateData(values, 2 * period + 1, period),
