@@ -5,8 +5,11 @@ import { arrayToBig } from '../utils';
 import { validateData, validatePeriod } from '../validations';
 import { emaC } from './ema';
 
-const calculate = (one: readonly Big[], two: readonly Big[], period: number): readonly Big[] =>
-  two.map((value, index) => one[index + period - 1].mul(2).sub(value));
+const calculate = (
+  one: ReadonlyArray<Big>,
+  two: ReadonlyArray<Big>,
+  period: number,
+): ReadonlyArray<Big> => two.map((value, index) => one[index + period - 1].mul(2).sub(value));
 
 /**
  * The Double Exponential Moving Average (DEMA) uses two Exponential Moving Average (EMA)
@@ -15,7 +18,10 @@ const calculate = (one: readonly Big[], two: readonly Big[], period: number): re
  *
  * @public
  */
-export const dema = (values: readonly number[], period = 20): E.Either<Error, readonly Big[]> =>
+export const dema = (
+  values: ReadonlyArray<number>,
+  period = 20,
+): E.Either<Error, ReadonlyArray<Big>> =>
   pipe(
     AP.sequenceS(E.Apply)({
       periodV: validatePeriod(period, 'period'),

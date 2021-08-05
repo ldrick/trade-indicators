@@ -6,7 +6,7 @@ parent: Modules
 
 ## Overview
 
-It might be easier to use `trade-indicators` within an existing project, by handling Errors with Promises. Therefor `unwrap` provides a way to transform each Result of the other Modules to respective `Promise<readonly number[]>` or `Promise<Record<string, readonly number[]>>`.
+It might be easier to use `trade-indicators` within an existing project, by handling Errors with Promises. Therefor `unwrap` provides a way to transform each Result of the other Modules to respective `Promise<ReadonlyArray<number>>` or `Promise<Readonly<Record<string, ReadonlyArray<number>>>>`.
 
 ## Signature
 
@@ -14,10 +14,10 @@ It might be easier to use `trade-indicators` within an existing project, by hand
 import { Big } from 'big.js';
 import { either as E } from 'fp-ts/lib';
 
-export function unwrap(values: E.Either<Error, readonly Big[]>): Promise<readonly number[]>;
+export function unwrap(values: E.Either<Error, ReadonlyArray<Big>>): Promise<ReadonlyArray<number>>;
 export function unwrap(
-  values: E.Either<Error, Record<string, readonly Big[]>>,
-): Promise<Record<string, readonly number[]>>;
+  values: E.Either<Error, Readonly<Record<string, ReadonlyArray<Big>>>>,
+): Promise<Readonly<Record<string, ReadonlyArray<number>>>>;
 ```
 
 ## Example

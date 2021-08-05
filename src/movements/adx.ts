@@ -1,5 +1,5 @@
 import { Big } from 'big.js';
-import { apply as AP, either as E } from 'fp-ts/lib';
+import { apply as AP, either as E, readonlyRecord as RR } from 'fp-ts/lib';
 import { pipe } from 'fp-ts/lib/function';
 import { smmaC } from '../averages/smma';
 import { HighLowClose, HighLowCloseB, Movement } from '../types';
@@ -15,7 +15,7 @@ const getDownMovement = (up: Big, down: Big): Big =>
 const getMovement = (up: Big, down: Big, move: Movement): Big =>
   move === 'up' ? getUpMovement(up, down) : getDownMovement(up, down);
 
-const directionalMovement = (values: HighLowCloseB, move: Movement): readonly Big[] =>
+const directionalMovement = (values: HighLowCloseB, move: Movement): ReadonlyArray<Big> =>
   values.low.reduce((reduced, low, index) => {
     if (index === 0) {
       return reduced;
@@ -24,13 +24,13 @@ const directionalMovement = (values: HighLowCloseB, move: Movement): readonly Bi
     const up = values.high[index].sub(values.high[prev]);
     const down = values.low[prev].sub(low);
     return [...reduced, getMovement(up, down, move)];
-  }, <readonly Big[]>[]);
+  }, <ReadonlyArray<Big>>[]);
 
 const directionalIndex = (
   values: HighLowCloseB,
   period: number,
   move: Movement,
-): E.Either<Error, readonly Big[]> =>
+): E.Either<Error, ReadonlyArray<Big>> =>
   pipe(
     E.bindTo('dm')(E.right(directionalMovement(values, move))),
     E.bind('dividends', ({ dm }) => smmaC(dm, period)),
@@ -43,7 +43,7 @@ const directionalIndex = (
     ),
   );
 
-const calculation = (pdi: readonly Big[], mdi: readonly Big[]): readonly Big[] =>
+const calculation = (pdi: ReadonlyArray<Big>, mdi: ReadonlyArray<Big>): ReadonlyArray<Big> =>
   pdi.map((plus, index) => {
     const sum = plus.add(mdi[index]);
     if (sum.eq(0)) {
@@ -51,7 +51,7 @@ const calculation = (pdi: readonly Big[], mdi: readonly Big[]): readonly Big[] =
     }
     const dividend = plus.sub(mdi[index]).abs();
     return dividend.div(sum);
-  }, <readonly Big[]>[]);
+  }, <ReadonlyArray<Big>>[]);
 
 /**
  * The Average Directional Index (ADX) determines trend strength.
@@ -64,14 +64,7 @@ const calculation = (pdi: readonly Big[], mdi: readonly Big[]): readonly Big[] =
 export const adx = (
   values: HighLowClose,
   period = 14,
-): E.Either<
-  Error,
-  {
-    readonly adx: readonly Big[];
-    readonly mdi: readonly Big[];
-    readonly pdi: readonly Big[];
-  }
-> =>
+): E.Either<Error, RR.ReadonlyRecord<'adx' | 'mdi' | 'pdi', ReadonlyArray<Big>>> =>
   pipe(
     AP.sequenceS(E.Apply)({
       periodV: validatePeriod(period, 'period'),

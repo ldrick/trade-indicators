@@ -6,11 +6,11 @@ import { validateData, validatePeriod } from '../validations';
 import { emaC } from './ema';
 
 const calculate = (
-  one: readonly Big[],
-  two: readonly Big[],
-  three: readonly Big[],
+  one: ReadonlyArray<Big>,
+  two: ReadonlyArray<Big>,
+  three: ReadonlyArray<Big>,
   period: number,
-): readonly Big[] =>
+): ReadonlyArray<Big> =>
   three.map((value, index) =>
     one[index + 2 * (period - 1)]
       .mul(3)
@@ -26,7 +26,10 @@ const calculate = (
  *
  * @public
  */
-export const tema = (values: readonly number[], period = 20): E.Either<Error, readonly Big[]> =>
+export const tema = (
+  values: ReadonlyArray<number>,
+  period = 20,
+): E.Either<Error, ReadonlyArray<Big>> =>
   pipe(
     AP.sequenceS(E.Apply)({
       periodV: validatePeriod(period, 'period'),

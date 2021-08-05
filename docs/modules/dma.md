@@ -15,10 +15,10 @@ import { Big } from 'big.js';
 import { either as E } from 'fp-ts/lib';
 
 export declare const dma: (
-  values: readonly number[],
+  values: ReadonlyArray<number>,
   period?: number, // default: 20
   factor?: number, // default: 2 / (period + 1)
-) => E.Either<Error, readonly Big[]>;
+) => E.Either<Error, ReadonlyArray<Big>>;
 ```
 
 ## Example

@@ -7,7 +7,7 @@ import { max, objectToBig } from '../utils';
 import { validatePeriod } from '../validations';
 import { validateData } from '../validations/validateData';
 
-const trueRange = (values: HighLowCloseB): readonly Big[] =>
+const trueRange = (values: HighLowCloseB): ReadonlyArray<Big> =>
   values.high.reduce((reduced, high, index) => {
     const previousClose = values.close[index - 1];
     return index === 0
@@ -20,14 +20,17 @@ const trueRange = (values: HighLowCloseB): readonly Big[] =>
             values.low[index].sub(previousClose).abs(),
           ]),
         ];
-  }, <readonly Big[]>[]);
+  }, <ReadonlyArray<Big>>[]);
 
 /**
  * ATR without checks and conversion.
  *
  * @internal
  */
-export const atrC = (values: HighLowCloseB, period: number): E.Either<Error, readonly Big[]> => {
+export const atrC = (
+  values: HighLowCloseB,
+  period: number,
+): E.Either<Error, ReadonlyArray<Big>> => {
   const tr = trueRange(values);
   return smmaC(tr, period);
 };
@@ -40,7 +43,7 @@ export const atrC = (values: HighLowCloseB, period: number): E.Either<Error, rea
  *
  * @public
  */
-export const atr = (values: HighLowClose, period = 14): E.Either<Error, readonly Big[]> =>
+export const atr = (values: HighLowClose, period = 14): E.Either<Error, ReadonlyArray<Big>> =>
   pipe(
     AP.sequenceS(E.Apply)({
       periodV: validatePeriod(period, 'period'),

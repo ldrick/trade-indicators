@@ -5,7 +5,7 @@ import { arrayToBig } from '../utils';
 import { validateData, validatePeriod } from '../validations';
 import { amean } from './amean';
 
-const calculate = (values: readonly Big[], period: number): readonly Big[] =>
+const calculate = (values: ReadonlyArray<Big>, period: number): ReadonlyArray<Big> =>
   values.reduce(
     (reduced, _value, index, array) =>
       pipe(
@@ -15,7 +15,7 @@ const calculate = (values: readonly Big[], period: number): readonly Big[] =>
         O.map((part) => [...reduced, amean(part)]),
         O.getOrElse(() => reduced),
       ),
-    <readonly Big[]>[],
+    <ReadonlyArray<Big>>[],
   );
 
 /**
@@ -25,7 +25,10 @@ const calculate = (values: readonly Big[], period: number): readonly Big[] =>
  *
  * @public
  */
-export const sma = (values: readonly number[], period = 20): E.Either<Error, readonly Big[]> =>
+export const sma = (
+  values: ReadonlyArray<number>,
+  period = 20,
+): E.Either<Error, ReadonlyArray<Big>> =>
   pipe(
     AP.sequenceS(E.Apply)({
       periodV: validatePeriod(period, 'period'),

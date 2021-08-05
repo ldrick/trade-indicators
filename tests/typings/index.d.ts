@@ -4,7 +4,7 @@ declare global {
   namespace jest {
     interface Matchers<R> {
       eitherRightToEqualFixedPrecision(
-        expected: readonly number[] | NumberObject,
+        expected: ReadonlyArray<number> | NumberObject,
         decimals = 12,
       ): R;
     }

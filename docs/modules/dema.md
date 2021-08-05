@@ -15,9 +15,9 @@ import { Big } from 'big.js';
 import { either as E } from 'fp-ts/lib';
 
 export declare const dema: (
-  values: readonly number[],
+  values: ReadonlyArray<number>,
   period?: number, // default: 20
-) => E.Either<Error, readonly Big[]>;
+) => E.Either<Error, ReadonlyArray<Big>>;
 ```
 
 ## Example

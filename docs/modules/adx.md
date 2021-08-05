@@ -15,20 +15,9 @@ import { Big } from 'big.js';
 import { either as E } from 'fp-ts/lib';
 
 export declare const adx: (
-  values: {
-    readonly high: readonly number[];
-    readonly low: readonly number[];
-    readonly close: readonly number[];
-  },
+  values: Readonly<Record<'high' | 'low' | 'close', ReadonlyArray<number>>>,
   period?: number, // default: 14
-) => E.Either<
-  Error,
-  {
-    readonly adx: readonly Big[];
-    readonly mdi: readonly Big[];
-    readonly pdi: readonly Big[];
-  }
->;
+) => E.Either<Error, Readonly<Record<'adx' | 'mdi' | 'pdi', ReadonlyArray<Big>>>>;
 ```
 
 ## Example

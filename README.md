@@ -41,13 +41,13 @@ import { ema, unwrap } from '@ldrick/trade-indicators';
 const prices = [3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5];
 const period = 3;
 
-// possible usage to pipe the Result E.Either<Error, Big[]>
+// possible usage to pipe the Result E.Either<Error, ReadonlyArray<Big>>
 const expMovingAverage = pipe(
   ema(prices, period),
-  E.getOrElse(() => <readonly Big[]>[]),
+  E.getOrElse(() => <ReadonlyArray<Big>>[]),
 );
 
-// or unwrap the Result to Promise<number[]>
+// or unwrap the Result to Promise<ReadonlyArray<number>>
 unwrap(ema(prices, period)).then(
   (result) => console.log(result),
   (error) => console.log(error),

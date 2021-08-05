@@ -26,7 +26,11 @@ const factorToBig = (period: number, factor?: number): E.Either<Error, Big> =>
  *
  * @internal
  */
-export const dmaC = (values: readonly Big[], period: number, factor: Big): readonly Big[] => {
+export const dmaC = (
+  values: ReadonlyArray<Big>,
+  period: number,
+  factor: Big,
+): ReadonlyArray<Big> => {
   const [init, rest] = RA.splitAt(period)(values);
 
   if (RA.isNonEmpty(init)) {
@@ -52,10 +56,10 @@ export const dmaC = (values: readonly Big[], period: number, factor: Big): reado
  * @public
  */
 export const dma = (
-  values: readonly number[],
+  values: ReadonlyArray<number>,
   period = 20,
   factor?: number,
-): E.Either<Error, readonly Big[]> =>
+): E.Either<Error, ReadonlyArray<Big>> =>
   pipe(
     AP.sequenceS(E.Apply)({
       periodV: validatePeriod(period, 'period'),

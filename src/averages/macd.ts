@@ -1,5 +1,5 @@
 import { Big } from 'big.js';
-import { apply as AP, either as E } from 'fp-ts/lib';
+import { apply as AP, either as E, readonlyRecord as RR } from 'fp-ts/lib';
 import { pipe } from 'fp-ts/lib/function';
 import { PeriodSizeMissmatchError } from '../errors';
 import { arrayToBig, trimLeft } from '../utils';
@@ -11,7 +11,7 @@ const validatePeriodSizes = (slowPeriod: number, fastPeriod: number): E.Either<E
     ? E.right(true)
     : E.left(new PeriodSizeMissmatchError('slowPeriod', 'fastPeriod'));
 
-const calculate = (fast: readonly Big[], slow: readonly Big[]): readonly Big[] => {
+const calculate = (fast: ReadonlyArray<Big>, slow: ReadonlyArray<Big>): ReadonlyArray<Big> => {
   const shortened = fast.slice(-1 * slow.length);
   return slow.map((value, index) => shortened[index].sub(value));
 };
@@ -25,11 +25,11 @@ const calculate = (fast: readonly Big[], slow: readonly Big[]): readonly Big[] =
  * @public
  */
 export const macd = (
-  values: readonly number[],
+  values: ReadonlyArray<number>,
   fastPeriod = 12,
   slowPeriod = 26,
   signalPeriod = 9,
-): E.Either<Error, { readonly macd: readonly Big[]; readonly signal: readonly Big[] }> =>
+): E.Either<Error, RR.ReadonlyRecord<'macd' | 'signal', ReadonlyArray<Big>>> =>
   pipe(
     AP.sequenceS(E.Apply)({
       fastPeriodV: validatePeriod(fastPeriod, 'fastPeriod'),

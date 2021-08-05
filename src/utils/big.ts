@@ -8,7 +8,7 @@ import { BigObject, HighLowClose, HighLowCloseB, NumberObject } from '../types';
  *
  * @internal
  */
-export const max = (values: readonly Big[]): Big =>
+export const max = (values: ReadonlyArray<Big>): Big =>
   values.reduce((reduced, value) => (value.gt(reduced) ? value : reduced), new Big(0));
 
 /**
@@ -23,15 +23,15 @@ export const numberToBig = (value: number): E.Either<Error, Big> =>
   );
 
 /**
- * Safely convert `Readonly<number[]>` to `Readonly<Big[]>`.
+ * Safely convert `ReadonlyArray<number>` to `ReadonlyArray<Big>`.
  *
  * @internal
  */
 export const arrayToBig = E.traverseArray(numberToBig);
 
 /**
- * Safely convert `Readonly<Record<string, Readonly<number[]>>>`
- * to `Readonly<Record<string, Readonly<Big[]>>>`.
+ * Safely convert `Readonly<Record<string, ReadonlyArray<number>>>`
+ * to `Readonly<Record<string, ReadonlyArray<Big>>>`.
  *
  * @internal
  */

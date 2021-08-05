@@ -22,14 +22,14 @@ const formatDiff = <R, X>(
 };
 
 const eitherRightToEqualFixedPrecision = <E>(
-  received: E.Either<E, readonly Big[] | BigObject>,
-  expected: readonly number[] | NumberObject,
+  received: E.Either<E, ReadonlyArray<Big> | BigObject>,
+  expected: ReadonlyArray<number> | NumberObject,
   decimals = 12,
 ) => {
   const formatNumberArray = (
-    arr: readonly number[] | readonly Big[],
+    arr: ReadonlyArray<number> | ReadonlyArray<Big>,
     dec: number,
-  ): readonly string[] => arr.map((el) => el.toFixed(dec));
+  ): ReadonlyArray<string> => arr.map((el) => el.toFixed(dec));
 
   const formatNumberObject = (obj: NumberObject | BigObject, dec: number): FormattedObject =>
     Object.keys(obj).reduce(
@@ -38,12 +38,12 @@ const eitherRightToEqualFixedPrecision = <E>(
     );
 
   const formatValues = (
-    val: readonly number[] | readonly Big[] | NumberObject | BigObject,
+    val: ReadonlyArray<number> | ReadonlyArray<Big> | NumberObject | BigObject,
     dec: number,
-  ): readonly string[] | FormattedObject =>
+  ): ReadonlyArray<string> | FormattedObject =>
     val instanceof Array ? formatNumberArray(val, dec) : formatNumberObject(val, dec);
 
-  const compareArrays = (exp: readonly number[], rec: readonly Big[]): boolean =>
+  const compareArrays = (exp: ReadonlyArray<number>, rec: ReadonlyArray<Big>): boolean =>
     exp.length === rec.length &&
     exp.every((e, index) => e.toFixed(decimals) === rec[index].toFixed(decimals));
 

@@ -3,7 +3,7 @@ import { either as E } from 'fp-ts/lib';
 import { pipe } from 'fp-ts/lib/function';
 import { BigObject, NumberObject } from '../types';
 
-const mapBigArray = (values: readonly Big[]): readonly number[] =>
+const mapBigArray = (values: ReadonlyArray<Big>): ReadonlyArray<number> =>
   values.map((value) => value.toNumber());
 
 const mapBigObject = (values: BigObject): NumberObject =>
@@ -14,13 +14,13 @@ const mapBigObject = (values: BigObject): NumberObject =>
 
 /**
  * Provides a way to transform each Result of the other Modules to respective
- * `Promise<readonly number[]>` or `Promise<Record<string, readonly number[]>>`.
+ * `Promise<ReadonlyArray<number>>` or `Promise<Readonly<Record<string, ReadonlyArray<number>>>>`.
  *
  * @public
  */
 export const unwrap = (
-  values: E.Either<Error, readonly Big[] | BigObject>,
-): Promise<readonly number[] | NumberObject> =>
+  values: E.Either<Error, ReadonlyArray<Big> | BigObject>,
+): Promise<ReadonlyArray<number> | NumberObject> =>
   pipe(
     values,
     E.fold(

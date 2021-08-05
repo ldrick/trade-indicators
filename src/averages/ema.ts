@@ -17,7 +17,10 @@ const factor = (period: number): E.Either<Error, Big> =>
  *
  * @internal
  */
-export const emaC = (values: readonly Big[], period: number): E.Either<Error, readonly Big[]> =>
+export const emaC = (
+  values: ReadonlyArray<Big>,
+  period: number,
+): E.Either<Error, ReadonlyArray<Big>> =>
   pipe(
     period,
     factor,
@@ -32,7 +35,10 @@ export const emaC = (values: readonly Big[], period: number): E.Either<Error, re
  *
  * @public
  */
-export const ema = (values: readonly number[], period = 20): E.Either<Error, readonly Big[]> =>
+export const ema = (
+  values: ReadonlyArray<number>,
+  period = 20,
+): E.Either<Error, ReadonlyArray<Big>> =>
   pipe(
     AP.sequenceS(E.Apply)({
       periodV: validatePeriod(period, 'period'),

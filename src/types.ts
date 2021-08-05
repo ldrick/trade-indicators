@@ -1,18 +1,22 @@
 import { Big } from 'big.js';
+import { readonlyRecord as RR } from 'fp-ts';
 
 export type Movement = 'up' | 'down';
-export type ValuesInput = Readonly<number[]> | NumberObject;
-export type NumberObject = Readonly<Record<string, Readonly<number[]>>>;
-export type BigObject = Readonly<Record<string, Readonly<Big[]>>>;
 
-export interface HighLowClose extends NumberObject {
-  high: Readonly<number[]>;
-  low: Readonly<number[]>;
-  close: Readonly<number[]>;
-}
+export type ValuesInput = ReadonlyArray<number> | NumberObject;
 
-export interface HighLowCloseB extends BigObject {
-  high: Readonly<Big[]>;
-  low: Readonly<Big[]>;
-  close: Readonly<Big[]>;
-}
+export type NumberObject = RR.ReadonlyRecord<string, ReadonlyArray<number>>;
+
+export type BigObject = RR.ReadonlyRecord<string, ReadonlyArray<Big>>;
+
+export type HighLowClose = NumberObject & {
+  high: ReadonlyArray<number>;
+  low: ReadonlyArray<number>;
+  close: ReadonlyArray<number>;
+};
+
+export type HighLowCloseB = BigObject & {
+  high: ReadonlyArray<Big>;
+  low: ReadonlyArray<Big>;
+  close: ReadonlyArray<Big>;
+};

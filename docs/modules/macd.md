@@ -15,11 +15,11 @@ import { Big } from 'big.js';
 import { either as E } from 'fp-ts/lib';
 
 export declare const macd: (
-  values: readonly number[],
+  values: ReadonlyArray<number>,
   fastPeriod?: number, // default: 12
   slowPeriod?: number, // default: 26
   signalPeriod?: number, // default: 9
-) => E.Either<Error, { readonly macd: readonly Big[]; readonly signal: readonly Big[] }>;
+) => E.Either<Error, Readonly<Record<"macd" | "signal", ReadonlyArray<Big>>>;
 ```
 
 ## Example
