@@ -1,6 +1,16 @@
 import { Big } from 'big.js';
-import { either as E, function as F, readonlyRecord as RR } from 'fp-ts/lib';
-import { BigObject, HighLowClose, HighLowCloseB, NumberObject } from '../types';
+import {
+  either as E,
+  function as F,
+  readonlyNonEmptyArray as RNEA,
+  readonlyRecord as RR,
+} from 'fp-ts/lib';
+import {
+  ReadonlyNonEmptyHighLowCloseBig,
+  ReadonlyNonEmptyHighLowCloseNumber,
+  ReadonlyNonEmptyRecordBig,
+  ReadonlyNonEmptyRecordNumber,
+} from '../types';
 
 /**
  * Like `Math.max()` just for `Big`.
@@ -22,22 +32,22 @@ export const numberToBig = (value: number): E.Either<Error, Big> =>
   );
 
 /**
- * Safely convert `ReadonlyArray<number>` to `ReadonlyArray<Big>`.
+ * Safely convert `RNEA.ReadonlyNonEmptyArray<number>` to `RNEA.ReadonlyNonEmptyArray<Big>`.
  *
  * @internal
  */
-export const arrayToBig = E.traverseArray(numberToBig);
+export const arrayToBig = RNEA.traverse(E.Applicative)(numberToBig);
 
 /**
- * Safely convert `Readonly<Record<string, ReadonlyArray<number>>>`
- * to `Readonly<Record<string, ReadonlyArray<Big>>>`.
+ * Safely convert `RR.ReadonlyRecord<string, RNEA.ReadonlyNonEmptyArray<number>>>`
+ * to `RR.ReadonlyRecord<string, RNEA.ReadonlyNonEmptyArray<Big>>>`.
  *
  * @internal
  */
-// prettier-ignore
 export const objectToBig = ((
-  obj: NumberObject | HighLowClose,
-): E.Either<Error, BigObject | HighLowCloseB> =>
-  F.pipe(obj, RR.traverse(E.Applicative)(arrayToBig))) as
-  ((obj: HighLowClose) => E.Either<Error, HighLowCloseB>) &
-  ((obj: NumberObject) => E.Either<Error, BigObject>);
+  obj: ReadonlyNonEmptyRecordNumber | ReadonlyNonEmptyHighLowCloseNumber,
+): E.Either<Error, ReadonlyNonEmptyRecordBig | ReadonlyNonEmptyHighLowCloseBig> =>
+  F.pipe(obj, RR.traverse(E.Applicative)(arrayToBig))) as ((
+  obj: ReadonlyNonEmptyHighLowCloseNumber,
+) => E.Either<Error, ReadonlyNonEmptyHighLowCloseBig>) &
+  ((obj: ReadonlyNonEmptyRecordNumber) => E.Either<Error, ReadonlyNonEmptyRecordBig>);

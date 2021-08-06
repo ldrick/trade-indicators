@@ -1,12 +1,12 @@
 import Big from 'big.js';
-import { apply as AP, either as E, function as F } from 'fp-ts/lib';
+import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
 import { smmaC } from '../averages/smma';
-import { HighLowClose, HighLowCloseB } from '../types';
+import { ReadonlyHighLowCloseNumber, ReadonlyNonEmptyHighLowCloseBig } from '../types';
 import { max, objectToBig } from '../utils';
 import { validatePeriod } from '../validations';
-import { validateData } from '../validations/validateData';
+import { validateValues } from '../validations/validateValues';
 
-const trueRange = (values: HighLowCloseB): ReadonlyArray<Big> =>
+const trueRange = (values: ReadonlyNonEmptyHighLowCloseBig): RNEA.ReadonlyNonEmptyArray<Big> =>
   values.high.reduce((reduced, high, index) => {
     const previousClose = values.close[index - 1];
     return index === 0
@@ -19,7 +19,7 @@ const trueRange = (values: HighLowCloseB): ReadonlyArray<Big> =>
             values.low[index].sub(previousClose).abs(),
           ]),
         ];
-  }, <ReadonlyArray<Big>>[]);
+  }, <RNEA.ReadonlyNonEmptyArray<Big>>[]);
 
 /**
  * ATR without checks and conversion.
@@ -27,9 +27,9 @@ const trueRange = (values: HighLowCloseB): ReadonlyArray<Big> =>
  * @internal
  */
 export const atrC = (
-  values: HighLowCloseB,
+  values: ReadonlyNonEmptyHighLowCloseBig,
   period: number,
-): E.Either<Error, ReadonlyArray<Big>> => {
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> => {
   const tr = trueRange(values);
   return smmaC(tr, period);
 };
@@ -42,11 +42,14 @@ export const atrC = (
  *
  * @public
  */
-export const atr = (values: HighLowClose, period = 14): E.Either<Error, ReadonlyArray<Big>> =>
+export const atr = (
+  values: ReadonlyHighLowCloseNumber,
+  period = 14,
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
   F.pipe(
     AP.sequenceS(E.Apply)({
       periodV: validatePeriod(period, 'period'),
-      valuesV: validateData(values, period + 1, period),
+      valuesV: validateValues(values, period + 1, period),
     }),
     E.bind('valuesB', ({ valuesV }) => objectToBig(valuesV)),
     E.chain(({ valuesB, periodV }) => atrC(valuesB, periodV)),

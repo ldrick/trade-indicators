@@ -1,8 +1,14 @@
 import { Big } from 'big.js';
-import { apply as AP, either as E, function as F, readonlyRecord as RR } from 'fp-ts/lib';
+import {
+  apply as AP,
+  either as E,
+  function as F,
+  readonlyNonEmptyArray as RNEA,
+  readonlyRecord as RR,
+} from 'fp-ts/lib';
 import { PeriodSizeMissmatchError } from '../errors';
 import { arrayToBig, trimLeft } from '../utils';
-import { validateData, validatePeriod } from '../validations';
+import { validatePeriod, validateValues } from '../validations';
 import { emaC } from './ema';
 
 const validatePeriodSizes = (slowPeriod: number, fastPeriod: number): E.Either<Error, boolean> =>
@@ -10,9 +16,15 @@ const validatePeriodSizes = (slowPeriod: number, fastPeriod: number): E.Either<E
     ? E.right(true)
     : E.left(new PeriodSizeMissmatchError('slowPeriod', 'fastPeriod'));
 
-const calculate = (fast: ReadonlyArray<Big>, slow: ReadonlyArray<Big>): ReadonlyArray<Big> => {
+const calculate = (
+  fast: RNEA.ReadonlyNonEmptyArray<Big>,
+  slow: RNEA.ReadonlyNonEmptyArray<Big>,
+): RNEA.ReadonlyNonEmptyArray<Big> => {
   const shortened = fast.slice(-1 * slow.length);
-  return slow.map((value, index) => shortened[index].sub(value));
+  return F.pipe(
+    slow,
+    RNEA.mapWithIndex((index, value) => shortened[index].sub(value)),
+  );
 };
 
 /**
@@ -28,14 +40,14 @@ export const macd = (
   fastPeriod = 12,
   slowPeriod = 26,
   signalPeriod = 9,
-): E.Either<Error, RR.ReadonlyRecord<'macd' | 'signal', ReadonlyArray<Big>>> =>
+): E.Either<Error, RR.ReadonlyRecord<'macd' | 'signal', RNEA.ReadonlyNonEmptyArray<Big>>> =>
   F.pipe(
     AP.sequenceS(E.Apply)({
       fastPeriodV: validatePeriod(fastPeriod, 'fastPeriod'),
       slowPeriodV: validatePeriod(slowPeriod, 'slowPeriod'),
       signalPeriodV: validatePeriod(signalPeriod, 'signalPeriod'),
       periodSizes: validatePeriodSizes(slowPeriod, fastPeriod),
-      valuesV: validateData(values, slowPeriod + signalPeriod, slowPeriod + signalPeriod),
+      valuesV: validateValues(values, slowPeriod + signalPeriod, slowPeriod + signalPeriod),
     }),
     E.bind('valuesB', ({ valuesV }) => arrayToBig(valuesV)),
     E.bind('emaSlow', ({ valuesB, slowPeriodV }) => emaC(valuesB, slowPeriodV)),

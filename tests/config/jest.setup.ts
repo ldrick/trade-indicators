@@ -2,7 +2,7 @@ import { Big } from 'big.js';
 import { either as E, function as F } from 'fp-ts/lib';
 import { diff, DiffOptions } from 'jest-diff';
 import { matcherHint, printExpected, printReceived } from 'jest-matcher-utils';
-import { BigObject, NumberObject } from '../../src/types';
+import { ReadonlyRecordBig, ReadonlyRecordNumber } from '../../src/types';
 
 type FormattedObject = { [x: string]: string };
 
@@ -21,8 +21,8 @@ const formatDiff = <R, X>(
 };
 
 const eitherRightToEqualFixedPrecision = <E>(
-  received: E.Either<E, ReadonlyArray<Big> | BigObject>,
-  expected: ReadonlyArray<number> | NumberObject,
+  received: E.Either<E, ReadonlyArray<Big> | ReadonlyRecordBig>,
+  expected: ReadonlyArray<number> | ReadonlyRecordNumber,
   decimals = 12,
 ) => {
   const formatNumberArray = (
@@ -30,23 +30,26 @@ const eitherRightToEqualFixedPrecision = <E>(
     dec: number,
   ): ReadonlyArray<string> => arr.map((el) => el.toFixed(dec));
 
-  const formatNumberObject = (obj: NumberObject | BigObject, dec: number): FormattedObject =>
+  const formatReadonlyRecordNumber = (
+    obj: ReadonlyRecordNumber | ReadonlyRecordBig,
+    dec: number,
+  ): FormattedObject =>
     Object.keys(obj).reduce(
       (reduced, key) => ({ ...reduced, ...{ [key]: formatNumberArray(obj[key], dec) } }),
       {},
     );
 
   const formatValues = (
-    val: ReadonlyArray<number> | ReadonlyArray<Big> | NumberObject | BigObject,
+    val: ReadonlyArray<number> | ReadonlyArray<Big> | ReadonlyRecordNumber | ReadonlyRecordBig,
     dec: number,
   ): ReadonlyArray<string> | FormattedObject =>
-    val instanceof Array ? formatNumberArray(val, dec) : formatNumberObject(val, dec);
+    val instanceof Array ? formatNumberArray(val, dec) : formatReadonlyRecordNumber(val, dec);
 
   const compareArrays = (exp: ReadonlyArray<number>, rec: ReadonlyArray<Big>): boolean =>
     exp.length === rec.length &&
     exp.every((e, index) => e.toFixed(decimals) === rec[index].toFixed(decimals));
 
-  const compareObjects = (exp: NumberObject, rec: BigObject): boolean =>
+  const compareObjects = (exp: ReadonlyRecordNumber, rec: ReadonlyRecordBig): boolean =>
     Object.keys(exp).every((k) => compareArrays(exp[k], rec[k]));
 
   return {
@@ -57,7 +60,7 @@ const eitherRightToEqualFixedPrecision = <E>(
         (right) =>
           expected instanceof Array && right instanceof Array
             ? compareArrays(expected, right)
-            : compareObjects(expected as NumberObject, right as BigObject),
+            : compareObjects(expected as ReadonlyRecordNumber, right as ReadonlyRecordBig),
       ),
     ),
     message: () =>

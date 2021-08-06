@@ -1,22 +1,43 @@
 import { Big } from 'big.js';
-import { readonlyRecord as RR } from 'fp-ts';
+import { readonlyNonEmptyArray as RNEA, readonlyRecord as RR } from 'fp-ts';
 
 export type Movement = 'up' | 'down';
 
-export type ValuesInput = ReadonlyArray<number> | NumberObject;
+// number records
+export type ReadonlyRecordNumber = RR.ReadonlyRecord<string, ReadonlyArray<number>>;
+export type ReadonlyNonEmptyRecordNumber = RR.ReadonlyRecord<
+  string,
+  RNEA.ReadonlyNonEmptyArray<number>
+>;
 
-export type NumberObject = RR.ReadonlyRecord<string, ReadonlyArray<number>>;
+// Big records
+export type ReadonlyRecordBig = RR.ReadonlyRecord<string, ReadonlyArray<Big>>;
+export type ReadonlyNonEmptyRecordBig = RR.ReadonlyRecord<string, RNEA.ReadonlyNonEmptyArray<Big>>;
 
-export type BigObject = RR.ReadonlyRecord<string, ReadonlyArray<Big>>;
+// value union types
+export type ReadonlyValuesNumber = ReadonlyArray<number> | ReadonlyRecordNumber;
+export type ReadonlyNonEmptyValuesNumber =
+  | RNEA.ReadonlyNonEmptyArray<number>
+  | ReadonlyNonEmptyRecordNumber;
 
-export type HighLowClose = NumberObject & {
+// High-Low-Close records
+export type ReadonlyHighLowCloseNumber = ReadonlyRecordNumber & {
   high: ReadonlyArray<number>;
   low: ReadonlyArray<number>;
   close: ReadonlyArray<number>;
 };
-
-export type HighLowCloseB = BigObject & {
+export type ReadonlyNonEmptyHighLowCloseNumber = ReadonlyNonEmptyRecordNumber & {
+  high: RNEA.ReadonlyNonEmptyArray<number>;
+  low: RNEA.ReadonlyNonEmptyArray<number>;
+  close: RNEA.ReadonlyNonEmptyArray<number>;
+};
+export type ReadonlyHighLowCloseBig = ReadonlyRecordBig & {
   high: ReadonlyArray<Big>;
   low: ReadonlyArray<Big>;
   close: ReadonlyArray<Big>;
+};
+export type ReadonlyNonEmptyHighLowCloseBig = ReadonlyNonEmptyRecordBig & {
+  high: RNEA.ReadonlyNonEmptyArray<Big>;
+  low: RNEA.ReadonlyNonEmptyArray<Big>;
+  close: RNEA.ReadonlyNonEmptyArray<Big>;
 };

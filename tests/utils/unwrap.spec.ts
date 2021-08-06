@@ -29,8 +29,11 @@ describe('unwrap', () => {
       v: E.right({ macd: [new Big(1.5), new Big(-2.5)], signal: [new Big(1), new Big(45)] }),
       r: { macd: [1.5, -2.5], signal: [1, 45] },
     },
-  ])('resolves Either with BigObject to Promise with NumberObject $v', async ({ v, r }) => {
-    expect.assertions(1);
-    await expect(unwrap(v)).resolves.toStrictEqual(r);
-  });
+  ])(
+    'resolves Either with ReadonlyRecordBig to Promise with ReadonlyRecordNumber $v',
+    async ({ v, r }) => {
+      expect.assertions(1);
+      await expect(unwrap(v)).resolves.toStrictEqual(r);
+    },
+  );
 });

@@ -1,10 +1,10 @@
-import { NumberObject } from '../../src/types';
+import { ReadonlyRecordNumber } from '../../src/types';
 
 declare global {
   namespace jest {
     interface Matchers<R> {
       eitherRightToEqualFixedPrecision(
-        expected: ReadonlyArray<number> | NumberObject,
+        expected: ReadonlyArray<number> | ReadonlyRecordNumber,
         decimals = 12,
       ): R;
     }

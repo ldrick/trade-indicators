@@ -1,14 +1,18 @@
 import { Big } from 'big.js';
-import { apply as AP, either as E, function as F } from 'fp-ts/lib';
+import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
 import { arrayToBig } from '../utils';
-import { validateData, validatePeriod } from '../validations';
+import { validatePeriod, validateValues } from '../validations';
 import { emaC } from './ema';
 
 const calculate = (
-  one: ReadonlyArray<Big>,
-  two: ReadonlyArray<Big>,
+  one: RNEA.ReadonlyNonEmptyArray<Big>,
+  two: RNEA.ReadonlyNonEmptyArray<Big>,
   period: number,
-): ReadonlyArray<Big> => two.map((value, index) => one[index + period - 1].mul(2).sub(value));
+): RNEA.ReadonlyNonEmptyArray<Big> =>
+  F.pipe(
+    two,
+    RNEA.mapWithIndex((index, value) => one[index + period - 1].mul(2).sub(value)),
+  );
 
 /**
  * The Double Exponential Moving Average (DEMA) uses two Exponential Moving Average (EMA)
@@ -20,11 +24,11 @@ const calculate = (
 export const dema = (
   values: ReadonlyArray<number>,
   period = 20,
-): E.Either<Error, ReadonlyArray<Big>> =>
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
   F.pipe(
     AP.sequenceS(E.Apply)({
       periodV: validatePeriod(period, 'period'),
-      valuesV: validateData(values, 2 * period - 1, period),
+      valuesV: validateValues(values, 2 * period - 1, period),
     }),
     E.bind('valuesB', ({ valuesV }) => arrayToBig(valuesV)),
     E.bind('emaOne', ({ valuesB, periodV }) => emaC(valuesB, periodV)),

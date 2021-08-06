@@ -7,10 +7,13 @@ import {
   readonlyNonEmptyArray as RNEA,
 } from 'fp-ts/lib';
 import { arrayToBig } from '../utils';
-import { validateData, validatePeriod } from '../validations';
+import { validatePeriod, validateValues } from '../validations';
 import { wamean } from './wamean';
 
-const calculate = (values: ReadonlyArray<Big>, period: number): ReadonlyArray<Big> =>
+const calculate = (
+  values: RNEA.ReadonlyNonEmptyArray<Big>,
+  period: number,
+): RNEA.ReadonlyNonEmptyArray<Big> =>
   values.reduce(
     (reduced, _value, index, array) =>
       F.pipe(
@@ -34,11 +37,11 @@ const calculate = (values: ReadonlyArray<Big>, period: number): ReadonlyArray<Bi
 export const wma = (
   values: ReadonlyArray<number>,
   period = 20,
-): E.Either<Error, ReadonlyArray<Big>> =>
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
   F.pipe(
     AP.sequenceS(E.Apply)({
       periodV: validatePeriod(period, 'period'),
-      valuesV: validateData(values, period, period),
+      valuesV: validateValues(values, period, period),
     }),
     E.bind('valuesB', ({ valuesV }) => arrayToBig(valuesV)),
     E.map(({ valuesB, periodV }) => calculate(valuesB, periodV)),

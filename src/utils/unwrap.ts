@@ -1,11 +1,11 @@
 import { Big } from 'big.js';
 import { either as E, function as F } from 'fp-ts/lib';
-import { BigObject, NumberObject } from '../types';
+import { ReadonlyRecordBig, ReadonlyRecordNumber } from '../types';
 
 const mapBigArray = (values: ReadonlyArray<Big>): ReadonlyArray<number> =>
   values.map((value) => value.toNumber());
 
-const mapBigObject = (values: BigObject): NumberObject =>
+const mapReadonlyRecordBig = (values: ReadonlyRecordBig): ReadonlyRecordNumber =>
   Object.keys(values).reduce(
     (reduced, key) => ({ ...reduced, ...{ [key]: values[key].map((value) => value.toNumber()) } }),
     {},
@@ -18,8 +18,8 @@ const mapBigObject = (values: BigObject): NumberObject =>
  * @public
  */
 export const unwrap = (
-  values: E.Either<Error, ReadonlyArray<Big> | BigObject>,
-): Promise<ReadonlyArray<number> | NumberObject> =>
+  values: E.Either<Error, ReadonlyArray<Big> | ReadonlyRecordBig>,
+): Promise<ReadonlyArray<number> | ReadonlyRecordNumber> =>
   F.pipe(
     values,
     E.fold(
@@ -27,6 +27,6 @@ export const unwrap = (
       (result) =>
         result instanceof Array
           ? Promise.resolve(mapBigArray(result))
-          : Promise.resolve(mapBigObject(result)),
+          : Promise.resolve(mapReadonlyRecordBig(result)),
     ),
   );

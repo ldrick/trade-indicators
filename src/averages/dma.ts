@@ -1,8 +1,14 @@
 import { Big } from 'big.js';
-import { apply as AP, either as E, function as F, readonlyArray as RA } from 'fp-ts/lib';
+import {
+  apply as AP,
+  either as E,
+  function as F,
+  readonlyArray as RA,
+  readonlyNonEmptyArray as RNEA,
+} from 'fp-ts/lib';
 import { InfinitNumberError } from '../errors';
 import { arrayToBig, numberToBig, previous } from '../utils';
-import { validateData, validatePeriod } from '../validations';
+import { validatePeriod, validateValues } from '../validations';
 import { amean } from './amean';
 
 const validateFactor = (factor?: number): E.Either<Error, number | undefined> =>
@@ -26,24 +32,18 @@ const factorToBig = (period: number, factor?: number): E.Either<Error, Big> =>
  * @internal
  */
 export const dmaC = (
-  values: ReadonlyArray<Big>,
+  values: RNEA.ReadonlyNonEmptyArray<Big>,
   period: number,
   factor: Big,
-): ReadonlyArray<Big> => {
-  const [init, rest] = RA.splitAt(period)(values);
-
-  if (RA.isNonEmpty(init)) {
-    return F.pipe(
-      rest,
-      RA.reduce([amean(init)], (reduced, value) => {
-        const prev = previous(reduced);
-
-        return [...reduced, value.sub(prev).mul(factor).add(prev)];
-      }),
-    );
-  }
-
-  return [];
+): RNEA.ReadonlyNonEmptyArray<Big> => {
+  const [init, rest] = RNEA.splitAt(period)(values);
+  return F.pipe(
+    rest,
+    RA.reduce([amean(init)], (reduced, value) => {
+      const prev = previous(reduced);
+      return [...reduced, value.sub(prev).mul(factor).add(prev)];
+    }),
+  );
 };
 
 /**
@@ -58,11 +58,11 @@ export const dma = (
   values: ReadonlyArray<number>,
   period = 20,
   factor?: number,
-): E.Either<Error, ReadonlyArray<Big>> =>
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
   F.pipe(
     AP.sequenceS(E.Apply)({
       periodV: validatePeriod(period, 'period'),
-      valuesV: validateData(values, period, period),
+      valuesV: validateValues(values, period, period),
       factorV: validateFactor(factor),
     }),
     E.bind('valuesB', ({ valuesV }) => arrayToBig(valuesV)),
