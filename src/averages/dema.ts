@@ -26,7 +26,7 @@ export const dema = (
   period = 20,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
   F.pipe(
-    AP.sequenceS(E.Apply)({
+    AP.sequenceS(E.Applicative)({
       periodV: validatePeriod(period, 'period'),
       valuesV: validateValues(values, 2 * period - 1, period),
     }),

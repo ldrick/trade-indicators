@@ -7,7 +7,7 @@ import {
   readonlyNonEmptyArray as RNEA,
 } from 'fp-ts/lib';
 import { InfinitNumberError } from '../errors';
-import { arrayToBig, numberToBig, previous } from '../utils';
+import { arrayToBig, numberToBig } from '../utils';
 import { validatePeriod, validateValues } from '../validations';
 import { amean } from './amean';
 
@@ -39,9 +39,9 @@ export const dmaC = (
   const [init, rest] = RNEA.splitAt(period)(values);
   return F.pipe(
     rest,
-    RA.reduce([amean(init)], (reduced, value) => {
-      const prev = previous(reduced);
-      return [...reduced, value.sub(prev).mul(factor).add(prev)];
+    RA.reduce(<RNEA.ReadonlyNonEmptyArray<Big>>[amean(init)], (reduced, value) => {
+      const prev = RNEA.last(reduced);
+      return RA.append(value.sub(prev).mul(factor).add(prev))(reduced);
     }),
   );
 };
@@ -60,7 +60,7 @@ export const dma = (
   factor?: number,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
   F.pipe(
-    AP.sequenceS(E.Apply)({
+    AP.sequenceS(E.Applicative)({
       periodV: validatePeriod(period, 'period'),
       valuesV: validateValues(values, period, period),
       factorV: validateFactor(factor),

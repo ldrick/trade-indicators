@@ -2,24 +2,28 @@ import Big from 'big.js';
 import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
 import { smmaC } from '../averages/smma';
 import { ReadonlyHighLowCloseNumber, ReadonlyNonEmptyHighLowCloseBig } from '../types';
-import { max, objectToBig } from '../utils';
+import { max, nonEmptyTail, objectToBig } from '../utils';
 import { validatePeriod } from '../validations';
 import { validateValues } from '../validations/validateValues';
 
-const trueRange = (values: ReadonlyNonEmptyHighLowCloseBig): RNEA.ReadonlyNonEmptyArray<Big> =>
-  values.high.reduce((reduced, high, index) => {
-    const previousClose = values.close[index - 1];
-    return index === 0
-      ? reduced
-      : [
-          ...reduced,
-          max([
-            high.sub(values.low[index]),
-            high.sub(previousClose).abs(),
-            values.low[index].sub(previousClose).abs(),
-          ]),
-        ];
-  }, <RNEA.ReadonlyNonEmptyArray<Big>>[]);
+const trueRange = (
+  values: ReadonlyNonEmptyHighLowCloseBig,
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
+  F.pipe(
+    values.high,
+    nonEmptyTail,
+    E.map(
+      RNEA.mapWithIndex((index, high) => {
+        const previousClose = values.close[index];
+        const currentLow = values.low[index + 1];
+        return max([
+          high.sub(currentLow),
+          high.sub(previousClose).abs(),
+          currentLow.sub(previousClose).abs(),
+        ]);
+      }),
+    ),
+  );
 
 /**
  * ATR without checks and conversion.
@@ -29,10 +33,12 @@ const trueRange = (values: ReadonlyNonEmptyHighLowCloseBig): RNEA.ReadonlyNonEmp
 export const atrC = (
   values: ReadonlyNonEmptyHighLowCloseBig,
   period: number,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> => {
-  const tr = trueRange(values);
-  return smmaC(tr, period);
-};
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
+  F.pipe(
+    values,
+    trueRange,
+    E.chain((tr) => smmaC(tr, period)),
+  );
 
 /**
  * The Average True Range (ATR) a period of the True Range Indicator,
@@ -47,7 +53,7 @@ export const atr = (
   period = 14,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
   F.pipe(
-    AP.sequenceS(E.Apply)({
+    AP.sequenceS(E.Applicative)({
       periodV: validatePeriod(period, 'period'),
       valuesV: validateValues(values, period + 1, period),
     }),

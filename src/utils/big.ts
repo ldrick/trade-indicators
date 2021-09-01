@@ -2,6 +2,7 @@ import { Big } from 'big.js';
 import {
   either as E,
   function as F,
+  readonlyArray as RA,
   readonlyNonEmptyArray as RNEA,
   readonlyRecord as RR,
 } from 'fp-ts/lib';
@@ -18,7 +19,10 @@ import {
  * @internal
  */
 export const max = (values: ReadonlyArray<Big>): Big =>
-  values.reduce((reduced, value) => (value.gt(reduced) ? value : reduced), new Big(0));
+  F.pipe(
+    values,
+    RA.reduce(new Big(0), (reduced, value) => (value.gt(reduced) ? value : reduced)),
+  );
 
 /**
  * Safely convert `number` to `Big`.

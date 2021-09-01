@@ -8,31 +8,33 @@ import {
 } from 'fp-ts/lib';
 import { smmaC } from '../averages/smma';
 import { Movement, ReadonlyHighLowCloseNumber, ReadonlyNonEmptyHighLowCloseBig } from '../types';
-import { objectToBig, trimLeft } from '../utils';
+import { nonEmptyTail, nonEmptyTakeRight, objectToBig } from '../utils';
 import { validatePeriod, validateValues } from '../validations';
 import { atrC } from './atr';
 
-const getUpMovement = (up: Big, down: Big): Big => (up.gt(down) && up.gt(0) ? up : new Big(0));
+const compareMovement = (base: Big, comparision: Big): Big =>
+  base.gt(comparision) && base.gt(0) ? base : new Big(0);
 
-const getDownMovement = (up: Big, down: Big): Big =>
-  down.gt(up) && down.gt(0) ? down : new Big(0);
-
-const getMovement = (up: Big, down: Big, move: Movement): Big =>
-  move === 'up' ? getUpMovement(up, down) : getDownMovement(up, down);
+const movement = (up: Big, down: Big, move: Movement): Big =>
+  move === 'up' ? compareMovement(up, down) : compareMovement(down, up);
 
 const directionalMovement = (
   values: ReadonlyNonEmptyHighLowCloseBig,
   move: Movement,
-): RNEA.ReadonlyNonEmptyArray<Big> =>
-  values.low.reduce((reduced, low, index) => {
-    if (index === 0) {
-      return reduced;
-    }
-    const prev = index - 1;
-    const up = values.high[index].sub(values.high[prev]);
-    const down = values.low[prev].sub(low);
-    return [...reduced, getMovement(up, down, move)];
-  }, <RNEA.ReadonlyNonEmptyArray<Big>>[]);
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
+  F.pipe(
+    values.low,
+    nonEmptyTail,
+    E.map(
+      RNEA.mapWithIndex((index, low) => {
+        const previous = index;
+        const current = index + 1;
+        const up = values.high[current].sub(values.high[previous]);
+        const down = values.low[previous].sub(low);
+        return movement(up, down, move);
+      }),
+    ),
+  );
 
 const directionalIndex = (
   values: ReadonlyNonEmptyHighLowCloseBig,
@@ -40,7 +42,7 @@ const directionalIndex = (
   move: Movement,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
   F.pipe(
-    E.bindTo('dm')(E.right(directionalMovement(values, move))),
+    E.bindTo('dm')(directionalMovement(values, move)),
     E.bind('dividends', ({ dm }) => smmaC(dm, period)),
     E.bind('divisors', () => atrC(values, period)),
     E.map(({ dividends, divisors }) =>
@@ -62,11 +64,8 @@ const calculation = (
     pdi,
     RNEA.mapWithIndex((index, plus) => {
       const sum = plus.add(mdi[index]);
-      if (sum.eq(0)) {
-        return new Big(0);
-      }
       const dividend = plus.sub(mdi[index]).abs();
-      return dividend.div(sum);
+      return sum.eq(0) ? new Big(0) : dividend.div(sum);
     }),
   );
 
@@ -83,7 +82,7 @@ export const adx = (
   period = 14,
 ): E.Either<Error, RR.ReadonlyRecord<'adx' | 'mdi' | 'pdi', RNEA.ReadonlyNonEmptyArray<Big>>> =>
   F.pipe(
-    AP.sequenceS(E.Apply)({
+    AP.sequenceS(E.Applicative)({
       periodV: validatePeriod(period, 'period'),
       valuesV: validateValues(values, 2 * period + 1, period),
     }),
@@ -99,7 +98,7 @@ export const adx = (
         smoothed,
         RNEA.map((value) => value.mul(100)),
       ),
-      mdi: trimLeft(mdi, smoothed),
-      pdi: trimLeft(pdi, smoothed),
+      mdi: nonEmptyTakeRight(smoothed.length)(mdi),
+      pdi: nonEmptyTakeRight(smoothed.length)(pdi),
     })),
   );

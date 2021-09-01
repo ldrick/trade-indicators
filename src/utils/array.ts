@@ -1,19 +1,30 @@
-import { readonlyNonEmptyArray as RNEA } from 'fp-ts';
+import {
+  either as E,
+  function as F,
+  readonlyArray as RA,
+  readonlyNonEmptyArray as RNEA,
+} from 'fp-ts';
+import { EmptyArrayError } from '../errors';
 
 /**
- * Get the second last item from `Array`.
+ * Create new `ReadonlyNonEmptyArray` from given `ReadonlyNonEmptyArray`
+ * by keeping number of values from right.
  *
  * @internal
  */
-export const previous = <A>(a: RNEA.ReadonlyNonEmptyArray<A>): A => a[a.length - 1];
+export const nonEmptyTakeRight =
+  (number: number) =>
+  <A>(array: RNEA.ReadonlyNonEmptyArray<A>): RNEA.ReadonlyNonEmptyArray<A> =>
+    RA.takeRight(number === 0 ? 1 : number)(array) as RNEA.ReadonlyNonEmptyArray<A>;
 
 /**
- * Create new `Array` from given `Array` by dropping left items to reach size of offset `Array`.
+ * Get all but the first of an `ReadonlyNonEmptyArray` as `ReadonlyNonEmptyArray`
  *
  * @internal
  */
-export const trimLeft = <A, O>(
-  arr: RNEA.ReadonlyNonEmptyArray<A>,
-  offsetArr: RNEA.ReadonlyNonEmptyArray<O>,
-): RNEA.ReadonlyNonEmptyArray<A> =>
-  arr.length > offsetArr.length ? arr.slice(-1 * offsetArr.length) : arr;
+export const nonEmptyTail = <A>(
+  array: RNEA.ReadonlyNonEmptyArray<A>,
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<A>> =>
+  F.pipe(array, RNEA.tail, (rest) =>
+    RA.isNonEmpty(rest) ? E.right(rest) : E.left(new EmptyArrayError()),
+  );

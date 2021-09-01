@@ -1,30 +1,9 @@
 import { Big } from 'big.js';
-import {
-  apply as AP,
-  either as E,
-  function as F,
-  option as O,
-  readonlyNonEmptyArray as RNEA,
-} from 'fp-ts/lib';
+import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
 import { arrayToBig } from '../utils';
 import { validatePeriod, validateValues } from '../validations';
+import { ma } from './ma';
 import { wamean } from './wamean';
-
-const calculate = (
-  values: RNEA.ReadonlyNonEmptyArray<Big>,
-  period: number,
-): RNEA.ReadonlyNonEmptyArray<Big> =>
-  values.reduce(
-    (reduced, _value, index, array) =>
-      F.pipe(
-        index + 1 >= period
-          ? RNEA.fromReadonlyArray(array.slice(reduced.length, index + 1))
-          : O.none,
-        O.map((part) => [...reduced, wamean(part)]),
-        O.getOrElse(() => reduced),
-      ),
-    <ReadonlyArray<Big>>[],
-  );
 
 /**
  * The Weighted Moving Average (WMA) takes newer values weighted into account
@@ -39,10 +18,10 @@ export const wma = (
   period = 20,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
   F.pipe(
-    AP.sequenceS(E.Apply)({
+    AP.sequenceS(E.Applicative)({
       periodV: validatePeriod(period, 'period'),
       valuesV: validateValues(values, period, period),
     }),
     E.bind('valuesB', ({ valuesV }) => arrayToBig(valuesV)),
-    E.map(({ valuesB, periodV }) => calculate(valuesB, periodV)),
+    E.chain(({ valuesB, periodV }) => ma(valuesB, periodV, wamean)),
   );

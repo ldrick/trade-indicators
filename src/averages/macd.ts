@@ -3,11 +3,12 @@ import {
   apply as AP,
   either as E,
   function as F,
+  readonlyArray as RA,
   readonlyNonEmptyArray as RNEA,
   readonlyRecord as RR,
 } from 'fp-ts/lib';
 import { PeriodSizeMissmatchError } from '../errors';
-import { arrayToBig, trimLeft } from '../utils';
+import { arrayToBig, nonEmptyTakeRight } from '../utils';
 import { validatePeriod, validateValues } from '../validations';
 import { emaC } from './ema';
 
@@ -20,7 +21,7 @@ const calculate = (
   fast: RNEA.ReadonlyNonEmptyArray<Big>,
   slow: RNEA.ReadonlyNonEmptyArray<Big>,
 ): RNEA.ReadonlyNonEmptyArray<Big> => {
-  const shortened = fast.slice(-1 * slow.length);
+  const shortened = RA.takeRight(slow.length)(fast);
   return F.pipe(
     slow,
     RNEA.mapWithIndex((index, value) => shortened[index].sub(value)),
@@ -42,7 +43,7 @@ export const macd = (
   signalPeriod = 9,
 ): E.Either<Error, RR.ReadonlyRecord<'macd' | 'signal', RNEA.ReadonlyNonEmptyArray<Big>>> =>
   F.pipe(
-    AP.sequenceS(E.Apply)({
+    AP.sequenceS(E.Applicative)({
       fastPeriodV: validatePeriod(fastPeriod, 'fastPeriod'),
       slowPeriodV: validatePeriod(slowPeriod, 'slowPeriod'),
       signalPeriodV: validatePeriod(signalPeriod, 'signalPeriod'),
@@ -54,5 +55,8 @@ export const macd = (
     E.bind('emaFast', ({ valuesB, fastPeriodV }) => emaC(valuesB, fastPeriodV)),
     E.bind('macdResult', ({ emaFast, emaSlow }) => E.right(calculate(emaFast, emaSlow))),
     E.bind('signal', ({ macdResult, signalPeriodV }) => emaC(macdResult, signalPeriodV)),
-    E.map(({ macdResult, signal }) => ({ macd: trimLeft(macdResult, signal), signal })),
+    E.map(({ macdResult, signal }) => ({
+      macd: nonEmptyTakeRight(signal.length)(macdResult),
+      signal,
+    })),
   );
