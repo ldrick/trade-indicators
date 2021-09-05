@@ -46,16 +46,16 @@
     "fp-ts": "^2.11.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.14.8",
-    "@babel/core": "^7.15.0",
-    "@babel/preset-env": "^7.15.0",
+    "@babel/cli": "^7.15.4",
+    "@babel/core": "^7.15.5",
+    "@babel/preset-env": "^7.15.4",
     "@babel/preset-typescript": "^7.15.0",
-    "@types/big.js": "^6.1.1",
+    "@types/big.js": "^6.1.2",
     "@types/jest": "^27.0.1",
     "@typescript-eslint/eslint-plugin": "^4.30.0",
     "@typescript-eslint/parser": "^4.30.0",
     "babel-jest": "^27.1.0",
-    "core-js": "^3.17.0",
+    "core-js": "^3.17.2",
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-airbnb-typescript": "^14.0.0",
@@ -130,6 +130,7 @@
           "warnOnUnsupportedTypeScriptVersion": false
         },
         "rules": {
+          "no-nested-ternary": "off",
           "import/prefer-default-export": "off",
           "import/no-default-export": "error",
           "jsdoc/require-returns": "off",

@@ -26,7 +26,7 @@ describe('sma', () => {
     expect(sma(prices.close)).eitherRightToEqualFixedPrecision(prices.sma.p20);
   });
 
-  test.each(<{ v: ReadonlyArray<number>; p: number; r: number[] }[]>[
+  test.each([
     { v: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], p: 3, r: [0, 0, 0, 0, 0, 0, 0, 0] },
     { v: prices.close, p: 10, r: prices.sma.p10 },
     { v: prices.close, p: 20, r: prices.sma.p20 },

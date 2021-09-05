@@ -1,13 +1,16 @@
 import { Big } from 'big.js';
-import { either as E, function as F } from 'fp-ts/lib';
+import { either as E, function as F, readonlyArray as RA } from 'fp-ts/lib';
 import { ReadonlyRecordBig, ReadonlyRecordNumber } from '../types';
 
 const mapBigArray = (values: ReadonlyArray<Big>): ReadonlyArray<number> =>
-  values.map((value) => value.toNumber());
+  F.pipe(
+    values,
+    RA.map((value) => value.toNumber()),
+  );
 
 const mapReadonlyRecordBig = (values: ReadonlyRecordBig): ReadonlyRecordNumber =>
   Object.keys(values).reduce(
-    (reduced, key) => ({ ...reduced, ...{ [key]: values[key].map((value) => value.toNumber()) } }),
+    (reduced, key) => ({ ...reduced, ...{ [key]: mapBigArray(values[key]) } }),
     {},
   );
 

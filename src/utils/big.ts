@@ -2,7 +2,7 @@ import { Big } from 'big.js';
 import {
   either as E,
   function as F,
-  readonlyArray as RA,
+  ord as ORD,
   readonlyNonEmptyArray as RNEA,
   readonlyRecord as RR,
 } from 'fp-ts/lib';
@@ -13,16 +13,27 @@ import {
   ReadonlyNonEmptyRecordNumber,
 } from '../types';
 
+export const ord: ORD.Ord<Big> = {
+  /**
+   * Big equals.
+   *
+   * @internal
+   */
+  equals: (first, second) => first.eq(second),
+  /**
+   * Big compare.
+   *
+   * @internal
+   */
+  compare: (first, second) => (first.lt(second) ? -1 : first.gt(second) ? 1 : 0),
+};
+
 /**
  * Like `Math.max()` just for `Big`.
  *
  * @internal
  */
-export const max = (values: ReadonlyArray<Big>): Big =>
-  F.pipe(
-    values,
-    RA.reduce(new Big(0), (reduced, value) => (value.gt(reduced) ? value : reduced)),
-  );
+export const max = (values: RNEA.ReadonlyNonEmptyArray<Big>): Big => F.pipe(values, RNEA.max(ord));
 
 /**
  * Safely convert `number` to `Big`.

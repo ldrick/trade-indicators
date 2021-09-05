@@ -15,7 +15,7 @@ import { EmptyArrayError } from '../errors';
 export const nonEmptyTakeRight =
   (number: number) =>
   <A>(array: RNEA.ReadonlyNonEmptyArray<A>): RNEA.ReadonlyNonEmptyArray<A> =>
-    RA.takeRight(number === 0 ? 1 : number)(array) as RNEA.ReadonlyNonEmptyArray<A>;
+    F.pipe(array, RA.takeRight(number), (taken) => (RA.isNonEmpty(taken) ? taken : array));
 
 /**
  * Get all but the first of an `ReadonlyNonEmptyArray` as `ReadonlyNonEmptyArray`
