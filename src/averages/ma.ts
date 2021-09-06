@@ -19,8 +19,8 @@ export const ma = (
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
   F.pipe(
     RNEA.range(0, values.length - period),
-    RNEA.traverseWithIndex(E.Applicative)((index) => {
-      const part = values.slice(index, period + index);
+    RNEA.traverse(E.Applicative)((r) => {
+      const part = values.slice(r, period + r);
       return RA.isNonEmpty(part) && part.length === period
         ? E.right(cb(part))
         : E.left(new NotEnoughDataError(period, period));
