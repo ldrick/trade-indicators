@@ -1,2 +1,2 @@
 export { validatePeriod } from './validatePeriod';
-export { validateValues } from './validateValues';
+export { validateValues, validateValues2 } from './validateValues';

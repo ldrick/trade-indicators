@@ -2,7 +2,7 @@ import { Big } from 'big.js';
 import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
 import { arrayToBig, numberToBig } from '../utils';
 import { validatePeriod, validateValues } from '../validations';
-import { dmaC } from './dma';
+import { dma } from './dma';
 
 const getFactor = (period: number): E.Either<Error, Big> =>
   F.pipe(
@@ -23,7 +23,7 @@ export const smmaC = (
   F.pipe(
     period,
     getFactor,
-    E.map((factorB) => dmaC(values, period, factorB)),
+    E.chain((factorB) => dma(values, period, factorB)),
   );
 
 /**

@@ -4,7 +4,12 @@ import {
   readonlyArray as RA,
   readonlyNonEmptyArray as RNEA,
 } from 'fp-ts/lib';
-import { InfinitNumberError, NotEnoughDataError, UnequalArraySizesError } from '../errors';
+import {
+  EmptyArrayError,
+  InfinitNumberError,
+  NotEnoughDataError,
+  UnequalArraySizesError,
+} from '../errors';
 import { ReadonlyNonEmptyValuesNumber, ReadonlyRecordNumber, ReadonlyValuesNumber } from '../types';
 
 const hasRequiredLength = <A>(
@@ -20,12 +25,22 @@ const hasRequiredValues = (
     ? hasRequiredLength(values, required)
     : Object.values(values).every((array) => hasRequiredLength(array, required));
 
+const hasRequiredValues2 = (values: ReadonlyValuesNumber): values is ReadonlyNonEmptyValuesNumber =>
+  values instanceof Array
+    ? RA.isNonEmpty(values)
+    : Object.values(values).every((array) => RA.isNonEmpty(array));
+
 const validateLength =
   (required: number, period: number) =>
   (values: ReadonlyValuesNumber): E.Either<Error, ReadonlyNonEmptyValuesNumber> =>
     hasRequiredValues(values, required)
       ? E.right(values)
       : E.left(new NotEnoughDataError(period, required));
+
+const validateLength2 = (
+  values: ReadonlyValuesNumber,
+): E.Either<Error, ReadonlyNonEmptyValuesNumber> =>
+  hasRequiredValues2(values) ? E.right(values) : E.left(new EmptyArrayError());
 
 const validateFinity = (
   values: ReadonlyNonEmptyValuesNumber,
@@ -71,4 +86,19 @@ export const validateValues = ((
     values: A,
     required: number,
     period: number,
+  ) => E.Either<Error, B>);
+
+/**
+ * Validate an data `Array` or `Object`
+ *
+ * @internal
+ */
+export const validateValues2 = ((
+  values: ReadonlyValuesNumber,
+): E.Either<Error, ReadonlyNonEmptyValuesNumber> =>
+  F.pipe(values, validateLength2, E.chain(validateFinity))) as ((
+  values: ReadonlyArray<number>,
+) => E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>>) &
+  (<A extends ReadonlyRecordNumber, B extends ReadonlyNonEmptyValuesNumber>(
+    values: A,
   ) => E.Either<Error, B>);

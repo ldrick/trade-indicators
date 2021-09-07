@@ -1,7 +1,5 @@
 import { Big } from 'big.js';
-import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
-import { arrayToBig } from '../utils';
-import { validatePeriod, validateValues } from '../validations';
+import { either as E, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
 import { amean } from './amean';
 import { ma } from './ma';
 
@@ -15,12 +13,4 @@ import { ma } from './ma';
 export const sma = (
   values: ReadonlyArray<number>,
   period = 20,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
-  F.pipe(
-    AP.sequenceS(E.Applicative)({
-      periodV: validatePeriod(period, 'period'),
-      valuesV: validateValues(values, period, period),
-    }),
-    E.bind('valuesB', ({ valuesV }) => arrayToBig(valuesV)),
-    E.chain(({ valuesB, periodV }) => ma(valuesB, periodV, amean)),
-  );
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> => ma(values, period, amean);

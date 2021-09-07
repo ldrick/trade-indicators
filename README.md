@@ -14,7 +14,6 @@
 > - Average Directional Index (adx)
 > - Average True Range (atr)
 > - Double Exponential Moving Average (dema)
-> - Dynamic Moving Average (dma)
 > - Exponential Moving Average (ema)
 > - Moving Average Convergence / Divergence (macd)
 > - Simple Moving Average (sma)
