@@ -27,7 +27,7 @@ describe('smma', () => {
   });
 
   test.each([
-    { v: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], p: 3, r: [0, 0, 0, 0, 0, 0, 0, 0] },
+    { v: [0, 0, 0], p: 3, r: [0] },
     { v: prices.close, p: 10, r: prices.smma.p10 },
     { v: prices.close, p: 20, r: prices.smma.p20 },
   ])('calculates the Smoothed Moving Average with period $p', ({ v, p, r }) => {

@@ -48,7 +48,7 @@ export const macd = (
       slowPeriodV: validatePeriod(slowPeriod, 'slowPeriod'),
       signalPeriodV: validatePeriod(signalPeriod, 'signalPeriod'),
       periodSizes: validatePeriodSizes(slowPeriod, fastPeriod),
-      valuesV: validateValues(values, slowPeriod + signalPeriod, slowPeriod + signalPeriod),
+      valuesV: validateValues(values, slowPeriod + signalPeriod - 1, slowPeriod + signalPeriod - 1),
     }),
     E.bind('valuesB', ({ valuesV }) => arrayToBig(valuesV)),
     E.bind('emaSlow', ({ valuesB, slowPeriodV }) => emaC(valuesB, slowPeriodV)),

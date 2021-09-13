@@ -12,7 +12,7 @@ describe('tema', () => {
   );
 
   it('fails if not enough data to calculate for period', () => {
-    expect(tema([1, 2], 3)).toStrictEqual(E.left(new NotEnoughDataError(3, 7)));
+    expect(tema([1, 2, 3, 4, 5, 6], 3)).toStrictEqual(E.left(new NotEnoughDataError(3, 7)));
   });
 
   test.each([{ v: [0, 0, NaN, 0] }, { v: [0, 0, Infinity, 0] }, { v: [0, 0, -Infinity, 0] }])(
@@ -27,7 +27,7 @@ describe('tema', () => {
   });
 
   test.each([
-    { v: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], p: 3, r: [0, 0, 0, 0] },
+    { v: [0, 0, 0, 0, 0, 0, 0], p: 3, r: [0] },
     { v: prices.close, p: 10, r: prices.tema.p10 },
     { v: prices.close, p: 20, r: prices.tema.p20 },
   ])('calculates the Triple Exponential Moving Average with period %p', ({ v, p, r }) => {

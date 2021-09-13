@@ -27,7 +27,7 @@ describe('wma', () => {
   });
 
   test.each([
-    { v: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], p: 3, r: [0, 0, 0, 0, 0, 0, 0, 0] },
+    { v: [0, 0, 0], p: 3, r: [0] },
     { v: prices.close, p: 10, r: prices.wma.p10 },
     { v: prices.close, p: 20, r: prices.wma.p20 },
   ])('calculates the Weighted Moving Average with period $p', ({ v, p, r }) => {

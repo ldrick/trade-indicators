@@ -84,7 +84,7 @@ export const adx = (
   F.pipe(
     AP.sequenceS(E.Applicative)({
       periodV: validatePeriod(period, 'period'),
-      valuesV: validateValues(values, 2 * period + 1, period),
+      valuesV: validateValues(values, 2 * period, period),
     }),
     E.bind('valuesB', ({ valuesV }) => objectToBig(valuesV)),
     E.bind('pdi', ({ valuesB, periodV }) => directionalIndex(valuesB, periodV, 'up')),

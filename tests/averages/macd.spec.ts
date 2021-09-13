@@ -39,7 +39,7 @@ describe('macd', () => {
   });
 
   it('fails if not enough data to calculate for periods', () => {
-    expect(macd([1, 2])).toStrictEqual(E.left(new NotEnoughDataError(35, 35)));
+    expect(macd([1, 2, 3, 4], 3, 4, 2)).toStrictEqual(E.left(new NotEnoughDataError(5, 5)));
   });
 
   test.each([{ v: [0, 0, NaN, 0] }, { v: [0, 0, Infinity, 0] }, { v: [0, 0, -Infinity, 0] }])(
@@ -55,9 +55,9 @@ describe('macd', () => {
 
   test.each([
     {
-      v: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      p: [2, 3, 1],
-      r: { macd: [0, 0, 0, 0, 0, 0, 0, 0], signal: [0, 0, 0, 0, 0, 0, 0, 0] },
+      v: [0, 0, 0, 0, 0],
+      p: [3, 4, 2],
+      r: { macd: [0], signal: [0] },
     },
     { v: prices.close, p: [12, 26, 9], r: prices.macd },
   ])(

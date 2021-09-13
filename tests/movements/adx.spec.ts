@@ -19,9 +19,9 @@ describe('adx', () => {
   );
 
   it('fails if not enough data to calculate for period', () => {
-    expect(adx({ close: [1.3], high: [1.5], low: [0.9] }, 3)).toStrictEqual(
-      E.left(new NotEnoughDataError(3, 7)),
-    );
+    expect(
+      adx({ close: [1, 2, 3, 4, 5], high: [1, 2, 3, 4, 5], low: [1, 2, 3, 4, 5] }, 3),
+    ).toStrictEqual(E.left(new NotEnoughDataError(3, 6)));
   });
 
   it('fails if data given has unequal sizes', () => {
@@ -65,12 +65,12 @@ describe('adx', () => {
   test.each([
     {
       v: {
-        high: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        low: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        close: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        high: [0, 0, 0, 0, 0, 0],
+        low: [0, 0, 0, 0, 0, 0],
+        close: [0, 0, 0, 0, 0, 0],
       },
       p: 3,
-      r: { adx: [0, 0, 0, 0, 0], mdi: [0, 0, 0, 0, 0], pdi: [0, 0, 0, 0, 0] },
+      r: { adx: [0], mdi: [0], pdi: [0] },
     },
     { v: { high: prices.high, low: prices.low, close: prices.close }, p: 14, r: prices.adx.p14 },
   ])('calculates the Average Directional Index on prices with period $p', ({ v, p, r }) => {

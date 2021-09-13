@@ -1,6 +1,14 @@
 import Big from 'big.js';
-import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
+import {
+  apply as AP,
+  either as E,
+  function as F,
+  option as O,
+  readonlyArray as RA,
+  readonlyNonEmptyArray as RNEA,
+} from 'fp-ts/lib';
 import { smmaC } from '../averages/smma';
+import { UnequalArraySizesError } from '../errors';
 import { ReadonlyHighLowCloseNumber, ReadonlyNonEmptyHighLowCloseBig } from '../types';
 import { max, nonEmptyTail, objectToBig } from '../utils';
 import { validatePeriod } from '../validations';
@@ -12,16 +20,21 @@ const trueRange = (
   F.pipe(
     values.high,
     nonEmptyTail,
-    E.map(
-      RNEA.mapWithIndex((index, high) => {
-        const previousClose = values.close[index];
-        const currentLow = values.low[index + 1];
-        return max([
-          high.sub(currentLow),
-          high.sub(previousClose).abs(),
-          currentLow.sub(previousClose).abs(),
-        ]);
-      }),
+    E.chain(
+      RNEA.traverseWithIndex(E.Applicative)((index, high) =>
+        F.pipe(
+          O.bindTo('previousClose')(RA.lookup(index)(values.close)),
+          O.bind('currentLow', () => RA.lookup(index + 1)(values.low)),
+          O.map(({ previousClose, currentLow }) =>
+            max([
+              high.sub(currentLow),
+              high.sub(previousClose).abs(),
+              currentLow.sub(previousClose).abs(),
+            ]),
+          ),
+          E.fromOption(() => new UnequalArraySizesError()),
+        ),
+      ),
     ),
   );
 

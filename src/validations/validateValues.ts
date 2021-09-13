@@ -3,32 +3,23 @@ import {
   function as F,
   readonlyArray as RA,
   readonlyNonEmptyArray as RNEA,
+  readonlyRecord as RR,
 } from 'fp-ts/lib';
-import {
-  EmptyArrayError,
-  InfinitNumberError,
-  NotEnoughDataError,
-  UnequalArraySizesError,
-} from '../errors';
+import { InfinitNumberError, NotEnoughDataError } from '../errors';
 import { ReadonlyNonEmptyValuesNumber, ReadonlyRecordNumber, ReadonlyValuesNumber } from '../types';
 
-const hasRequiredLength = <A>(
-  array: ReadonlyArray<A>,
-  required: number,
-): array is RNEA.ReadonlyNonEmptyArray<A> => RA.isNonEmpty(array) && array.length >= required;
+const hasRequiredLength =
+  <A>(required: number) =>
+  (array: ReadonlyArray<A>): array is RNEA.ReadonlyNonEmptyArray<A> =>
+    RA.isNonEmpty(array) && array.length >= required;
 
 const hasRequiredValues = (
   values: ReadonlyValuesNumber,
   required: number,
 ): values is ReadonlyNonEmptyValuesNumber =>
   values instanceof Array
-    ? hasRequiredLength(values, required)
-    : Object.values(values).every((array) => hasRequiredLength(array, required));
-
-const hasRequiredValues2 = (values: ReadonlyValuesNumber): values is ReadonlyNonEmptyValuesNumber =>
-  values instanceof Array
-    ? RA.isNonEmpty(values)
-    : Object.values(values).every((array) => RA.isNonEmpty(array));
+    ? hasRequiredLength(required)(values)
+    : RR.every(hasRequiredLength(required))(values);
 
 const validateLength =
   (required: number, period: number) =>
@@ -37,33 +28,19 @@ const validateLength =
       ? E.right(values)
       : E.left(new NotEnoughDataError(period, required));
 
-const validateLength2 = (
-  values: ReadonlyValuesNumber,
-): E.Either<Error, ReadonlyNonEmptyValuesNumber> =>
-  hasRequiredValues2(values) ? E.right(values) : E.left(new EmptyArrayError());
+const everyIsFinite = (array: readonly number[]): boolean =>
+  RA.every((n) => Number.isFinite(n))(array);
 
 const validateFinity = (
   values: ReadonlyNonEmptyValuesNumber,
 ): E.Either<Error, ReadonlyNonEmptyValuesNumber> => {
   const verifier =
-    values instanceof Array
-      ? values.every((v) => Number.isFinite(v))
-      : Object.values(values).every((array) => array.every((v) => Number.isFinite(v)));
+    values instanceof Array ? everyIsFinite(values) : RR.every(everyIsFinite)(values);
   return verifier ? E.right(values) : E.left(new InfinitNumberError());
 };
 
-const validateEqualArraySizes = (
-  values: ReadonlyNonEmptyValuesNumber,
-): E.Either<Error, ReadonlyNonEmptyValuesNumber> => {
-  const verifier =
-    values instanceof Array
-      ? true
-      : Object.values(values).every((array, _index, vals) => array.length === vals[0].length);
-  return verifier ? E.right(values) : E.left(new UnequalArraySizesError());
-};
-
 /**
- * Validate an data `Array` or `Object`
+ * Validate a data `ReadonlyArray<number>` or `Readonly<Record<string, ReadonlyArray<number>>>`
  *
  * @internal
  */
@@ -72,12 +49,7 @@ export const validateValues = ((
   required: number,
   period: number,
 ): E.Either<Error, ReadonlyNonEmptyValuesNumber> =>
-  F.pipe(
-    values,
-    validateLength(required, period),
-    E.chain(validateEqualArraySizes),
-    E.chain(validateFinity),
-  )) as ((
+  F.pipe(values, validateLength(required, period), E.chain(validateFinity))) as ((
   values: ReadonlyArray<number>,
   required: number,
   period: number,
@@ -86,19 +58,4 @@ export const validateValues = ((
     values: A,
     required: number,
     period: number,
-  ) => E.Either<Error, B>);
-
-/**
- * Validate an data `Array` or `Object`
- *
- * @internal
- */
-export const validateValues2 = ((
-  values: ReadonlyValuesNumber,
-): E.Either<Error, ReadonlyNonEmptyValuesNumber> =>
-  F.pipe(values, validateLength2, E.chain(validateFinity))) as ((
-  values: ReadonlyArray<number>,
-) => E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>>) &
-  (<A extends ReadonlyRecordNumber, B extends ReadonlyNonEmptyValuesNumber>(
-    values: A,
   ) => E.Either<Error, B>);

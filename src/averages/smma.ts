@@ -23,7 +23,7 @@ export const smmaC = (
   F.pipe(
     period,
     getFactor,
-    E.chain((factorB) => dma(values, period, factorB)),
+    E.map((factorB) => dma(values, period, factorB)),
   );
 
 /**

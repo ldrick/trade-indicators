@@ -19,7 +19,7 @@ describe('atr', () => {
   );
 
   it('fails if not enough data to calculate for period', () => {
-    expect(atr({ close: [1.3], high: [1.5], low: [0.9] }, 3)).toStrictEqual(
+    expect(atr({ close: [1, 2, 3], high: [1, 2, 3], low: [1, 2, 3] }, 3)).toStrictEqual(
       E.left(new NotEnoughDataError(3, 4)),
     );
   });
@@ -65,12 +65,12 @@ describe('atr', () => {
   test.each([
     {
       v: {
-        high: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        low: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        close: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        high: [0, 0, 0, 0],
+        low: [0, 0, 0, 0],
+        close: [0, 0, 0, 0],
       },
       p: 3,
-      r: [0, 0, 0, 0, 0, 0, 0],
+      r: [0],
     },
     { v: { high: prices.high, low: prices.low, close: prices.close }, p: 14, r: prices.atr.p14 },
   ])('calculates the Average True Range on prices with period $p', ({ v, p, r }) => {
