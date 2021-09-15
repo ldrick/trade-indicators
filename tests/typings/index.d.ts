@@ -1,12 +1,9 @@
-import { ReadonlyRecordNumber } from '../../src/types';
+import { JestResult } from '../../src/types';
 
 declare global {
   namespace jest {
     interface Matchers<R> {
-      eitherRightToEqualFixedPrecision(
-        expected: ReadonlyArray<number> | ReadonlyRecordNumber,
-        decimals = 12,
-      ): R;
+      eitherRightToEqualFixedPrecision(expected: JestResult, decimals = 12): R;
     }
   }
 }

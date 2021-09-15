@@ -1,13 +1,13 @@
 import { Big } from 'big.js';
 import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
-import { arrayToBig, numberToBig } from '../utils';
+import { arr, num } from '../utils';
 import { validatePeriod, validateValues } from '../validations';
 import { dma } from './dma';
 
 const factor = (period: number): E.Either<Error, Big> =>
   F.pipe(
     period,
-    numberToBig,
+    num.toBig,
     E.map((periodB) => new Big(2).div(periodB.add(1))),
   );
 
@@ -37,12 +37,13 @@ export const emaC = (
 export const ema = (
   values: ReadonlyArray<number>,
   period = 20,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
   F.pipe(
     AP.sequenceS(E.Applicative)({
       periodV: validatePeriod(period, 'period'),
       valuesV: validateValues(values, period, period),
     }),
-    E.bind('valuesB', ({ valuesV }) => arrayToBig(valuesV)),
+    E.bind('valuesB', ({ valuesV }) => arr.toBig(valuesV)),
     E.chain(({ valuesB, periodV }) => emaC(valuesB, periodV)),
+    E.map(arr.toNumber),
   );

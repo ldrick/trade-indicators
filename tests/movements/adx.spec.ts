@@ -70,7 +70,7 @@ describe('adx', () => {
         close: [0, 0, 0, 0, 0, 0],
       },
       p: 3,
-      r: { adx: [0], mdi: [0], pdi: [0] },
+      r: { adx: [null, null, 0], mdi: [0, 0, 0], pdi: [0, 0, 0] },
     },
     { v: { high: prices.high, low: prices.low, close: prices.close }, p: 14, r: prices.adx.p14 },
   ])('calculates the Average Directional Index on prices with period $p', ({ v, p, r }) => {

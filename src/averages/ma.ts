@@ -7,7 +7,7 @@ import {
   readonlyNonEmptyArray as RNEA,
 } from 'fp-ts/lib';
 import { NotEnoughDataError } from '../errors';
-import { arrayToBig } from '../utils';
+import { arr } from '../utils';
 import { validatePeriod, validateValues } from '../validations';
 
 const calculation = (
@@ -34,12 +34,13 @@ export const ma = (
   values: ReadonlyArray<number>,
   period: number,
   cb: (v: RNEA.ReadonlyNonEmptyArray<Big>) => Big,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
   F.pipe(
     AP.sequenceS(E.Applicative)({
       periodV: validatePeriod(period, 'period'),
       valuesV: validateValues(values, period, period),
     }),
-    E.bind('valuesB', ({ valuesV }) => arrayToBig(valuesV)),
+    E.bind('valuesB', ({ valuesV }) => arr.toBig(valuesV)),
     E.chain(({ valuesB, periodV }) => calculation(valuesB, periodV, cb)),
+    E.map(arr.toNumber),
   );

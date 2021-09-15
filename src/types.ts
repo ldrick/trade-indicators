@@ -41,3 +41,8 @@ export type ReadonlyNonEmptyHighLowCloseBig = ReadonlyNonEmptyRecordBig & {
   low: RNEA.ReadonlyNonEmptyArray<Big>;
   close: RNEA.ReadonlyNonEmptyArray<Big>;
 };
+
+// needed for Tests
+export type JestResultArray = ReadonlyArray<number | null>;
+export type JestResultRecord = RR.ReadonlyRecord<string, JestResultArray>;
+export type JestResult = JestResultArray | JestResultRecord;

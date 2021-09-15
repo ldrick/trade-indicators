@@ -1,3 +1,4 @@
+import { Big } from 'big.js';
 import {
   either as E,
   function as F,
@@ -5,24 +6,45 @@ import {
   readonlyNonEmptyArray as RNEA,
 } from 'fp-ts';
 import { EmptyArrayError } from '../errors';
+import * as big from './big';
+import * as num from './number';
 
 /**
- * Create new `ReadonlyNonEmptyArray` from given `ReadonlyNonEmptyArray`
- * by keeping number of values from right.
+ * Safely convert `RNEA.ReadonlyNonEmptyArray<number>` to `RNEA.ReadonlyNonEmptyArray<Big>`.
  *
  * @internal
  */
-export const nonEmptyTakeRight =
-  (number: number) =>
-  <A>(array: RNEA.ReadonlyNonEmptyArray<A>): RNEA.ReadonlyNonEmptyArray<A> =>
-    F.pipe(array, RA.takeRight(number), (taken) => (RA.isNonEmpty(taken) ? taken : array));
+export const toBig = RNEA.traverse(E.Applicative)(num.toBig);
+
+/**
+ * Convert `RNEA.ReadonlyNonEmptyArray<Big>` to `RNEA.ReadonlyNonEmptyArray<number>`.
+ *
+ * @internal
+ */
+export const toNumber = (
+  values: RNEA.ReadonlyNonEmptyArray<Big>,
+): RNEA.ReadonlyNonEmptyArray<number> => RNEA.map(big.toNumber)(values);
+
+/**
+ * Create new Array from given and fill left with value up to given size.
+ *
+ * @internal
+ */
+export const fillLeftW =
+  <A>(size: number, value: A) =>
+  <B>(tail: RNEA.ReadonlyNonEmptyArray<B>): RNEA.ReadonlyNonEmptyArray<A | B> =>
+    F.pipe(
+      size > tail.length ? size - tail.length : 0,
+      (times) => RA.replicate(times, value),
+      RNEA.concatW(tail),
+    );
 
 /**
  * Get all but the first of an `ReadonlyNonEmptyArray` as `ReadonlyNonEmptyArray`
  *
  * @internal
  */
-export const nonEmptyTail = <A>(
+export const tail = <A>(
   array: RNEA.ReadonlyNonEmptyArray<A>,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<A>> =>
   F.pipe(array, RNEA.tail, (rest) =>

@@ -1,6 +1,6 @@
 import { Big } from 'big.js';
 import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
-import { arrayToBig } from '../utils';
+import { arr } from '../utils';
 import { validatePeriod, validateValues } from '../validations';
 import { emaC } from './ema';
 
@@ -8,10 +8,10 @@ const calculate = (
   one: RNEA.ReadonlyNonEmptyArray<Big>,
   two: RNEA.ReadonlyNonEmptyArray<Big>,
   period: number,
-): RNEA.ReadonlyNonEmptyArray<Big> =>
+): RNEA.ReadonlyNonEmptyArray<number> =>
   F.pipe(
     two,
-    RNEA.mapWithIndex((index, value) => one[index + period - 1].mul(2).sub(value)),
+    RNEA.mapWithIndex((index, value) => one[index + period - 1].mul(2).sub(value).toNumber()),
   );
 
 /**
@@ -24,13 +24,13 @@ const calculate = (
 export const dema = (
   values: ReadonlyArray<number>,
   period = 20,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
   F.pipe(
     AP.sequenceS(E.Applicative)({
       periodV: validatePeriod(period, 'period'),
       valuesV: validateValues(values, 2 * period - 1, period),
     }),
-    E.bind('valuesB', ({ valuesV }) => arrayToBig(valuesV)),
+    E.bind('valuesB', ({ valuesV }) => arr.toBig(valuesV)),
     E.bind('emaOne', ({ valuesB, periodV }) => emaC(valuesB, periodV)),
     E.bind('emaTwo', ({ emaOne, periodV }) => emaC(emaOne, periodV)),
     E.map(({ emaOne, emaTwo, periodV }) => calculate(emaOne, emaTwo, periodV)),

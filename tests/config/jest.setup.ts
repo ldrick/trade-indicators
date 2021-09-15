@@ -1,8 +1,7 @@
-import { Big } from 'big.js';
 import { either as E, function as F } from 'fp-ts/lib';
 import { diff, DiffOptions } from 'jest-diff';
 import { matcherHint, printExpected, printReceived } from 'jest-matcher-utils';
-import { ReadonlyRecordBig, ReadonlyRecordNumber } from '../../src/types';
+import { JestResult, JestResultArray, JestResultRecord } from '../../src/types';
 
 type FormattedObject = { [x: string]: string };
 
@@ -21,35 +20,32 @@ const formatDiff = <R, X>(
 };
 
 const eitherRightToEqualFixedPrecision = <E>(
-  received: E.Either<E, ReadonlyArray<Big> | ReadonlyRecordBig>,
-  expected: ReadonlyArray<number> | ReadonlyRecordNumber,
+  received: E.Either<E, JestResult>,
+  expected: JestResult,
   decimals = 12,
 ) => {
-  const formatNumberArray = (
-    arr: ReadonlyArray<number> | ReadonlyArray<Big>,
-    dec: number,
-  ): ReadonlyArray<string> => arr.map((el) => el.toFixed(dec));
+  const formatNumberArray = (arr: JestResultArray, dec: number): ReadonlyArray<string> =>
+    arr.map((el) => (el === null ? String(el) : el.toFixed(dec)));
 
-  const formatReadonlyRecordNumber = (
-    obj: ReadonlyRecordNumber | ReadonlyRecordBig,
-    dec: number,
-  ): FormattedObject =>
+  const formatReadonlyRecordNumber = (obj: JestResultRecord, dec: number): FormattedObject =>
     Object.keys(obj).reduce(
       (reduced, key) => ({ ...reduced, ...{ [key]: formatNumberArray(obj[key], dec) } }),
       {},
     );
 
-  const formatValues = (
-    val: ReadonlyArray<number> | ReadonlyArray<Big> | ReadonlyRecordNumber | ReadonlyRecordBig,
-    dec: number,
-  ): ReadonlyArray<string> | FormattedObject =>
+  const formatValues = (val: JestResult, dec: number): ReadonlyArray<string> | FormattedObject =>
     val instanceof Array ? formatNumberArray(val, dec) : formatReadonlyRecordNumber(val, dec);
 
-  const compareArrays = (exp: ReadonlyArray<number>, rec: ReadonlyArray<Big>): boolean =>
+  const compareArrays = (exp: JestResultArray, rec: JestResultArray): boolean =>
     exp.length === rec.length &&
-    exp.every((e, index) => e.toFixed(decimals) === rec[index].toFixed(decimals));
+    exp.every((e, index) => {
+      const left = e === null ? e : e.toFixed(decimals);
+      const r = rec[index];
+      const right = r === null ? r : r.toFixed(decimals);
+      return left === right;
+    });
 
-  const compareObjects = (exp: ReadonlyRecordNumber, rec: ReadonlyRecordBig): boolean =>
+  const compareObjects = (exp: JestResultRecord, rec: JestResultRecord): boolean =>
     Object.keys(exp).every((k) => compareArrays(exp[k], rec[k]));
 
   return {
@@ -60,7 +56,7 @@ const eitherRightToEqualFixedPrecision = <E>(
         (right) =>
           expected instanceof Array && right instanceof Array
             ? compareArrays(expected, right)
-            : compareObjects(expected as ReadonlyRecordNumber, right as ReadonlyRecordBig),
+            : compareObjects(expected as JestResultRecord, right as JestResultRecord),
       ),
     ),
     message: () =>

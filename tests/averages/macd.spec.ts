@@ -57,7 +57,7 @@ describe('macd', () => {
     {
       v: [0, 0, 0, 0, 0],
       p: [3, 4, 2],
-      r: { macd: [0], signal: [0] },
+      r: { macd: [0, 0], signal: [null, 0] },
     },
     { v: prices.close, p: [12, 26, 9], r: prices.macd },
   ])(

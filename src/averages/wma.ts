@@ -1,4 +1,3 @@
-import { Big } from 'big.js';
 import { either as E, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
 import { ma } from './ma';
 import { wamean } from './wamean';
@@ -14,4 +13,4 @@ import { wamean } from './wamean';
 export const wma = (
   values: ReadonlyArray<number>,
   period = 20,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> => ma(values, period, wamean);
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> => ma(values, period, wamean);

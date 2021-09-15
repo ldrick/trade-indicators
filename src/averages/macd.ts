@@ -8,9 +8,14 @@ import {
   readonlyRecord as RR,
 } from 'fp-ts/lib';
 import { PeriodSizeMissmatchError } from '../errors';
-import { arrayToBig, nonEmptyTakeRight } from '../utils';
+import { arr } from '../utils';
 import { validatePeriod, validateValues } from '../validations';
 import { emaC } from './ema';
+
+type MACDReturn = RR.ReadonlyRecord<string, RNEA.ReadonlyNonEmptyArray<number | null>> & {
+  readonly macd: RNEA.ReadonlyNonEmptyArray<number>;
+  readonly signal: RNEA.ReadonlyNonEmptyArray<number | null>;
+};
 
 const validatePeriodSizes = (slowPeriod: number, fastPeriod: number): E.Either<Error, boolean> =>
   slowPeriod > fastPeriod
@@ -41,22 +46,24 @@ export const macd = (
   fastPeriod = 12,
   slowPeriod = 26,
   signalPeriod = 9,
-): E.Either<Error, RR.ReadonlyRecord<'macd' | 'signal', RNEA.ReadonlyNonEmptyArray<Big>>> =>
+): E.Either<Error, MACDReturn> =>
   F.pipe(
     AP.sequenceS(E.Applicative)({
       fastPeriodV: validatePeriod(fastPeriod, 'fastPeriod'),
       slowPeriodV: validatePeriod(slowPeriod, 'slowPeriod'),
       signalPeriodV: validatePeriod(signalPeriod, 'signalPeriod'),
+      // TODO: kick this check out of here
       periodSizes: validatePeriodSizes(slowPeriod, fastPeriod),
+      // TODO: return better Error message
       valuesV: validateValues(values, slowPeriod + signalPeriod - 1, slowPeriod + signalPeriod - 1),
     }),
-    E.bind('valuesB', ({ valuesV }) => arrayToBig(valuesV)),
+    E.bind('valuesB', ({ valuesV }) => arr.toBig(valuesV)),
     E.bind('emaSlow', ({ valuesB, slowPeriodV }) => emaC(valuesB, slowPeriodV)),
     E.bind('emaFast', ({ valuesB, fastPeriodV }) => emaC(valuesB, fastPeriodV)),
     E.bind('macdResult', ({ emaFast, emaSlow }) => E.right(calculate(emaFast, emaSlow))),
     E.bind('signal', ({ macdResult, signalPeriodV }) => emaC(macdResult, signalPeriodV)),
     E.map(({ macdResult, signal }) => ({
-      macd: nonEmptyTakeRight(signal.length)(macdResult),
-      signal,
+      macd: arr.toNumber(macdResult),
+      signal: F.pipe(signal, arr.toNumber, arr.fillLeftW(macdResult.length, null)),
     })),
   );

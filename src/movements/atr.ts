@@ -10,7 +10,7 @@ import {
 import { smmaC } from '../averages/smma';
 import { UnequalArraySizesError } from '../errors';
 import { ReadonlyHighLowCloseNumber, ReadonlyNonEmptyHighLowCloseBig } from '../types';
-import { max, nonEmptyTail, objectToBig } from '../utils';
+import { arr, big, rec } from '../utils';
 import { validatePeriod } from '../validations';
 import { validateValues } from '../validations/validateValues';
 
@@ -19,14 +19,14 @@ const trueRange = (
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
   F.pipe(
     values.high,
-    nonEmptyTail,
+    arr.tail,
     E.chain(
       RNEA.traverseWithIndex(E.Applicative)((index, high) =>
         F.pipe(
           O.bindTo('previousClose')(RA.lookup(index)(values.close)),
           O.bind('currentLow', () => RA.lookup(index + 1)(values.low)),
           O.map(({ previousClose, currentLow }) =>
-            max([
+            big.max([
               high.sub(currentLow),
               high.sub(previousClose).abs(),
               currentLow.sub(previousClose).abs(),
@@ -64,12 +64,13 @@ export const atrC = (
 export const atr = (
   values: ReadonlyHighLowCloseNumber,
   period = 14,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
   F.pipe(
     AP.sequenceS(E.Applicative)({
       periodV: validatePeriod(period, 'period'),
       valuesV: validateValues(values, period + 1, period),
     }),
-    E.bind('valuesB', ({ valuesV }) => objectToBig(valuesV)),
+    E.bind('valuesB', ({ valuesV }) => rec.toBig(valuesV)),
     E.chain(({ valuesB, periodV }) => atrC(valuesB, periodV)),
+    E.map(arr.toNumber),
   );

@@ -8,9 +8,15 @@ import {
 } from 'fp-ts/lib';
 import { smmaC } from '../averages/smma';
 import { Movement, ReadonlyHighLowCloseNumber, ReadonlyNonEmptyHighLowCloseBig } from '../types';
-import { nonEmptyTail, nonEmptyTakeRight, objectToBig } from '../utils';
+import { arr, rec } from '../utils';
 import { validatePeriod, validateValues } from '../validations';
 import { atrC } from './atr';
+
+type ADXReturn = RR.ReadonlyRecord<string, RNEA.ReadonlyNonEmptyArray<number | null>> & {
+  readonly adx: RNEA.ReadonlyNonEmptyArray<number | null>;
+  readonly mdi: RNEA.ReadonlyNonEmptyArray<number>;
+  readonly pdi: RNEA.ReadonlyNonEmptyArray<number>;
+};
 
 const compareMovement = (base: Big, comparision: Big): Big =>
   base.gt(comparision) && base.gt(0) ? base : new Big(0);
@@ -24,7 +30,7 @@ const directionalMovement = (
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
   F.pipe(
     values.low,
-    nonEmptyTail,
+    arr.tail,
     E.map(
       RNEA.mapWithIndex((index, low) => {
         const previous = index;
@@ -77,16 +83,13 @@ const calculation = (
  *
  * @public
  */
-export const adx = (
-  values: ReadonlyHighLowCloseNumber,
-  period = 14,
-): E.Either<Error, RR.ReadonlyRecord<'adx' | 'mdi' | 'pdi', RNEA.ReadonlyNonEmptyArray<Big>>> =>
+export const adx = (values: ReadonlyHighLowCloseNumber, period = 14): E.Either<Error, ADXReturn> =>
   F.pipe(
     AP.sequenceS(E.Applicative)({
       periodV: validatePeriod(period, 'period'),
       valuesV: validateValues(values, 2 * period, period),
     }),
-    E.bind('valuesB', ({ valuesV }) => objectToBig(valuesV)),
+    E.bind('valuesB', ({ valuesV }) => rec.toBig(valuesV)),
     E.bind('pdi', ({ valuesB, periodV }) => directionalIndex(valuesB, periodV, 'up')),
     E.bind('mdi', ({ valuesB, periodV }) => directionalIndex(valuesB, periodV, 'down')),
     E.bind('smoothed', ({ pdi, mdi, periodV }) => {
@@ -97,8 +100,10 @@ export const adx = (
       adx: F.pipe(
         smoothed,
         RNEA.map((value) => value.mul(100)),
+        arr.toNumber,
+        arr.fillLeftW(mdi.length, null),
       ),
-      mdi: nonEmptyTakeRight(smoothed.length)(mdi),
-      pdi: nonEmptyTakeRight(smoothed.length)(pdi),
+      mdi: arr.toNumber(mdi),
+      pdi: arr.toNumber(pdi),
     })),
   );
