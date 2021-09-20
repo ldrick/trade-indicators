@@ -1,7 +1,6 @@
 import { either as E } from 'fp-ts/lib';
 import { adx } from '../../src';
 import {
-  InfinitNumberError,
   NotEnoughDataError,
   NotPositiveIntegerError,
   UnequalArraySizesError,
@@ -13,7 +12,7 @@ describe('adx', () => {
     'fails if period is not a positive integer $p',
     ({ p }) => {
       expect(adx({ close: [1.3], high: [1.5], low: [0.9] }, p)).toStrictEqual(
-        E.left(new NotPositiveIntegerError('period')),
+        E.left(new NotPositiveIntegerError()),
       );
     },
   );
@@ -21,7 +20,7 @@ describe('adx', () => {
   it('fails if not enough data to calculate for period', () => {
     expect(
       adx({ close: [1, 2, 3, 4, 5], high: [1, 2, 3, 4, 5], low: [1, 2, 3, 4, 5] }, 3),
-    ).toStrictEqual(E.left(new NotEnoughDataError(3, 6)));
+    ).toStrictEqual(E.left(new NotEnoughDataError(5, 6)));
   });
 
   it('fails if data given has unequal sizes', () => {
@@ -53,7 +52,7 @@ describe('adx', () => {
       },
     },
   ])('fails if any value is a infinit value $v', ({ v }) => {
-    expect(adx(v, 2)).toStrictEqual(E.left(new InfinitNumberError()));
+    expect(adx(v, 2)).toStrictEqual(E.left(new Error('[big.js] Invalid number')));
   });
 
   it('calculates the Average Directional Index with default period', () => {

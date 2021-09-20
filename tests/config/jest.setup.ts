@@ -1,7 +1,7 @@
 import { either as E, function as F } from 'fp-ts/lib';
 import { diff, DiffOptions } from 'jest-diff';
 import { matcherHint, printExpected, printReceived } from 'jest-matcher-utils';
-import { JestResult, JestResultArray, JestResultRecord } from '../../src/types';
+import { JestResult, JestResultArray, JestResultRecord } from '../types';
 
 type FormattedObject = { [x: string]: string };
 

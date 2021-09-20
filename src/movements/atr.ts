@@ -9,13 +9,11 @@ import {
 } from 'fp-ts/lib';
 import { smmaC } from '../averages/smma';
 import { UnequalArraySizesError } from '../errors';
-import { ReadonlyHighLowCloseNumber, ReadonlyNonEmptyHighLowCloseBig } from '../types';
-import { arr, big, rec } from '../utils';
-import { validatePeriod } from '../validations';
-import { validateValues } from '../validations/validateValues';
+import { HighLowClose, NonEmptyHighLowClose } from '../types';
+import { arr, big, num, rec } from '../utils';
 
 const trueRange = (
-  values: ReadonlyNonEmptyHighLowCloseBig,
+  values: NonEmptyHighLowClose<Big>,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
   F.pipe(
     values.high,
@@ -44,7 +42,7 @@ const trueRange = (
  * @internal
  */
 export const atrC = (
-  values: ReadonlyNonEmptyHighLowCloseBig,
+  values: NonEmptyHighLowClose<Big>,
   period: number,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
   F.pipe(
@@ -62,13 +60,13 @@ export const atrC = (
  * @public
  */
 export const atr = (
-  values: ReadonlyHighLowCloseNumber,
+  values: HighLowClose<number>,
   period = 14,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
   F.pipe(
     AP.sequenceS(E.Applicative)({
-      periodV: validatePeriod(period, 'period'),
-      valuesV: validateValues(values, period + 1, period),
+      periodV: num.validatePositiveInteger(period),
+      valuesV: rec.validateRequiredSize(period + 1)(values),
     }),
     E.bind('valuesB', ({ valuesV }) => rec.toBig(valuesV)),
     E.chain(({ valuesB, periodV }) => atrC(valuesB, periodV)),

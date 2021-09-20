@@ -11,13 +11,12 @@ The Double Exponential Moving Average (DEMA) uses two Exponential Moving Average
 ## Signature
 
 ```typescript
-import { Big } from 'big.js';
 import { either as E } from 'fp-ts/lib';
 
 export declare const dema: (
   values: ReadonlyArray<number>,
   period?: number, // default: 20
-) => E.Either<Error, ReadonlyArray<Big>>;
+) => E.Either<Error, ReadonlyArray<number>>;
 ```
 
 ## Example

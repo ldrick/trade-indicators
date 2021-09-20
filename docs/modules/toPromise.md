@@ -11,7 +11,6 @@ It might be easier to use `trade-indicators` within an existing project, by hand
 ## Signature
 
 ```typescript
-import { Big } from 'big.js';
 import { either as E } from 'fp-ts/lib';
 
 export function toPromise<A>(values: E.Either<Error, A>): Promise<A>;

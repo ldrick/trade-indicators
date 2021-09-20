@@ -11,13 +11,12 @@ The Weighted Moving Average (WMA) takes newer values weighted into account and r
 ## Signature
 
 ```typescript
-import { Big } from 'big.js';
 import { either as E } from 'fp-ts/lib';
 
 export declare const wma: (
   values: ReadonlyArray<number>,
   period?: number, // default: 20
-) => E.Either<Error, ReadonlyArray<Big>;
+) => E.Either<Error, ReadonlyArray<number>;
 ```
 
 ## Example

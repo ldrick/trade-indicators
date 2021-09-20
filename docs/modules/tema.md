@@ -11,13 +11,12 @@ The Triple Exponential Moving Average (TEMA) uses three Exponential Moving Avera
 ## Signature
 
 ```typescript
-import { Big } from 'big.js';
 import { either as E } from 'fp-ts/lib';
 
 export declare const tema: (
   values: ReadonlyArray<number>,
   period?: number, // default: 20
-) => E.Either<Error, ReadonlyArray<Big>;
+) => E.Either<Error, ReadonlyArray<number>;
 ```
 
 ## Example

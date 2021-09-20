@@ -5,7 +5,7 @@ import {
   readonlyArray as RA,
   readonlyNonEmptyArray as RNEA,
 } from 'fp-ts';
-import { EmptyArrayError } from '../errors';
+import { EmptyArrayError, NotEnoughDataError } from '../errors';
 import * as big from './big';
 import * as num from './number';
 
@@ -50,3 +50,15 @@ export const tail = <A>(
   F.pipe(array, RNEA.tail, (rest) =>
     RA.isNonEmpty(rest) ? E.right(rest) : E.left(new EmptyArrayError()),
   );
+
+/**
+ * Validates if an Array has the required size.
+ *
+ * @internal
+ */
+export const validateRequiredSize =
+  (required: number) =>
+  <A>(array: ReadonlyArray<A>): E.Either<Error, RNEA.ReadonlyNonEmptyArray<A>> =>
+    RA.isNonEmpty(array) && array.length >= required
+      ? E.right(array)
+      : E.left(new NotEnoughDataError(array.length, required));

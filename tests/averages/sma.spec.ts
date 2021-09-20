@@ -1,24 +1,24 @@
 import { either as E } from 'fp-ts/lib';
 import { sma } from '../../src';
-import { InfinitNumberError, NotEnoughDataError, NotPositiveIntegerError } from '../../src/errors';
+import { NotEnoughDataError, NotPositiveIntegerError } from '../../src/errors';
 import * as prices from '../prices.json';
 
 describe('sma', () => {
   test.each([{ p: NaN }, { p: Infinity }, { p: -Infinity }, { p: -1 }, { p: 0 }, { p: 1.5 }])(
     'fails if period is not a positive integer $p',
     ({ p }) => {
-      expect(sma([1], p)).toStrictEqual(E.left(new NotPositiveIntegerError('period')));
+      expect(sma([1], p)).toStrictEqual(E.left(new NotPositiveIntegerError()));
     },
   );
 
   it('fails if not enough data to calculate for period', () => {
-    expect(sma([1, 2], 3)).toStrictEqual(E.left(new NotEnoughDataError(3, 3)));
+    expect(sma([1, 2], 3)).toStrictEqual(E.left(new NotEnoughDataError(2, 3)));
   });
 
   test.each([{ v: [0, 0, NaN, 0] }, { v: [0, 0, Infinity, 0] }, { v: [0, 0, -Infinity, 0] }])(
     'fails if values contains a infinit value $v',
     ({ v }) => {
-      expect(sma(v, 2)).toStrictEqual(E.left(new InfinitNumberError()));
+      expect(sma(v, 2)).toStrictEqual(E.left(new Error('[big.js] Invalid number')));
     },
   );
 

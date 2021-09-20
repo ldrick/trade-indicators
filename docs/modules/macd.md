@@ -11,7 +11,6 @@ The Moving Average Convergence Divergence (MACD) is the relationship of two Expo
 ## Signature
 
 ```typescript
-import { Big } from 'big.js';
 import { either as E } from 'fp-ts/lib';
 
 export declare const macd: (
@@ -19,7 +18,7 @@ export declare const macd: (
   fastPeriod?: number, // default: 12
   slowPeriod?: number, // default: 26
   signalPeriod?: number, // default: 9
-) => E.Either<Error, Readonly<Record<"macd" | "signal", ReadonlyArray<Big>>>;
+) => E.Either<Error, Readonly<Record<"macd" | "signal", ReadonlyArray<number | null>>>;
 ```
 
 ## Example

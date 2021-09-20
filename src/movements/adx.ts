@@ -1,18 +1,13 @@
 import { Big } from 'big.js';
-import {
-  apply as AP,
-  either as E,
-  function as F,
-  readonlyNonEmptyArray as RNEA,
-  readonlyRecord as RR,
-} from 'fp-ts/lib';
+import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
 import { smmaC } from '../averages/smma';
-import { Movement, ReadonlyHighLowCloseNumber, ReadonlyNonEmptyHighLowCloseBig } from '../types';
-import { arr, rec } from '../utils';
-import { validatePeriod, validateValues } from '../validations';
+import { HighLowClose, NonEmptyHighLowClose, ReadonlyRecordNonEmptyArray } from '../types';
+import { arr, num, rec } from '../utils';
 import { atrC } from './atr';
 
-type ADXReturn = RR.ReadonlyRecord<string, RNEA.ReadonlyNonEmptyArray<number | null>> & {
+type Movement = 'up' | 'down';
+
+type ADXReturn = ReadonlyRecordNonEmptyArray<number | null> & {
   readonly adx: RNEA.ReadonlyNonEmptyArray<number | null>;
   readonly mdi: RNEA.ReadonlyNonEmptyArray<number>;
   readonly pdi: RNEA.ReadonlyNonEmptyArray<number>;
@@ -25,7 +20,7 @@ const movement = (up: Big, down: Big, move: Movement): Big =>
   move === 'up' ? compareMovement(up, down) : compareMovement(down, up);
 
 const directionalMovement = (
-  values: ReadonlyNonEmptyHighLowCloseBig,
+  values: NonEmptyHighLowClose<Big>,
   move: Movement,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
   F.pipe(
@@ -43,7 +38,7 @@ const directionalMovement = (
   );
 
 const directionalIndex = (
-  values: ReadonlyNonEmptyHighLowCloseBig,
+  values: NonEmptyHighLowClose<Big>,
   period: number,
   move: Movement,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
@@ -83,11 +78,11 @@ const calculation = (
  *
  * @public
  */
-export const adx = (values: ReadonlyHighLowCloseNumber, period = 14): E.Either<Error, ADXReturn> =>
+export const adx = (values: HighLowClose<number>, period = 14): E.Either<Error, ADXReturn> =>
   F.pipe(
     AP.sequenceS(E.Applicative)({
-      periodV: validatePeriod(period, 'period'),
-      valuesV: validateValues(values, 2 * period, period),
+      periodV: num.validatePositiveInteger(period),
+      valuesV: rec.validateRequiredSize(2 * period)(values),
     }),
     E.bind('valuesB', ({ valuesV }) => rec.toBig(valuesV)),
     E.bind('pdi', ({ valuesB, periodV }) => directionalIndex(valuesB, periodV, 'up')),

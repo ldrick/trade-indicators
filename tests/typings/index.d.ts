@@ -1,4 +1,4 @@
-import { JestResult } from '../../src/types';
+import { JestResult } from '../types';
 
 declare global {
   namespace jest {

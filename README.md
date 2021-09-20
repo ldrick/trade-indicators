@@ -7,7 +7,9 @@
 [![made with](https://img.shields.io/github/languages/top/ldrick/trade-indicators)](https://www.typescriptlang.org/)
 
 > Trade Indicators written in pure functional Typescript. \
-> Results will be Either<Error, Big[] | BigObject> using: \
+> Results will be \
+> `Either<Error, ReadonlyArray<number> | Readonly<Record<string, ReadonlyArray<number>>>>` \
+> depending on what is returned using these amazing libraries: \
 > 🚀 [fp-ts](https://github.com/gcanti/fp-ts) \
 > 🌟 [big.js](https://github.com/MikeMcl/big.js/)
 >
@@ -32,7 +34,6 @@ or \
 In TypeScript:
 
 ```typescript
-import { Big } from 'big.js';
 import { either as E, function as F } from 'fp-ts/lib';
 import { ema, toPromise } from '@ldrick/trade-indicators';
 

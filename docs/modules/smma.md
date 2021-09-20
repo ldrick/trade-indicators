@@ -11,13 +11,12 @@ The Smoothed Moving Average (SMMA) is like the Exponential Moving Average (EMA),
 ## Signature
 
 ```typescript
-import { Big } from 'big.js';
 import { either as E } from 'fp-ts/lib';
 
 export declare const smma: (
   values: ReadonlyArray<number>,
   period?: number, // default: 20
-) => E.Either<Error, ReadonlyArray<Big>;
+) => E.Either<Error, ReadonlyArray<number>;
 ```
 
 ## Example

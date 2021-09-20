@@ -11,13 +11,12 @@ The Exponential Moving Average (EMA) takes newer values weighted into account an
 ## Signature
 
 ```typescript
-import { Big } from 'big.js';
 import { either as E } from 'fp-ts/lib';
 
 export declare const ema: (
   values: ReadonlyArray<number>,
   period?: number, // default: 20
-) => E.Either<Error, ReadonlyArray<Big>>;
+) => E.Either<Error, ReadonlyArray<number>>;
 ```
 
 ## Example

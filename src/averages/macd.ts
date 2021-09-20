@@ -5,14 +5,13 @@ import {
   function as F,
   readonlyArray as RA,
   readonlyNonEmptyArray as RNEA,
-  readonlyRecord as RR,
 } from 'fp-ts/lib';
 import { PeriodSizeMissmatchError } from '../errors';
-import { arr } from '../utils';
-import { validatePeriod, validateValues } from '../validations';
+import { ReadonlyRecordNonEmptyArray } from '../types';
+import { arr, num } from '../utils';
 import { emaC } from './ema';
 
-type MACDReturn = RR.ReadonlyRecord<string, RNEA.ReadonlyNonEmptyArray<number | null>> & {
+type MACDReturn = ReadonlyRecordNonEmptyArray<number | null> & {
   readonly macd: RNEA.ReadonlyNonEmptyArray<number>;
   readonly signal: RNEA.ReadonlyNonEmptyArray<number | null>;
 };
@@ -49,13 +48,12 @@ export const macd = (
 ): E.Either<Error, MACDReturn> =>
   F.pipe(
     AP.sequenceS(E.Applicative)({
-      fastPeriodV: validatePeriod(fastPeriod, 'fastPeriod'),
-      slowPeriodV: validatePeriod(slowPeriod, 'slowPeriod'),
-      signalPeriodV: validatePeriod(signalPeriod, 'signalPeriod'),
+      fastPeriodV: num.validatePositiveInteger(fastPeriod),
+      slowPeriodV: num.validatePositiveInteger(slowPeriod),
+      signalPeriodV: num.validatePositiveInteger(signalPeriod),
       // TODO: kick this check out of here
       periodSizes: validatePeriodSizes(slowPeriod, fastPeriod),
-      // TODO: return better Error message
-      valuesV: validateValues(values, slowPeriod + signalPeriod - 1, slowPeriod + signalPeriod - 1),
+      valuesV: arr.validateRequiredSize(slowPeriod + signalPeriod - 1)(values),
     }),
     E.bind('valuesB', ({ valuesV }) => arr.toBig(valuesV)),
     E.bind('emaSlow', ({ valuesB, slowPeriodV }) => emaC(valuesB, slowPeriodV)),

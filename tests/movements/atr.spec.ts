@@ -1,7 +1,6 @@
 import { either as E } from 'fp-ts/lib';
 import { atr } from '../../src';
 import {
-  InfinitNumberError,
   NotEnoughDataError,
   NotPositiveIntegerError,
   UnequalArraySizesError,
@@ -13,7 +12,7 @@ describe('atr', () => {
     'fails if period is not a positive integer $p',
     ({ p }) => {
       expect(atr({ close: [1.3], high: [1.5], low: [0.9] }, p)).toStrictEqual(
-        E.left(new NotPositiveIntegerError('period')),
+        E.left(new NotPositiveIntegerError()),
       );
     },
   );
@@ -53,7 +52,7 @@ describe('atr', () => {
       },
     },
   ])('fails if any value is a infinit value $v', ({ v }) => {
-    expect(atr(v, 2)).toStrictEqual(E.left(new InfinitNumberError()));
+    expect(atr(v, 2)).toStrictEqual(E.left(new Error('[big.js] Invalid number')));
   });
 
   it('calculates the Average True Range with default period', () => {
