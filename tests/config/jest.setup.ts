@@ -1,9 +1,31 @@
-import { either as E, function as F } from 'fp-ts/lib';
+import { either as E, function as F, readonlyArray as RA, readonlyRecord as RR } from 'fp-ts/lib';
 import { diff, DiffOptions } from 'jest-diff';
 import { matcherHint, printExpected, printReceived } from 'jest-matcher-utils';
-import { JestResult, JestResultArray, JestResultRecord } from '../types';
+import {
+  FormattedArray,
+  FormattedRecord,
+  JestResult,
+  JestResultArray,
+  JestResultRecord,
+} from '../types';
 
-type FormattedObject = { [x: string]: string };
+const formatArray =
+  (dec: number) =>
+  (arr: JestResultArray): FormattedArray =>
+    F.pipe(
+      arr,
+      RA.map((el) => (el === null ? String(el) : el.toFixed(dec))),
+    );
+
+const formatRecord =
+  (dec: number) =>
+  (rec: JestResultRecord): FormattedRecord =>
+    F.pipe(rec, RR.map(formatArray(dec)));
+
+const format =
+  (dec: number) =>
+  (val: JestResult): FormattedArray | FormattedRecord =>
+    val instanceof Array ? formatArray(dec)(val) : formatRecord(dec)(val);
 
 const formatDiff = <R, X>(
   matcherName: string,
@@ -19,61 +41,54 @@ const formatDiff = <R, X>(
   }`;
 };
 
+const compareArrays = <A>(exp: ReadonlyArray<A>, rec: ReadonlyArray<A>) =>
+  exp.length === rec.length && exp.every((e, index) => e === rec[index]);
+
+const compareResultArrays = (
+  exp: JestResultArray,
+  rec: JestResultArray,
+  decimals: number,
+): boolean =>
+  exp.length === rec.length &&
+  exp.every((e, index) => e?.toFixed(decimals) === rec[index]?.toFixed(decimals));
+
+const compareResultRecords = (
+  exp: JestResultRecord,
+  rec: JestResultRecord,
+  decimals: number,
+): boolean =>
+  compareArrays(Object.keys(exp), Object.keys(rec)) &&
+  Object.keys(exp).every((k) => compareResultArrays(exp[k], rec[k], decimals));
+
 const eitherRightToEqualFixedPrecision = <E>(
   received: E.Either<E, JestResult>,
   expected: JestResult,
   decimals = 12,
-) => {
-  const formatNumberArray = (arr: JestResultArray, dec: number): ReadonlyArray<string> =>
-    arr.map((el) => (el === null ? String(el) : el.toFixed(dec)));
-
-  const formatReadonlyRecordNumber = (obj: JestResultRecord, dec: number): FormattedObject =>
-    Object.keys(obj).reduce(
-      (reduced, key) => ({ ...reduced, ...{ [key]: formatNumberArray(obj[key], dec) } }),
-      {},
-    );
-
-  const formatValues = (val: JestResult, dec: number): ReadonlyArray<string> | FormattedObject =>
-    val instanceof Array ? formatNumberArray(val, dec) : formatReadonlyRecordNumber(val, dec);
-
-  const compareArrays = (exp: JestResultArray, rec: JestResultArray): boolean =>
-    exp.length === rec.length &&
-    exp.every((e, index) => {
-      const left = e === null ? e : e.toFixed(decimals);
-      const r = rec[index];
-      const right = r === null ? r : r.toFixed(decimals);
-      return left === right;
-    });
-
-  const compareObjects = (exp: JestResultRecord, rec: JestResultRecord): boolean =>
-    Object.keys(exp).every((k) => compareArrays(exp[k], rec[k]));
-
-  return {
-    pass: F.pipe(
+) => ({
+  pass: F.pipe(
+    received,
+    E.fold(
+      () => false,
+      (right) =>
+        expected instanceof Array && right instanceof Array
+          ? compareResultArrays(expected, right, decimals)
+          : compareResultRecords(expected as JestResultRecord, right as JestResultRecord, decimals),
+    ),
+  ),
+  message: () =>
+    F.pipe(
       received,
       E.fold(
-        () => false,
-        (right) =>
-          expected instanceof Array && right instanceof Array
-            ? compareArrays(expected, right)
-            : compareObjects(expected as JestResultRecord, right as JestResultRecord),
+        () => `Either expected to be right, but was left.`,
+        (rec) =>
+          formatDiff(
+            '.eitherRightToEqualFixedPrecision',
+            format(decimals)(rec),
+            format(decimals)(expected),
+          ),
       ),
     ),
-    message: () =>
-      F.pipe(
-        received,
-        E.fold(
-          () => `Either expected to be right, but was left.`,
-          (rec) =>
-            formatDiff(
-              '.eitherRightToEqualFixedPrecision',
-              formatValues(rec, decimals),
-              formatValues(expected, decimals),
-            ),
-        ),
-      ),
-  };
-};
+});
 
 expect.extend({
   eitherRightToEqualFixedPrecision,
