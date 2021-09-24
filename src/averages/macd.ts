@@ -24,13 +24,14 @@ const validatePeriodSizes = (slowPeriod: number, fastPeriod: number): E.Either<E
 const calculate = (
   fast: RNEA.ReadonlyNonEmptyArray<Big>,
   slow: RNEA.ReadonlyNonEmptyArray<Big>,
-): RNEA.ReadonlyNonEmptyArray<Big> => {
-  const shortened = RA.takeRight(slow.length)(fast);
-  return F.pipe(
+): RNEA.ReadonlyNonEmptyArray<Big> =>
+  F.pipe(
     slow,
-    RNEA.mapWithIndex((index, value) => shortened[index].sub(value)),
+    RNEA.mapWithIndex((index, value) => {
+      const shortened = RA.takeRight(slow.length)(fast);
+      return shortened[index].sub(value);
+    }),
   );
-};
 
 /**
  * The Moving Average Convergence Divergence (MACD) is the relationship of
@@ -51,7 +52,6 @@ export const macd = (
       fastPeriodV: num.validatePositiveInteger(fastPeriod),
       slowPeriodV: num.validatePositiveInteger(slowPeriod),
       signalPeriodV: num.validatePositiveInteger(signalPeriod),
-      // TODO: kick this check out of here
       periodSizes: validatePeriodSizes(slowPeriod, fastPeriod),
       valuesV: arr.validateRequiredSize(slowPeriod + signalPeriod - 1)(values),
     }),
