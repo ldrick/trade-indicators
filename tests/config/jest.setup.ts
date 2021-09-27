@@ -1,6 +1,5 @@
 import { either as E, function as F, readonlyArray as RA, readonlyRecord as RR } from 'fp-ts/lib';
-import { diff, DiffOptions } from 'jest-diff';
-import { matcherHint, printExpected, printReceived } from 'jest-matcher-utils';
+import { diff } from 'jest-diff';
 import {
   FormattedArray,
   FormattedRecord,
@@ -27,20 +26,6 @@ const format =
   (val: JestResult): FormattedArray | FormattedRecord =>
     val instanceof Array ? formatArray(dec)(val) : formatRecord(dec)(val);
 
-const formatDiff = <R, X>(
-  matcherName: string,
-  received: R,
-  expected: X,
-  options: DiffOptions = { expand: true },
-) => {
-  const diffString = diff(expected, received, options);
-  return `${matcherHint(matcherName, undefined, undefined)}\n\n${
-    diffString && diffString.includes('- Expect')
-      ? `Difference:\n\n${diffString}`
-      : `Expected: ${printExpected(expected)}\nReceived: ${printReceived(received)}`
-  }`;
-};
-
 const compareArrays = <A>(exp: ReadonlyArray<A>, rec: ReadonlyArray<A>) =>
   exp.length === rec.length && exp.every((e, index) => e === rec[index]);
 
@@ -60,36 +45,83 @@ const compareResultRecords = (
   compareArrays(Object.keys(exp), Object.keys(rec)) &&
   Object.keys(exp).every((k) => compareResultArrays(exp[k], rec[k], decimals));
 
-const eitherRightToEqualFixedPrecision = <E>(
-  received: E.Either<E, JestResult>,
-  expected: JestResult,
-  decimals = 12,
-) => ({
-  pass: F.pipe(
-    received,
-    E.fold(
-      () => false,
-      (right) =>
-        expected instanceof Array && right instanceof Array
-          ? compareResultArrays(expected, right, decimals)
-          : compareResultRecords(expected as JestResultRecord, right as JestResultRecord, decimals),
-    ),
-  ),
-  message: () =>
-    F.pipe(
+expect.extend({
+  eitherRightToEqualFixedPrecision<E>(
+    received: E.Either<E, JestResult>,
+    expected: JestResult,
+    decimals = 12,
+  ) {
+    const that = this as jest.MatcherContext;
+
+    const options = {
+      comment: 'Object.is equality',
+      isNot: that.isNot,
+      promise: that.promise,
+    };
+
+    const pass = F.pipe(
       received,
       E.fold(
-        () => `Either expected to be right, but was left.`,
-        (rec) =>
-          formatDiff(
-            '.eitherRightToEqualFixedPrecision',
-            format(decimals)(rec),
-            format(decimals)(expected),
-          ),
+        () => false,
+        (right) =>
+          expected instanceof Array && right instanceof Array
+            ? compareResultArrays(expected, right, decimals)
+            : compareResultRecords(
+                expected as JestResultRecord,
+                right as JestResultRecord,
+                decimals,
+              ),
       ),
-    ),
-});
+    );
 
-expect.extend({
-  eitherRightToEqualFixedPrecision,
+    const message = pass
+      ? () =>
+          F.pipe(
+            received,
+            E.fold(
+              () => `Either expected to be right, but was left.`,
+              (rec) => {
+                const formattedR = format(decimals)(rec);
+                const formattedE = format(decimals)(expected);
+                return (
+                  `${that.utils.matcherHint(
+                    'eitherRightToEqualFixedPrecision',
+                    undefined,
+                    undefined,
+                    options,
+                  )}\n\n` +
+                  `Expected: not ${that.utils.printExpected(formattedE)}\n` +
+                  `Received: ${that.utils.printReceived(formattedR)}`
+                );
+              },
+            ),
+          )
+      : () =>
+          F.pipe(
+            received,
+            E.fold(
+              () => `Either expected to be right, but was left.`,
+              (rec) => {
+                const formattedR = format(decimals)(rec);
+                const formattedE = format(decimals)(expected);
+                const diffString = diff(formattedE, formattedR, {
+                  expand: that.expand,
+                });
+                return `${that.utils.matcherHint(
+                  'eitherRightToEqualFixedPrecision',
+                  undefined,
+                  undefined,
+                  options,
+                )}\n\n${
+                  diffString && diffString.includes('- Expect')
+                    ? `Difference:\n\n${diffString}`
+                    : `Expected: ${that.utils.printExpected(formattedE)}\n` +
+                      `Received: ${that.utils.printReceived(formattedR)}`
+                }`;
+              },
+            ),
+          );
+
+    return { actual: received, message, pass };
+  },
 });
