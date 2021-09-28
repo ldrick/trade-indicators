@@ -1,6 +1,6 @@
+import { wamean } from '@src/averages/wamean';
 import { Big } from 'big.js';
 import { readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
-import { wamean } from '../../src/averages/wamean';
 
 describe('wamean', () => {
   test.each(<{ v: RNEA.ReadonlyNonEmptyArray<Big>; r: Big }[]>[

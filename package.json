@@ -209,6 +209,9 @@
     "setupFilesAfterEnv": [
       "<rootDir>/tests/config/jest.setup.ts"
     ],
+    "moduleNameMapper": {
+      "^@src/(.*)$": "<rootDir>/src/$1"
+    },
     "collectCoverage": true,
     "coverageThreshold": {
       "global": {

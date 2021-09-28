@@ -1,6 +1,6 @@
+import { EmptyArrayError } from '@src/errors';
+import { arr } from '@src/utils';
 import { either as E, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
-import { EmptyArrayError } from '../../src/errors';
-import { arr } from '../../src/utils';
 
 describe('tail', () => {
   test.each<{

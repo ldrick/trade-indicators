@@ -1,6 +1,6 @@
+import { NotEnoughDataError, NotPositiveIntegerError } from '@src/errors';
+import { ema } from '@src/index';
 import { either as E } from 'fp-ts/lib';
-import { ema } from '../../src';
-import { NotEnoughDataError, NotPositiveIntegerError } from '../../src/errors';
 import * as prices from '../prices.json';
 
 describe('ema', () => {

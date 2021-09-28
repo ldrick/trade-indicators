@@ -1,10 +1,6 @@
+import { NotEnoughDataError, NotPositiveIntegerError, PeriodSizeMissmatchError } from '@src/errors';
+import { macd } from '@src/index';
 import { either as E } from 'fp-ts/lib';
-import { macd } from '../../src';
-import {
-  NotEnoughDataError,
-  NotPositiveIntegerError,
-  PeriodSizeMissmatchError,
-} from '../../src/errors';
 import * as prices from '../prices.json';
 
 describe('macd', () => {

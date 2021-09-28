@@ -1,10 +1,6 @@
+import { NotEnoughDataError, NotPositiveIntegerError, UnequalArraySizesError } from '@src/errors';
+import { adx } from '@src/index';
 import { either as E } from 'fp-ts/lib';
-import { adx } from '../../src';
-import {
-  NotEnoughDataError,
-  NotPositiveIntegerError,
-  UnequalArraySizesError,
-} from '../../src/errors';
 import * as prices from '../prices.json';
 
 describe('adx', () => {
