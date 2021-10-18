@@ -24,8 +24,6 @@ jobs:
         run: yarn lint
       - name: Test
         run: yarn test
-      - name: Set Version ${{ github.event.release.tag_name }}
-        run: yarn version ${{ github.event.release.tag_name }}
       - name: Build Package
         run: yarn build
       - name: Publish Package to npmjs.org
