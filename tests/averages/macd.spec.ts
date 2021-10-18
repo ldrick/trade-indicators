@@ -1,51 +1,46 @@
-import { left } from 'fp-ts/lib/Either';
-import { macd } from '../../src';
-import {
-  InfinitNumberError,
-  NotEnoughDataError,
-  NotPositiveIntegerError,
-  PeriodSizeMissmatchError,
-} from '../../src/errors';
+import { NotEnoughDataError, NotPositiveIntegerError, PeriodSizeMissmatchError } from '@src/errors';
+import { macd } from '@src/index';
+import { either as E } from 'fp-ts/lib';
 import * as prices from '../prices.json';
 
 describe('macd', () => {
   test.each([
-    { p: [NaN], n: 'fastPeriod' },
-    { p: [1, NaN], n: 'slowPeriod' },
-    { p: [1, 1, NaN], n: 'signalPeriod' },
-    { p: [Infinity], n: 'fastPeriod' },
-    { p: [1, Infinity], n: 'slowPeriod' },
-    { p: [1, 1, Infinity], n: 'signalPeriod' },
-    { p: [-Infinity], n: 'fastPeriod' },
-    { p: [1, -Infinity], n: 'slowPeriod' },
-    { p: [1, 1, -Infinity], n: 'signalPeriod' },
-    { p: [0], n: 'fastPeriod' },
-    { p: [1, 0], n: 'slowPeriod' },
-    { p: [1, 1, 0], n: 'signalPeriod' },
-    { p: [-1], n: 'fastPeriod' },
-    { p: [1, -1], n: 'slowPeriod' },
-    { p: [1, 1, -1], n: 'signalPeriod' },
-    { p: [1.5], n: 'fastPeriod' },
-    { p: [1, 1.5], n: 'slowPeriod' },
-    { p: [1, 1, 1.5], n: 'signalPeriod' },
-  ])('fails if any period is not a positive integer $p', ({ p, n }) => {
-    expect(macd([], ...p)).toStrictEqual(left(new NotPositiveIntegerError(n)));
+    { p: [NaN] },
+    { p: [1, NaN] },
+    { p: [1, 1, NaN] },
+    { p: [Infinity] },
+    { p: [1, Infinity] },
+    { p: [1, 1, Infinity] },
+    { p: [-Infinity] },
+    { p: [1, -Infinity] },
+    { p: [1, 1, -Infinity] },
+    { p: [0] },
+    { p: [1, 0] },
+    { p: [1, 1, 0] },
+    { p: [-1] },
+    { p: [1, -1] },
+    { p: [1, 1, -1] },
+    { p: [1.5] },
+    { p: [1, 1.5] },
+    { p: [1, 1, 1.5] },
+  ])('fails if any period is not a positive integer $p', ({ p }) => {
+    expect(macd([], ...p)).toStrictEqual(E.left(new NotPositiveIntegerError()));
   });
 
   it('fails if slowPeriod is lower or equal fastPeriod', () => {
     expect(macd([], 3, 1)).toStrictEqual(
-      left(new PeriodSizeMissmatchError('slowPeriod', 'fastPeriod')),
+      E.left(new PeriodSizeMissmatchError('slowPeriod', 'fastPeriod')),
     );
   });
 
   it('fails if not enough data to calculate for periods', () => {
-    expect(macd([1, 2])).toStrictEqual(left(new NotEnoughDataError(35, 35)));
+    expect(macd([1, 2, 3, 4], 3, 4, 2)).toStrictEqual(E.left(new NotEnoughDataError(4, 5)));
   });
 
   test.each([{ v: [0, 0, NaN, 0] }, { v: [0, 0, Infinity, 0] }, { v: [0, 0, -Infinity, 0] }])(
     'fails if values contains a infinit value $v',
     ({ v }) => {
-      expect(macd(v, 2, 3, 1)).toStrictEqual(left(new InfinitNumberError()));
+      expect(macd(v, 2, 3, 1)).toStrictEqual(E.left(new Error('[big.js] Invalid number')));
     },
   );
 
@@ -55,9 +50,9 @@ describe('macd', () => {
 
   test.each([
     {
-      v: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      p: [2, 3, 1],
-      r: { macd: [0, 0, 0, 0, 0, 0, 0, 0], signal: [0, 0, 0, 0, 0, 0, 0, 0] },
+      v: [0, 0, 0, 0, 0],
+      p: [3, 4, 2],
+      r: { macd: [0, 0], signal: [null, 0] },
     },
     { v: prices.close, p: [12, 26, 9], r: prices.macd },
   ])(

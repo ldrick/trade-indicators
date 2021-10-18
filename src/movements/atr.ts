@@ -1,35 +1,55 @@
 import Big from 'big.js';
-import { apply as AP, either as E } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
+import {
+  apply as AP,
+  either as E,
+  function as F,
+  option as O,
+  readonlyArray as RA,
+  readonlyNonEmptyArray as RNEA,
+} from 'fp-ts/lib';
 import { smmaC } from '../averages/smma';
-import { HighLowClose, HighLowCloseB } from '../types';
-import { max, objectToBig } from '../utils';
-import { validatePeriod } from '../validations';
-import { validateData } from '../validations/validateData';
+import { UnequalArraySizesError } from '../errors';
+import { HighLowClose, NonEmptyHighLowClose } from '../types';
+import { arr, big, num, rec } from '../utils';
 
-const trueRange = (values: HighLowCloseB): readonly Big[] =>
-  values.high.reduce((reduced, high, index) => {
-    const previousClose = values.close[index - 1];
-    return index === 0
-      ? reduced
-      : [
-          ...reduced,
-          max([
-            high.sub(values.low[index]),
-            high.sub(previousClose).abs(),
-            values.low[index].sub(previousClose).abs(),
-          ]),
-        ];
-  }, <readonly Big[]>[]);
+const trueRange = (
+  values: NonEmptyHighLowClose<Big>,
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
+  F.pipe(
+    values.high,
+    arr.tail,
+    E.chain(
+      RNEA.traverseWithIndex(E.Applicative)((index, high) =>
+        F.pipe(
+          O.bindTo('previousClose')(RA.lookup(index)(values.close)),
+          O.bind('currentLow', () => RA.lookup(index + 1)(values.low)),
+          O.map(({ previousClose, currentLow }) =>
+            big.max([
+              high.sub(currentLow),
+              high.sub(previousClose).abs(),
+              currentLow.sub(previousClose).abs(),
+            ]),
+          ),
+          E.fromOption(() => new UnequalArraySizesError()),
+        ),
+      ),
+    ),
+  );
 
 /**
  * ATR without checks and conversion.
- * Only for internal use.
+ *
+ * @internal
  */
-export const atrC = (values: HighLowCloseB, period: number): E.Either<Error, readonly Big[]> => {
-  const tr = trueRange(values);
-  return smmaC(tr, period);
-};
+export const atrC = (
+  values: NonEmptyHighLowClose<Big>,
+  period: number,
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
+  F.pipe(
+    values,
+    trueRange,
+    E.chain((tr) => smmaC(tr, period)),
+  );
 
 /**
  * The Average True Range (ATR) a period of the True Range Indicator,
@@ -39,12 +59,16 @@ export const atrC = (values: HighLowCloseB, period: number): E.Either<Error, rea
  *
  * @public
  */
-export const atr = (values: HighLowClose, period = 14): E.Either<Error, readonly Big[]> =>
-  pipe(
-    AP.sequenceS(E.Apply)({
-      periodV: validatePeriod(period, 'period'),
-      valuesV: validateData(values, period + 1, period),
+export const atr = (
+  values: HighLowClose<number>,
+  period = 14,
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
+  F.pipe(
+    AP.sequenceS(E.Applicative)({
+      periodV: num.validatePositiveInteger(period),
+      valuesV: rec.validateRequiredSize(period + 1)(values),
     }),
-    E.bind('valuesB', ({ valuesV }) => objectToBig(valuesV)),
+    E.bind('valuesB', ({ valuesV }) => rec.toBig(valuesV)),
     E.chain(({ valuesB, periodV }) => atrC(valuesB, periodV)),
+    E.map(arr.toNumber),
   );

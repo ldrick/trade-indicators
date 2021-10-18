@@ -11,27 +11,21 @@ The Average True Range (ATR) a period of the True Range Indicator, being the gre
 ## Signature
 
 ```typescript
-import { Big } from 'big.js';
 import { either as E } from 'fp-ts/lib';
 
 export declare const atr: (
-  values: {
-    readonly high: readonly number[];
-    readonly low: readonly number[];
-    readonly close: readonly number[];
-  },
+  values: Readonly<Record<'high' | 'low' | 'close', ReadonlyArray<number>>>,
   period?: number, // default: 14
-) => E.Either<Error, readonly Big[]>;
+) => E.Either<Error, ReadonlyArray<number>>;
 ```
 
 ## Example
 
 ```typescript
-import { either as E } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
+import { either as E, function as F } from 'fp-ts/lib';
 import { atr } from '@ldrick/trade-indicators';
 
-const result = pipe(
+const result = F.pipe(
   atr(
     {
       high: [3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5],

@@ -1,4 +1,4 @@
-export { InfinitNumberError } from './InfinitNumberError';
+export { EmptyArrayError } from './EmptyArrayError';
 export { NotEnoughDataError } from './NotEnoughDataError';
 export { NotPositiveIntegerError } from './NotPositiveIntegerError';
 export { PeriodSizeMissmatchError } from './PeriodSizeMissmatchError';

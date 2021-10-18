@@ -1,21 +1,23 @@
 import { Big } from 'big.js';
-import { apply as AP, either as E } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
-import { arrayToBig } from '../utils';
-import { validateData, validatePeriod } from '../validations';
+import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
+import { arr, num } from '../utils';
 import { emaC } from './ema';
 
 const calculate = (
-  one: readonly Big[],
-  two: readonly Big[],
-  three: readonly Big[],
+  one: RNEA.ReadonlyNonEmptyArray<Big>,
+  two: RNEA.ReadonlyNonEmptyArray<Big>,
+  three: RNEA.ReadonlyNonEmptyArray<Big>,
   period: number,
-): readonly Big[] =>
-  three.map((value, index) =>
-    one[index + 2 * (period - 1)]
-      .mul(3)
-      .sub(two[index + period - 1].mul(3))
-      .add(value),
+): RNEA.ReadonlyNonEmptyArray<number> =>
+  F.pipe(
+    three,
+    RNEA.mapWithIndex((index, value) =>
+      one[index + 2 * (period - 1)]
+        .mul(3)
+        .sub(two[index + period - 1].mul(3))
+        .add(value)
+        .toNumber(),
+    ),
   );
 
 /**
@@ -26,13 +28,16 @@ const calculate = (
  *
  * @public
  */
-export const tema = (values: readonly number[], period = 20): E.Either<Error, readonly Big[]> =>
-  pipe(
-    AP.sequenceS(E.Apply)({
-      periodV: validatePeriod(period, 'period'),
-      valuesV: validateData(values, 3 * period - 2, period),
+export const tema = (
+  values: ReadonlyArray<number>,
+  period = 20,
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
+  F.pipe(
+    AP.sequenceS(E.Applicative)({
+      periodV: num.validatePositiveInteger(period),
+      valuesV: arr.validateRequiredSize(3 * period - 2)(values),
     }),
-    E.bind('valuesB', ({ valuesV }) => arrayToBig(valuesV)),
+    E.bind('valuesB', ({ valuesV }) => arr.toBig(valuesV)),
     E.bind('emaOne', ({ valuesB, periodV }) => emaC(valuesB, periodV)),
     E.bind('emaTwo', ({ emaOne, periodV }) => emaC(emaOne, periodV)),
     E.bind('emaThree', ({ emaTwo, periodV }) => emaC(emaTwo, periodV)),

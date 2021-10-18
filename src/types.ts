@@ -1,18 +1,17 @@
-import { Big } from 'big.js';
+import { readonlyNonEmptyArray as RNEA, readonlyRecord as RR } from 'fp-ts';
 
-export type Movement = 'up' | 'down';
-export type ValuesInput = Readonly<number[]> | NumberObject;
-export type NumberObject = Readonly<Record<string, Readonly<number[]>>>;
-export type BigObject = Readonly<Record<string, Readonly<Big[]>>>;
+// record array
+export type ReadonlyRecordArray<A> = RR.ReadonlyRecord<string, ReadonlyArray<A>>;
+export type HighLowClose<A> = ReadonlyRecordArray<A> & {
+  high: ReadonlyArray<A>;
+  low: ReadonlyArray<A>;
+  close: ReadonlyArray<A>;
+};
 
-export interface HighLowClose extends NumberObject {
-  high: Readonly<number[]>;
-  low: Readonly<number[]>;
-  close: Readonly<number[]>;
-}
+export type NonEmpty<A, Type extends ReadonlyRecordArray<A>> = {
+  [Property in keyof Type]: RNEA.ReadonlyNonEmptyArray<A>;
+};
 
-export interface HighLowCloseB extends BigObject {
-  high: Readonly<Big[]>;
-  low: Readonly<Big[]>;
-  close: Readonly<Big[]>;
-}
+// non empty record array
+export type ReadonlyRecordNonEmptyArray<A> = NonEmpty<A, ReadonlyRecordArray<A>>;
+export type NonEmptyHighLowClose<A> = NonEmpty<A, HighLowClose<A>>;
