@@ -9,7 +9,9 @@ has_toc: false
 ## Trade Indicators
 
 > Trade Indicators written in pure functional Typescript. \
-> Results will be Either<Error, Big[] | BigObject> using: \
+> Results will be \
+> `Either<Error, ReadonlyArray<number> | Readonly<Record<string, ReadonlyArray<number>>>>` \
+> depending on what is returned using these amazing libraries: \
 > 🚀 [fp-ts](https://github.com/gcanti/fp-ts) \
 > 🌟 [big.js](https://github.com/MikeMcl/big.js/)
 
@@ -21,4 +23,4 @@ To achieve this goal, `trade-indicators` uses fp-ts. \
 For convenience use, it provides the possibility to unwrap to Promise, still enforcing an Error-Handling.
 
 Besides that the maximum possible precision of results shall be delivered. \
-JavaScript Ecosystem uses `Number`, which has some unprecise effects. To mitigate these, `trade-indicators` uses big.js.
+JavaScript Ecosystem uses `Number`, which has some unprecise effects. To mitigate these, `trade-indicators` uses big.js internally.

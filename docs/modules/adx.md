@@ -11,34 +11,21 @@ The Average Directional Index (ADX) determines trend strength. It also delivers 
 ## Signature
 
 ```typescript
-import { Big } from 'big.js';
 import { either as E } from 'fp-ts/lib';
 
 export declare const adx: (
-  values: {
-    readonly high: readonly number[];
-    readonly low: readonly number[];
-    readonly close: readonly number[];
-  },
+  values: Readonly<Record<'high' | 'low' | 'close', ReadonlyArray<number>>>,
   period?: number, // default: 14
-) => E.Either<
-  Error,
-  {
-    readonly adx: readonly Big[];
-    readonly mdi: readonly Big[];
-    readonly pdi: readonly Big[];
-  }
->;
+) => E.Either<Error, Readonly<Record<'adx' | 'mdi' | 'pdi', ReadonlyArray<number | null>>>>;
 ```
 
 ## Example
 
 ```typescript
-import { either as E } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
+import { either as E, function as F } from 'fp-ts/lib';
 import { adx } from '@ldrick/trade-indicators';
 
-const result = pipe(
+const result = F.pipe(
   adx(
     {
       high: [3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5],

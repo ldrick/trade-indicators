@@ -1,26 +1,28 @@
 import { Big } from 'big.js';
-import { apply as AP, either as E } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
-import { arrayToBig, numberToBig } from '../utils';
-import { validateData, validatePeriod } from '../validations';
-import { dmaC } from './dma';
+import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
+import { arr, num } from '../utils';
+import { dma } from './dma';
 
 const getFactor = (period: number): E.Either<Error, Big> =>
-  pipe(
+  F.pipe(
     period,
-    numberToBig,
+    num.toBig,
     E.map((periodB) => new Big(1).div(periodB)),
   );
 
 /**
  * SMMA without checks and conversion.
- * Only for internal use.
+ *
+ * @internal
  */
-export const smmaC = (values: readonly Big[], period: number): E.Either<Error, readonly Big[]> =>
-  pipe(
+export const smmaC = (
+  values: RNEA.ReadonlyNonEmptyArray<Big>,
+  period: number,
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
+  F.pipe(
     period,
     getFactor,
-    E.map((factorB) => dmaC(values, period, factorB)),
+    E.map((factorB) => dma(values, period, factorB)),
   );
 
 /**
@@ -30,12 +32,16 @@ export const smmaC = (values: readonly Big[], period: number): E.Either<Error, r
  *
  * @public
  */
-export const smma = (values: readonly number[], period = 20): E.Either<Error, readonly Big[]> =>
-  pipe(
-    AP.sequenceS(E.Apply)({
-      periodV: validatePeriod(period, 'period'),
-      valuesV: validateData(values, period, period),
+export const smma = (
+  values: ReadonlyArray<number>,
+  period = 20,
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
+  F.pipe(
+    AP.sequenceS(E.Applicative)({
+      periodV: num.validatePositiveInteger(period),
+      valuesV: arr.validateRequiredSize(period)(values),
     }),
-    E.bind('valuesB', ({ valuesV }) => arrayToBig(valuesV)),
+    E.bind('valuesB', ({ valuesV }) => arr.toBig(valuesV)),
     E.chain(({ valuesB, periodV }) => smmaC(valuesB, periodV)),
+    E.map(arr.toNumber),
   );
