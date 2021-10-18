@@ -1,11 +1,6 @@
-import { left } from 'fp-ts/lib/Either';
-import { atr } from '../../src';
-import {
-  InfinitNumberError,
-  NotEnoughDataError,
-  NotPositiveIntegerError,
-  UnequalArraySizesError,
-} from '../../src/errors';
+import { NotEnoughDataError, NotPositiveIntegerError, UnequalArraySizesError } from '@src/errors';
+import { atr } from '@src/index';
+import { either as E } from 'fp-ts/lib';
 import * as prices from '../prices.json';
 
 describe('atr', () => {
@@ -13,21 +8,21 @@ describe('atr', () => {
     'fails if period is not a positive integer $p',
     ({ p }) => {
       expect(atr({ close: [1.3], high: [1.5], low: [0.9] }, p)).toStrictEqual(
-        left(new NotPositiveIntegerError('period')),
+        E.left(new NotPositiveIntegerError()),
       );
     },
   );
 
   it('fails if not enough data to calculate for period', () => {
-    expect(atr({ close: [1.3], high: [1.5], low: [0.9] }, 3)).toStrictEqual(
-      left(new NotEnoughDataError(3, 4)),
+    expect(atr({ close: [1, 2, 3], high: [1, 2, 3], low: [1, 2, 3] }, 3)).toStrictEqual(
+      E.left(new NotEnoughDataError(3, 4)),
     );
   });
 
   it('fails if data given has unequal sizes', () => {
     expect(
       atr({ close: [1.3, 2.1, 2, 3, 1.9], high: [1.5, 2.4, 2.8, 2.3], low: [0.9, 1.5, 2.3] }, 1),
-    ).toStrictEqual(left(new UnequalArraySizesError()));
+    ).toStrictEqual(E.left(new UnequalArraySizesError()));
   });
 
   test.each([
@@ -53,7 +48,7 @@ describe('atr', () => {
       },
     },
   ])('fails if any value is a infinit value $v', ({ v }) => {
-    expect(atr(v, 2)).toStrictEqual(left(new InfinitNumberError()));
+    expect(atr(v, 2)).toStrictEqual(E.left(new Error('[big.js] Invalid number')));
   });
 
   it('calculates the Average True Range with default period', () => {
@@ -65,12 +60,12 @@ describe('atr', () => {
   test.each([
     {
       v: {
-        high: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        low: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        close: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        high: [0, 0, 0, 0],
+        low: [0, 0, 0, 0],
+        close: [0, 0, 0, 0],
       },
       p: 3,
-      r: [0, 0, 0, 0, 0, 0, 0],
+      r: [0],
     },
     { v: { high: prices.high, low: prices.low, close: prices.close }, p: 14, r: prices.atr.p14 },
   ])('calculates the Average True Range on prices with period $p', ({ v, p, r }) => {

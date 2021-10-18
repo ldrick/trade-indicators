@@ -7,14 +7,15 @@
 [![made with](https://img.shields.io/github/languages/top/ldrick/trade-indicators)](https://www.typescriptlang.org/)
 
 > Trade Indicators written in pure functional Typescript. \
-> Results will be Either<Error, Big[] | BigObject> using: \
+> Results will be \
+> `Either<Error, ReadonlyArray<number> | Readonly<Record<string, ReadonlyArray<number>>>>` \
+> depending on what is returned using these amazing libraries: \
 > 🚀 [fp-ts](https://github.com/gcanti/fp-ts) \
 > 🌟 [big.js](https://github.com/MikeMcl/big.js/)
 >
 > - Average Directional Index (adx)
 > - Average True Range (atr)
 > - Double Exponential Moving Average (dema)
-> - Dynamic Moving Average (dma)
 > - Exponential Moving Average (ema)
 > - Moving Average Convergence / Divergence (macd)
 > - Simple Moving Average (sma)
@@ -33,22 +34,20 @@ or \
 In TypeScript:
 
 ```typescript
-import { Big } from 'big.js';
-import { either as E } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
-import { ema, unwrap } from '@ldrick/trade-indicators';
+import { either as E, function as F } from 'fp-ts/lib';
+import { ema, toPromise } from '@ldrick/trade-indicators';
 
 const prices = [3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5];
 const period = 3;
 
-// possible usage to pipe the Result E.Either<Error, Big[]>
-const expMovingAverage = pipe(
+// possible usage to pipe the Result E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>>
+const expMovingAverage = F.pipe(
   ema(prices, period),
-  E.getOrElse(() => <readonly Big[]>[]),
+  E.getOrElse(() => <ReadonlyArray<number>>[]),
 );
 
-// or unwrap the Result to Promise<number[]>
-unwrap(ema(prices, period)).then(
+// or convert the Result to Promise<RNEA.ReadonlyNonEmptyArray<number>>
+toPromise(ema(prices, period)).then(
   (result) => console.log(result),
   (error) => console.log(error),
 );

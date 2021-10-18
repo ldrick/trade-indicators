@@ -1,36 +1,31 @@
 import { Big } from 'big.js';
-import { either as E, readonlyRecord as RR } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
-import { BigObject, HighLowClose, HighLowCloseB, NumberObject } from '../types';
+import { function as F, ord as ORD, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
+
+export const ord: ORD.Ord<Big> = {
+  /**
+   * Big equals.
+   *
+   * @internal
+   */
+  equals: (first, second) => first.eq(second),
+  /**
+   * Big compare.
+   *
+   * @internal
+   */
+  compare: (first, second) => (first.lt(second) ? -1 : first.gt(second) ? 1 : 0),
+};
 
 /**
  * Like `Math.max()` just for `Big`.
+ *
+ * @internal
  */
-export const max = (values: readonly Big[]): Big =>
-  values.reduce((reduced, value) => (value.gt(reduced) ? value : reduced), new Big(0));
+export const max = (values: RNEA.ReadonlyNonEmptyArray<Big>): Big => F.pipe(values, RNEA.max(ord));
 
 /**
- * Safely convert `number` to `Big`.
+ *  Chainable wrapper for Big.toNumber()
+ *
+ * @internal
  */
-export const numberToBig = (value: number): E.Either<Error, Big> =>
-  E.tryCatch(
-    () => new Big(value),
-    (reason) => reason as Error,
-  );
-
-/**
- * Safely convert `Readonly<number[]>` to `Readonly<Big[]>`.
- */
-export const arrayToBig = E.traverseArray(numberToBig);
-
-/**
- * Safely convert `Readonly<Record<string, Readonly<number[]>>>`
- * to `Readonly<Record<string, Readonly<Big[]>>>`.
- */
-// prettier-ignore
-export const objectToBig = ((
-  obj: NumberObject | HighLowClose,
-): E.Either<Error, BigObject | HighLowCloseB> =>
-  pipe(obj, RR.traverse(E.Applicative)(arrayToBig))) as
-  ((obj: HighLowClose) => E.Either<Error, HighLowCloseB>) &
-  ((obj: NumberObject) => E.Either<Error, BigObject>);
+export const toNumber = (b: Big): number => b.toNumber();

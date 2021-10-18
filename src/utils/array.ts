@@ -1,10 +1,64 @@
-/**
- * Get the second last item from `Array`.
- */
-export const previous = <A>(a: readonly A[]): A => a[a.length - 1];
+import { Big } from 'big.js';
+import {
+  either as E,
+  function as F,
+  readonlyArray as RA,
+  readonlyNonEmptyArray as RNEA,
+} from 'fp-ts';
+import { EmptyArrayError, NotEnoughDataError } from '../errors';
+import * as big from './big';
+import * as num from './number';
 
 /**
- * Create new `Array` from given `Array` by dropping left items to reach size of offset `Array`.
+ * Safely convert `RNEA.ReadonlyNonEmptyArray<number>` to `RNEA.ReadonlyNonEmptyArray<Big>`.
+ *
+ * @internal
  */
-export const trimLeft = <A, O>(arr: readonly A[], offsetArr: readonly O[]): readonly A[] =>
-  arr.length > offsetArr.length ? arr.slice(-1 * offsetArr.length) : arr;
+export const toBig = RNEA.traverse(E.Applicative)(num.toBig);
+
+/**
+ * Convert `RNEA.ReadonlyNonEmptyArray<Big>` to `RNEA.ReadonlyNonEmptyArray<number>`.
+ *
+ * @internal
+ */
+export const toNumber = (
+  values: RNEA.ReadonlyNonEmptyArray<Big>,
+): RNEA.ReadonlyNonEmptyArray<number> => RNEA.map(big.toNumber)(values);
+
+/**
+ * Create new Array from given and fill left with value up to given size.
+ *
+ * @internal
+ */
+export const fillLeftW =
+  <A>(size: number, value: A) =>
+  <B>(tail: RNEA.ReadonlyNonEmptyArray<B>): RNEA.ReadonlyNonEmptyArray<A | B> =>
+    F.pipe(
+      size > tail.length ? size - tail.length : 0,
+      (times) => RA.replicate(times, value),
+      RNEA.concatW(tail),
+    );
+
+/**
+ * Get all but the first of an `ReadonlyNonEmptyArray` as `ReadonlyNonEmptyArray`
+ *
+ * @internal
+ */
+export const tail = <A>(
+  array: RNEA.ReadonlyNonEmptyArray<A>,
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<A>> =>
+  F.pipe(array, RNEA.tail, (rest) =>
+    RA.isNonEmpty(rest) ? E.right(rest) : E.left(new EmptyArrayError()),
+  );
+
+/**
+ * Validates if an Array has the required size.
+ *
+ * @internal
+ */
+export const validateRequiredSize =
+  (required: number) =>
+  <A>(array: ReadonlyArray<A>): E.Either<Error, RNEA.ReadonlyNonEmptyArray<A>> =>
+    RA.isNonEmpty(array) && array.length >= required
+      ? E.right(array)
+      : E.left(new NotEnoughDataError(array.length, required));

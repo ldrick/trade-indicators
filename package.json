@@ -1,6 +1,6 @@
 {
   "name": "@ldrick/trade-indicators",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "Trade Indicators",
   "license": "MIT",
   "repository": "ldrick/trade-indicators",
@@ -8,7 +8,9 @@
     "name": "Ricky Lippmann",
     "email": "ricky.lippmann@gmail.com"
   },
+  "homepage": "https://github.com/ldrick/trade-indicators",
   "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "engines": {
     "node": ">= 14.0",
     "yarn": ">= 1.22"
@@ -41,38 +43,37 @@
   ],
   "dependencies": {
     "big.js": "^6.1.1",
-    "fp-ts": "^2.11.1"
+    "fp-ts": "^2.11.5"
   },
   "devDependencies": {
-    "@babel/cli": "^7.14.8",
-    "@babel/core": "^7.14.8",
-    "@babel/preset-env": "^7.14.9",
-    "@babel/preset-typescript": "^7.14.5",
-    "@types/big.js": "^6.1.1",
-    "@types/jest": "^26.0.24",
-    "@typescript-eslint/eslint-plugin": "^4.29.0",
-    "@typescript-eslint/parser": "^4.29.0",
-    "babel-jest": "^27.0.6",
-    "core-js": "^3.16.0",
-    "eslint": "^7.32.0",
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "@babel/preset-typescript": "^7.15.0",
+    "@types/big.js": "^6.1.2",
+    "@types/jest": "^27.0.2",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
+    "babel-jest": "^27.3.0",
+    "core-js": "^3.18.3",
+    "eslint": "^8.0.1",
     "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-config-airbnb-typescript": "^12.3.1",
+    "eslint-config-airbnb-typescript": "^14.0.1",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-import-resolver-node": "^0.3.4",
+    "eslint-import-resolver-node": "^0.3.6",
     "eslint-plugin-eslint-comments": "^3.2.0",
-    "eslint-plugin-functional": "^3.5.0",
-    "eslint-plugin-import": "^2.23.4",
-    "eslint-plugin-jest": "^24.4.0",
-    "eslint-plugin-jsdoc": "^36.0.6",
-    "husky": "^7.0.1",
-    "jest": "^27.0.6",
-    "jest-diff": "^27.0.6",
-    "jest-matcher-utils": "^27.0.6",
-    "lint-staged": "^11.1.1",
+    "eslint-plugin-functional": "^4.0.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-jest": "^25.2.2",
+    "eslint-plugin-jsdoc": "^36.1.1",
+    "husky": "^7.0.2",
+    "jest": "^27.3.0",
+    "jest-diff": "^27.3.0",
+    "lint-staged": "^11.2.3",
     "pinst": "^2.1.6",
-    "prettier": "^2.3.2",
+    "prettier": "^2.4.1",
     "rimraf": "^3.0.2",
-    "typescript": "^4.3.5"
+    "typescript": "~4.4.4"
   },
   "types": "dist/index.d.ts",
   "sideEffects": false,
@@ -81,7 +82,7 @@
       [
         "@babel/preset-env",
         {
-          "corejs": "3.15",
+          "corejs": "3.18",
           "targets": {
             "node": "current"
           },
@@ -128,6 +129,7 @@
           "warnOnUnsupportedTypeScriptVersion": false
         },
         "rules": {
+          "no-nested-ternary": "off",
           "import/prefer-default-export": "off",
           "import/no-default-export": "error",
           "jsdoc/require-returns": "off",
@@ -155,6 +157,14 @@
                 "any"
               ]
             }
+          ],
+          "jsdoc/check-tag-names": [
+            "warn",
+            {
+              "definedTags": [
+                "internal"
+              ]
+            }
           ]
         }
       },
@@ -167,20 +177,14 @@
         ],
         "extends": [
           "plugin:functional/external-recommended",
-          "plugin:functional/recommended",
-          "plugin:functional/stylitic"
+          "plugin:functional/recommended"
         ],
         "rules": {
+          "@typescript-eslint/prefer-readonly-parameter-types": "off",
           "functional/functional-parameters": [
             "warn",
             {
               "enforceParameterCount": false
-            }
-          ],
-          "functional/no-conditional-statement": [
-            "warn",
-            {
-              "allowReturningBranches": true
             }
           ]
         }
@@ -205,6 +209,9 @@
     "setupFilesAfterEnv": [
       "<rootDir>/tests/config/jest.setup.ts"
     ],
+    "moduleNameMapper": {
+      "^@src/(.*)$": "<rootDir>/src/$1"
+    },
     "collectCoverage": true,
     "coverageThreshold": {
       "global": {
@@ -226,5 +233,6 @@
     "trailingComma": "all",
     "arrowParens": "always",
     "endOfLine": "lf"
-  }
+  },
+  "packageManager": "yarn@3.0.2"
 }

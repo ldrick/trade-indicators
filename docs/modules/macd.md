@@ -1,6 +1,6 @@
 ---
 title: macd.ts
-nav_order: 6
+nav_order: 5
 parent: Modules
 ---
 
@@ -11,25 +11,23 @@ The Moving Average Convergence Divergence (MACD) is the relationship of two Expo
 ## Signature
 
 ```typescript
-import { Big } from 'big.js';
 import { either as E } from 'fp-ts/lib';
 
 export declare const macd: (
-  values: readonly number[],
+  values: ReadonlyArray<number>,
   fastPeriod?: number, // default: 12
   slowPeriod?: number, // default: 26
   signalPeriod?: number, // default: 9
-) => E.Either<Error, { readonly macd: readonly Big[]; readonly signal: readonly Big[] }>;
+) => E.Either<Error, Readonly<Record<"macd" | "signal", ReadonlyArray<number | null>>>;
 ```
 
 ## Example
 
 ```typescript
-import { either as E } from 'fp-ts/lib';
-import { pipe } from 'fp-ts/lib/function';
+import { either as E, function as F } from 'fp-ts/lib';
 import { macd } from '@ldrick/trade-indicators';
 
-const result = pipe(
+const result = F.pipe(
   macd([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5, 3.5, 5.44, 8.1, 9.1, 11], 4, 5, 3),
   E.fold(
     (error) => console.log(error),
