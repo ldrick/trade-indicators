@@ -35,7 +35,8 @@ jobs:
         with:
           node-version: '14.x'
           registry-url: 'https://npm.pkg.github.com'
+          scope: '@ldrick'
       - name: Publish Package to Github Packages
-        run: yarn npm publish --access public
+        run: yarn npm publish
         env:
           YARN_NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
