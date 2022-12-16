@@ -9,24 +9,26 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14.x, 16.x]
+        node-version: [16.x, 18.x]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install Dependencies
-        run: yarn install --immutable
-      - name: Typecheck
-        run: yarn tsc --noEmit
+        run: npm ci
+      - name: Format Check
+        run: npm run check:format
+      - name: Type Check
+        run: npm run check:types
       - name: Lint
-        run: yarn lint
+        run: npm run lint
       - name: Test
-        run: yarn test
+        run: npm run test
       - name: Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: ./coverage

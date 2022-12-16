@@ -21,16 +21,10 @@
     "html",
     "vue"
   ],
-  "eslint.packageManager": "yarn",
-  // typescript
-  "typescript.tsdk": ".yarn/sdks/typescript/lib",
+  "eslint.packageManager": "npm",
   // package manager
-  "npm.packageManager": "yarn",
-  "eslint.nodePath": ".yarn/sdks",
-  "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
+  "npm.packageManager": "npm",
   "typescript.enablePromptUseWorkspaceTsdk": true,
-  "search.exclude": {
-    "**/.yarn": true,
-    "**/.pnp.*": true
-  }
+  // typescript
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
