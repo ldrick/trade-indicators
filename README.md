@@ -1,6 +1,6 @@
 # trade-indicators
 
-[![build status](https://img.shields.io/github/workflow/status/ldrick/trade-indicators/Test)](https://github.com/ldrick/trade-indicators/actions?query=workflow%3ATest)
+[![test](https://github.com/ldrick/trade-indicators/actions/workflows/test.yml/badge.svg)](https://github.com/ldrick/trade-indicators/actions/workflows/test.yml)
 [![codecov](https://img.shields.io/codecov/c/github/ldrick/trade-indicators/main)](https://codecov.io/gh/ldrick/trade-indicators)
 [![npm version](https://img.shields.io/npm/v/@ldrick/trade-indicators?color=blue)](https://www.npmjs.com/package/@ldrick/trade-indicators)
 [![npm license](https://img.shields.io/npm/l/@ldrick/trade-indicators)](https://www.npmjs.com/package/@ldrick/trade-indicators)
