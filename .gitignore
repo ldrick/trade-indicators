@@ -99,10 +99,3 @@ dist
 
 # TernJS port file
 .tern-port
-
-# yarn directories
-.yarn/*
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-.pnp.*
