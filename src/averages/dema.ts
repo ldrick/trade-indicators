@@ -4,14 +4,14 @@ import { arr, num } from '../utils';
 import { emaC } from './ema';
 
 const calculate = (
-  one: RNEA.ReadonlyNonEmptyArray<Big>,
-  two: RNEA.ReadonlyNonEmptyArray<Big>,
-  period: number,
+	one: RNEA.ReadonlyNonEmptyArray<Big>,
+	two: RNEA.ReadonlyNonEmptyArray<Big>,
+	period: number,
 ): RNEA.ReadonlyNonEmptyArray<number> =>
-  F.pipe(
-    two,
-    RNEA.mapWithIndex((index, value) => one[index + period - 1].mul(2).sub(value).toNumber()),
-  );
+	F.pipe(
+		two,
+		RNEA.mapWithIndex((index, value) => one[index + period - 1].mul(2).sub(value).toNumber()),
+	);
 
 /**
  * The Double Exponential Moving Average (DEMA) uses two Exponential Moving Average (EMA)
@@ -21,16 +21,16 @@ const calculate = (
  * @public
  */
 export const dema = (
-  values: ReadonlyArray<number>,
-  period = 20,
+	values: ReadonlyArray<number>,
+	period = 20,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
-  F.pipe(
-    AP.sequenceS(E.Applicative)({
-      periodV: num.validatePositiveInteger(period),
-      valuesV: arr.validateRequiredSize(2 * period - 1)(values),
-    }),
-    E.bind('valuesB', ({ valuesV }) => arr.toBig(valuesV)),
-    E.bind('emaOne', ({ valuesB, periodV }) => emaC(valuesB, periodV)),
-    E.bind('emaTwo', ({ emaOne, periodV }) => emaC(emaOne, periodV)),
-    E.map(({ emaOne, emaTwo, periodV }) => calculate(emaOne, emaTwo, periodV)),
-  );
+	F.pipe(
+		AP.sequenceS(E.Applicative)({
+			periodV: num.validatePositiveInteger(period),
+			valuesV: arr.validateRequiredSize(2 * period - 1)(values),
+		}),
+		E.bind('valuesB', ({ valuesV }) => arr.toBig(valuesV)),
+		E.bind('emaOne', ({ valuesB, periodV }) => emaC(valuesB, periodV)),
+		E.bind('emaTwo', ({ emaOne, periodV }) => emaC(emaOne, periodV)),
+		E.map(({ emaOne, emaTwo, periodV }) => calculate(emaOne, emaTwo, periodV)),
+	);

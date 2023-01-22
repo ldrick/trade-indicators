@@ -26,10 +26,10 @@ import { either as E, function as F } from 'fp-ts/lib';
 import { wma } from '@ldrick/trade-indicators';
 
 const result = F.pipe(
-  wma([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5], 3),
-  E.fold(
-    (error) => console.log(error),
-    (values) => console.log(values),
-  ),
+	wma([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5], 3),
+	E.fold(
+		(error) => console.log(error),
+		(values) => console.log(values),
+	),
 );
 ```

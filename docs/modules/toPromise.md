@@ -23,13 +23,13 @@ import { ema, macd, toPromise } from '@ldrick/trade-indicators';
 
 const emaResult = ema([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5], 3);
 toPromise(emaResult).then(
-  (result) => console.log(result),
-  (error) => console.log(error),
+	(result) => console.log(result),
+	(error) => console.log(error),
 );
 
 const macdResult = macd([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5, 3.5, 5.44, 8.1, 9.1, 11], 4, 5, 3);
 toPromise(macdResult).then(
-  (result) => console.log(result),
-  (error) => console.log(error),
+	(result) => console.log(result),
+	(error) => console.log(error),
 );
 ```

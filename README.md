@@ -42,13 +42,13 @@ const period = 3;
 
 // possible usage to pipe the Result E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>>
 const expMovingAverage = F.pipe(
-  ema(prices, period),
-  E.getOrElse(() => <ReadonlyArray<number>>[]),
+	ema(prices, period),
+	E.getOrElse(() => <ReadonlyArray<number>>[]),
 );
 
 // or convert the Result to Promise<RNEA.ReadonlyNonEmptyArray<number>>
 toPromise(ema(prices, period)).then(
-  (result) => console.log(result),
-  (error) => console.log(error),
+	(result) => console.log(result),
+	(error) => console.log(error),
 );
 ```

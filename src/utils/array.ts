@@ -1,9 +1,9 @@
 import { Big } from 'big.js';
 import {
-  either as E,
-  function as F,
-  readonlyArray as RA,
-  readonlyNonEmptyArray as RNEA,
+	either as E,
+	function as F,
+	readonlyArray as RA,
+	readonlyNonEmptyArray as RNEA,
 } from 'fp-ts';
 import { EmptyArrayError, NotEnoughDataError } from '../errors';
 import * as big from './big';
@@ -22,7 +22,7 @@ export const toBig = RNEA.traverse(E.Applicative)(num.toBig);
  * @internal
  */
 export const toNumber = (
-  values: RNEA.ReadonlyNonEmptyArray<Big>,
+	values: RNEA.ReadonlyNonEmptyArray<Big>,
 ): RNEA.ReadonlyNonEmptyArray<number> => RNEA.map(big.toNumber)(values);
 
 /**
@@ -31,13 +31,13 @@ export const toNumber = (
  * @internal
  */
 export const fillLeftW =
-  <A>(size: number, value: A) =>
-  <B>(tail: RNEA.ReadonlyNonEmptyArray<B>): RNEA.ReadonlyNonEmptyArray<A | B> =>
-    F.pipe(
-      size > tail.length ? size - tail.length : 0,
-      (times) => RA.replicate(times, value),
-      RNEA.concatW(tail),
-    );
+	<A>(size: number, value: A) =>
+	<B>(tail: RNEA.ReadonlyNonEmptyArray<B>): RNEA.ReadonlyNonEmptyArray<A | B> =>
+		F.pipe(
+			size > tail.length ? size - tail.length : 0,
+			(times) => RA.replicate(times, value),
+			RNEA.concatW(tail),
+		);
 
 /**
  * Get all but the first of an `ReadonlyNonEmptyArray` as `ReadonlyNonEmptyArray`
@@ -45,11 +45,11 @@ export const fillLeftW =
  * @internal
  */
 export const tail = <A>(
-  array: RNEA.ReadonlyNonEmptyArray<A>,
+	array: RNEA.ReadonlyNonEmptyArray<A>,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<A>> =>
-  F.pipe(array, RNEA.tail, (rest) =>
-    RA.isNonEmpty(rest) ? E.right(rest) : E.left(new EmptyArrayError()),
-  );
+	F.pipe(array, RNEA.tail, (rest) =>
+		RA.isNonEmpty(rest) ? E.right(rest) : E.left(new EmptyArrayError()),
+	);
 
 /**
  * Validates if an Array has the required size.
@@ -57,8 +57,8 @@ export const tail = <A>(
  * @internal
  */
 export const validateRequiredSize =
-  (required: number) =>
-  <A>(array: ReadonlyArray<A>): E.Either<Error, RNEA.ReadonlyNonEmptyArray<A>> =>
-    RA.isNonEmpty(array) && array.length >= required
-      ? E.right(array)
-      : E.left(new NotEnoughDataError(array.length, required));
+	(required: number) =>
+	<A>(array: ReadonlyArray<A>): E.Either<Error, RNEA.ReadonlyNonEmptyArray<A>> =>
+		RA.isNonEmpty(array) && array.length >= required
+			? E.right(array)
+			: E.left(new NotEnoughDataError(array.length, required));

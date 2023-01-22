@@ -14,8 +14,8 @@ The Exponential Moving Average (EMA) takes newer values weighted into account an
 import { either as E } from 'fp-ts/lib';
 
 export declare const ema: (
-  values: ReadonlyArray<number>,
-  period?: number, // default: 20
+	values: ReadonlyArray<number>,
+	period?: number, // default: 20
 ) => E.Either<Error, ReadonlyArray<number>>;
 ```
 
@@ -26,10 +26,10 @@ import { either as E, function as F } from 'fp-ts/lib';
 import { ema } from '@ldrick/trade-indicators';
 
 const result = F.pipe(
-  ema([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5], 3),
-  E.fold(
-    (error) => console.log(error),
-    (values) => console.log(values),
-  ),
+	ema([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5], 3),
+	E.fold(
+		(error) => console.log(error),
+		(values) => console.log(values),
+	),
 );
 ```

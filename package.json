@@ -1,236 +1,237 @@
 {
-  "name": "@ldrick/trade-indicators",
-  "version": "0.4.1",
-  "description": "Trade Indicators",
-  "license": "MIT",
-  "repository": "ldrick/trade-indicators",
-  "author": {
-    "name": "Ricky Lippmann",
-    "email": "ricky.lippmann@gmail.com"
-  },
-  "homepage": "https://github.com/ldrick/trade-indicators",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "engines": {
-    "node": ">= 16.0"
-  },
-  "scripts": {
-    "build": "rimraf dist && tsc --project tsconfig.build.json",
-    "check:format": "prettier --check .",
-    "check:types": "tsc --noEmit",
-    "format": "prettier --write .",
-    "lint": "eslint .",
-    "postinstall": "husky install",
-    "postpublish": "pinst --enable",
-    "prepublishOnly": "pinst --disable",
-    "test": "jest"
-  },
-  "files": [
-    "dist"
-  ],
-  "keywords": [
-    "average",
-    "dema",
-    "ema",
-    "indicators",
-    "moving",
-    "signals",
-    "sma",
-    "smma",
-    "technical",
-    "trade",
-    "trading",
-    "true-range"
-  ],
-  "dependencies": {
-    "big.js": "^6.2.1",
-    "fp-ts": "^2.13.1"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.19.3",
-    "@babel/core": "^7.20.5",
-    "@babel/preset-env": "^7.20.2",
-    "@babel/preset-typescript": "^7.18.6",
-    "@types/big.js": "^6.1.6",
-    "@types/jest": "^29.2.4",
-    "@typescript-eslint/eslint-plugin": "^5.46.1",
-    "@typescript-eslint/parser": "^5.46.1",
-    "babel-jest": "^29.3.1",
-    "core-js": "^3.26.1",
-    "eslint": "^8.29.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-airbnb-typescript": "^17.0.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-import-resolver-node": "^0.3.6",
-    "eslint-plugin-eslint-comments": "^3.2.0",
-    "eslint-plugin-functional": "^4.4.1",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-jest": "^27.1.7",
-    "eslint-plugin-jsdoc": "^39.6.4",
-    "husky": "^8.0.2",
-    "jest": "^29.3.1",
-    "jest-diff": "^29.3.1",
-    "lint-staged": "^13.1.0",
-    "pinst": "^3.0.0",
-    "prettier": "^2.8.1",
-    "rimraf": "^3.0.2",
-    "typescript": "~4.9.4"
-  },
-  "types": "dist/index.d.ts",
-  "sideEffects": false,
-  "babel": {
-    "presets": [
-      [
-        "@babel/preset-env",
-        {
-          "corejs": "3.18",
-          "targets": {
-            "node": "current"
-          },
-          "useBuiltIns": "usage"
-        }
-      ],
-      "@babel/preset-typescript"
-    ]
-  },
-  "eslintConfig": {
-    "ignorePatterns": [
-      "**/node_modules/",
-      "/dist",
-      "/coverage"
-    ],
-    "env": {
-      "es6": true,
-      "node": true
-    },
-    "extends": [
-      "airbnb-base",
-      "plugin:eslint-comments/recommended",
-      "prettier"
-    ],
-    "overrides": [
-      {
-        "files": [
-          "*.ts?(x)"
-        ],
-        "extends": [
-          "airbnb-typescript/base",
-          "plugin:@typescript-eslint/eslint-recommended",
-          "plugin:@typescript-eslint/recommended",
-          "plugin:@typescript-eslint/recommended-requiring-type-checking",
-          "plugin:eslint-comments/recommended",
-          "plugin:jsdoc/recommended",
-          "plugin:eslint-comments/recommended",
-          "prettier"
-        ],
-        "parserOptions": {
-          "project": "./tsconfig.json",
-          "warnOnUnsupportedTypeScriptVersion": false
-        },
-        "rules": {
-          "no-nested-ternary": "off",
-          "import/prefer-default-export": "off",
-          "import/no-default-export": "error",
-          "jsdoc/require-returns": "off",
-          "jsdoc/require-param": "off",
-          "jsdoc/require-jsdoc": [
-            "warn",
-            {
-              "publicOnly": {
-                "esm": true
-              },
-              "require": {
-                "ArrowFunctionExpression": true,
-                "ClassDeclaration": true,
-                "ClassExpression": true,
-                "FunctionDeclaration": true,
-                "FunctionExpression": true,
-                "MethodDefinition": false
-              }
-            }
-          ],
-          "jsdoc/require-description": [
-            "warn",
-            {
-              "contexts": [
-                "any"
-              ]
-            }
-          ],
-          "jsdoc/check-tag-names": [
-            "warn",
-            {
-              "definedTags": [
-                "internal"
-              ]
-            }
-          ]
-        }
-      },
-      {
-        "files": [
-          "src/!(errors)/*.ts?(x)"
-        ],
-        "plugins": [
-          "functional"
-        ],
-        "extends": [
-          "plugin:functional/external-recommended",
-          "plugin:functional/recommended"
-        ],
-        "rules": {
-          "@typescript-eslint/prefer-readonly-parameter-types": "off",
-          "functional/functional-parameters": [
-            "warn",
-            {
-              "enforceParameterCount": false
-            }
-          ]
-        }
-      },
-      {
-        "files": [
-          "*.spec*.ts?(x)"
-        ],
-        "extends": [
-          "plugin:jest/recommended"
-        ]
-      }
-    ]
-  },
-  "jest": {
-    "roots": [
-      "<rootDir>/tests"
-    ],
-    "transform": {
-      "^.+\\.[t|j]sx?$": "babel-jest"
-    },
-    "setupFilesAfterEnv": [
-      "<rootDir>/tests/config/jest.setup.ts"
-    ],
-    "moduleNameMapper": {
-      "^@src/(.*)$": "<rootDir>/src/$1"
-    },
-    "collectCoverage": true,
-    "coverageThreshold": {
-      "global": {
-        "branches": 100,
-        "functions": 100,
-        "lines": 100,
-        "statements": 100
-      }
-    }
-  },
-  "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "prettier --write ."
-    ]
-  },
-  "prettier": {
-    "singleQuote": true,
-    "printWidth": 100,
-    "trailingComma": "all",
-    "arrowParens": "always",
-    "endOfLine": "lf"
-  }
+	"name": "@ldrick/trade-indicators",
+	"version": "0.4.1",
+	"description": "Trade Indicators",
+	"license": "MIT",
+	"repository": "ldrick/trade-indicators",
+	"author": {
+		"name": "Ricky Lippmann",
+		"email": "ricky.lippmann@gmail.com"
+	},
+	"homepage": "https://github.com/ldrick/trade-indicators",
+	"main": "dist/index.js",
+	"typings": "dist/index.d.ts",
+	"engines": {
+		"node": ">= 16.0"
+	},
+	"scripts": {
+		"build": "rimraf dist && tsc --project tsconfig.build.json",
+		"check:format": "prettier --check .",
+		"check:types": "tsc --noEmit",
+		"format": "prettier --write .",
+		"lint": "eslint .",
+		"postinstall": "husky install",
+		"postpublish": "pinst --enable",
+		"prepublishOnly": "pinst --disable",
+		"test": "jest"
+	},
+	"files": [
+		"dist"
+	],
+	"keywords": [
+		"average",
+		"dema",
+		"ema",
+		"indicators",
+		"moving",
+		"signals",
+		"sma",
+		"smma",
+		"technical",
+		"trade",
+		"trading",
+		"true-range"
+	],
+	"dependencies": {
+		"big.js": "^6.2.1",
+		"fp-ts": "^2.13.1"
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.20.7",
+		"@babel/core": "^7.20.12",
+		"@babel/preset-env": "^7.20.2",
+		"@babel/preset-typescript": "^7.18.6",
+		"@types/big.js": "^6.1.6",
+		"@types/jest": "^29.2.6",
+		"@typescript-eslint/eslint-plugin": "^5.48.2",
+		"@typescript-eslint/parser": "^5.48.2",
+		"babel-jest": "^29.3.1",
+		"core-js": "^3.27.2",
+		"eslint": "^8.32.0",
+		"eslint-config-airbnb-base": "^15.0.0",
+		"eslint-config-airbnb-typescript": "^17.0.0",
+		"eslint-config-prettier": "^8.6.0",
+		"eslint-import-resolver-node": "^0.3.7",
+		"eslint-plugin-eslint-comments": "^3.2.0",
+		"eslint-plugin-functional": "^4.4.1",
+		"eslint-plugin-import": "^2.27.5",
+		"eslint-plugin-jest": "^27.2.1",
+		"eslint-plugin-jsdoc": "^39.6.7",
+		"husky": "^8.0.3",
+		"jest": "^29.3.1",
+		"jest-diff": "^29.3.1",
+		"lint-staged": "^13.1.0",
+		"pinst": "^3.0.0",
+		"prettier": "^2.8.3",
+		"rimraf": "^4.1.1",
+		"typescript": "~4.9.4"
+	},
+	"types": "dist/index.d.ts",
+	"sideEffects": false,
+	"babel": {
+		"presets": [
+			[
+				"@babel/preset-env",
+				{
+					"corejs": "3.18",
+					"targets": {
+						"node": "current"
+					},
+					"useBuiltIns": "usage"
+				}
+			],
+			"@babel/preset-typescript"
+		]
+	},
+	"eslintConfig": {
+		"ignorePatterns": [
+			"**/node_modules/",
+			"/dist",
+			"/coverage"
+		],
+		"env": {
+			"es6": true,
+			"node": true
+		},
+		"extends": [
+			"airbnb-base",
+			"plugin:eslint-comments/recommended",
+			"prettier"
+		],
+		"overrides": [
+			{
+				"files": [
+					"*.ts?(x)"
+				],
+				"extends": [
+					"airbnb-typescript/base",
+					"plugin:@typescript-eslint/eslint-recommended",
+					"plugin:@typescript-eslint/recommended",
+					"plugin:@typescript-eslint/recommended-requiring-type-checking",
+					"plugin:eslint-comments/recommended",
+					"plugin:jsdoc/recommended",
+					"plugin:eslint-comments/recommended",
+					"prettier"
+				],
+				"parserOptions": {
+					"project": "./tsconfig.json",
+					"warnOnUnsupportedTypeScriptVersion": false
+				},
+				"rules": {
+					"no-nested-ternary": "off",
+					"import/prefer-default-export": "off",
+					"import/no-default-export": "error",
+					"jsdoc/require-returns": "off",
+					"jsdoc/require-param": "off",
+					"jsdoc/require-jsdoc": [
+						"warn",
+						{
+							"publicOnly": {
+								"esm": true
+							},
+							"require": {
+								"ArrowFunctionExpression": true,
+								"ClassDeclaration": true,
+								"ClassExpression": true,
+								"FunctionDeclaration": true,
+								"FunctionExpression": true,
+								"MethodDefinition": false
+							}
+						}
+					],
+					"jsdoc/require-description": [
+						"warn",
+						{
+							"contexts": [
+								"any"
+							]
+						}
+					],
+					"jsdoc/check-tag-names": [
+						"warn",
+						{
+							"definedTags": [
+								"internal"
+							]
+						}
+					]
+				}
+			},
+			{
+				"files": [
+					"src/!(errors)/*.ts?(x)"
+				],
+				"plugins": [
+					"functional"
+				],
+				"extends": [
+					"plugin:functional/external-recommended",
+					"plugin:functional/recommended"
+				],
+				"rules": {
+					"@typescript-eslint/prefer-readonly-parameter-types": "off",
+					"functional/functional-parameters": [
+						"warn",
+						{
+							"enforceParameterCount": false
+						}
+					]
+				}
+			},
+			{
+				"files": [
+					"*.spec*.ts?(x)"
+				],
+				"extends": [
+					"plugin:jest/recommended"
+				]
+			}
+		]
+	},
+	"jest": {
+		"roots": [
+			"<rootDir>/tests"
+		],
+		"transform": {
+			"^.+\\.[t|j]sx?$": "babel-jest"
+		},
+		"setupFilesAfterEnv": [
+			"<rootDir>/tests/config/jest.setup.ts"
+		],
+		"moduleNameMapper": {
+			"^@src/(.*)$": "<rootDir>/src/$1"
+		},
+		"collectCoverage": true,
+		"coverageThreshold": {
+			"global": {
+				"branches": 100,
+				"functions": 100,
+				"lines": 100,
+				"statements": 100
+			}
+		}
+	},
+	"lint-staged": {
+		"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+			"prettier --write ."
+		]
+	},
+	"prettier": {
+		"useTabs": true,
+		"singleQuote": true,
+		"printWidth": 100,
+		"trailingComma": "all",
+		"arrowParens": "always",
+		"endOfLine": "lf"
+	}
 }
