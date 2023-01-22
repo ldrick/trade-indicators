@@ -3,16 +3,16 @@ import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA 
 import { arr, num } from '../utils';
 
 const calculation = (
-  values: RNEA.ReadonlyNonEmptyArray<Big>,
-  period: number,
-  cb: (v: RNEA.ReadonlyNonEmptyArray<Big>) => Big,
+	values: RNEA.ReadonlyNonEmptyArray<Big>,
+	period: number,
+	cb: (v: RNEA.ReadonlyNonEmptyArray<Big>) => Big,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
-  F.pipe(
-    RNEA.range(0, values.length - period),
-    RNEA.traverse(E.Applicative)((r) =>
-      F.pipe(values.slice(r, period + r), arr.validateRequiredSize(period), E.map(cb)),
-    ),
-  );
+	F.pipe(
+		RNEA.range(0, values.length - period),
+		RNEA.traverse(E.Applicative)((r) =>
+			F.pipe(values.slice(r, period + r), arr.validateRequiredSize(period), E.map(cb)),
+		),
+	);
 
 /**
  * Moving Average
@@ -20,16 +20,16 @@ const calculation = (
  * @internal
  */
 export const ma = (
-  values: ReadonlyArray<number>,
-  period: number,
-  cb: (v: RNEA.ReadonlyNonEmptyArray<Big>) => Big,
+	values: ReadonlyArray<number>,
+	period: number,
+	cb: (v: RNEA.ReadonlyNonEmptyArray<Big>) => Big,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
-  F.pipe(
-    AP.sequenceS(E.Applicative)({
-      periodV: num.validatePositiveInteger(period),
-      valuesV: arr.validateRequiredSize(period)(values),
-    }),
-    E.bind('valuesB', ({ valuesV }) => arr.toBig(valuesV)),
-    E.chain(({ valuesB, periodV }) => calculation(valuesB, periodV, cb)),
-    E.map(arr.toNumber),
-  );
+	F.pipe(
+		AP.sequenceS(E.Applicative)({
+			periodV: num.validatePositiveInteger(period),
+			valuesV: arr.validateRequiredSize(period)(values),
+		}),
+		E.bind('valuesB', ({ valuesV }) => arr.toBig(valuesV)),
+		E.chain(({ valuesB, periodV }) => calculation(valuesB, periodV, cb)),
+		E.map(arr.toNumber),
+	);

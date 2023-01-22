@@ -1,30 +1,30 @@
 {
-  // spacing
-  "editor.insertSpaces": true,
-  "editor.tabSize": 2,
-  "editor.trimAutoWhitespace": true,
-  "files.trimTrailingWhitespace": true,
-  "files.eol": "\n",
-  "files.insertFinalNewline": true,
-  "files.trimFinalNewlines": true,
-  // trigger linting and fixes
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
-    "source.organizeImports": true
-  },
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact",
-    "html",
-    "vue"
-  ],
-  "eslint.packageManager": "npm",
-  // package manager
-  "npm.packageManager": "npm",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  // typescript
-  "typescript.tsdk": "node_modules/typescript/lib"
+	// spacing
+	"editor.insertSpaces": true,
+	"editor.tabSize": 4,
+	"editor.trimAutoWhitespace": true,
+	"files.trimTrailingWhitespace": true,
+	"files.eol": "\n",
+	"files.insertFinalNewline": true,
+	"files.trimFinalNewlines": true,
+	// trigger linting and fixes
+	"editor.formatOnSave": true,
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": true,
+		"source.organizeImports": true
+	},
+	"eslint.validate": [
+		"javascript",
+		"javascriptreact",
+		"typescript",
+		"typescriptreact",
+		"html",
+		"vue"
+	],
+	"eslint.packageManager": "npm",
+	// package manager
+	"npm.packageManager": "npm",
+	"typescript.enablePromptUseWorkspaceTsdk": true,
+	// typescript
+	"typescript.tsdk": "node_modules/typescript/lib"
 }

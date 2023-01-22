@@ -11,6 +11,6 @@ import { wamean } from './wamean';
  * @public
  */
 export const wma = (
-  values: ReadonlyArray<number>,
-  period = 20,
+	values: ReadonlyArray<number>,
+	period = 20,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> => ma(values, period, wamean);

@@ -4,9 +4,9 @@
  * @internal
  */
 export class NotPositiveIntegerError extends Error {
-  constructor() {
-    super(`Given value is not a positive Integer.`);
-    this.name = 'NotPositiveIntegerError';
-    Object.setPrototypeOf(this, new.target.prototype);
-  }
+	constructor() {
+		super(`Given value is not a positive Integer.`);
+		this.name = 'NotPositiveIntegerError';
+		Object.setPrototypeOf(this, new.target.prototype);
+	}
 }
