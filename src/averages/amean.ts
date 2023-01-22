@@ -7,8 +7,8 @@ import { function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts';
  * @internal
  */
 export const amean = (values: RNEA.ReadonlyNonEmptyArray<Big>): Big =>
-  F.pipe(
-    values,
-    RNEA.reduce(new Big(0), (reduced, value) => reduced.add(value)),
-    (dividend) => dividend.div(values.length),
-  );
+	F.pipe(
+		values,
+		RNEA.reduce(new Big(0), (reduced, value) => reduced.add(value)),
+		(dividend) => dividend.div(values.length),
+	);

@@ -9,16 +9,16 @@ import { amean } from './amean';
  * @internal
  */
 export const dma = (
-  values: RNEA.ReadonlyNonEmptyArray<Big>,
-  period: number,
-  factor: Big,
+	values: RNEA.ReadonlyNonEmptyArray<Big>,
+	period: number,
+	factor: Big,
 ): RNEA.ReadonlyNonEmptyArray<Big> => {
-  const [init, rest] = RNEA.splitAt(period)(values);
-  return F.pipe(
-    rest,
-    RA.reduce(<RNEA.ReadonlyNonEmptyArray<Big>>[amean(init)], (reduced, value) => {
-      const prev = RNEA.last(reduced);
-      return RA.append(value.sub(prev).mul(factor).add(prev))(reduced);
-    }),
-  );
+	const [init, rest] = RNEA.splitAt(period)(values);
+	return F.pipe(
+		rest,
+		RA.reduce(<RNEA.ReadonlyNonEmptyArray<Big>>[amean(init)], (reduced, value) => {
+			const prev = RNEA.last(reduced);
+			return RA.append(value.sub(prev).mul(factor).add(prev))(reduced);
+		}),
+	);
 };

@@ -10,6 +10,6 @@ import { ma } from './ma';
  * @public
  */
 export const sma = (
-  values: ReadonlyArray<number>,
-  period = 20,
+	values: ReadonlyArray<number>,
+	period = 20,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> => ma(values, period, amean);
