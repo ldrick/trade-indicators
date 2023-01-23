@@ -23,7 +23,7 @@ export declare const tema: (
 
 ```typescript
 import { either as E, function as F } from 'fp-ts/lib';
-import { tema } from '@ldrick/trade-indicators';
+import { tema } from '@ldrick/trade-indicators/averages/tema.js';
 
 const result = F.pipe(
 	tema([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5], 3),

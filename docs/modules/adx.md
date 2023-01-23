@@ -23,7 +23,7 @@ export declare const adx: (
 
 ```typescript
 import { either as E, function as F } from 'fp-ts/lib';
-import { adx } from '@ldrick/trade-indicators';
+import { adx } from '@ldrick/trade-indicators/movements/adx.js';
 
 const result = F.pipe(
 	adx(

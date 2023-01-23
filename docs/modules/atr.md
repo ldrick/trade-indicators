@@ -23,7 +23,7 @@ export declare const atr: (
 
 ```typescript
 import { either as E, function as F } from 'fp-ts/lib';
-import { atr } from '@ldrick/trade-indicators';
+import { atr } from '@ldrick/trade-indicators/movements/atr.js';
 
 const result = F.pipe(
 	atr(
