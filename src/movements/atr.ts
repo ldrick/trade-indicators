@@ -1,4 +1,4 @@
-import Big from 'big.js';
+import { Big } from 'big.js';
 import {
 	apply as AP,
 	either as E,
@@ -7,10 +7,13 @@ import {
 	readonlyArray as RA,
 	readonlyNonEmptyArray as RNEA,
 } from 'fp-ts/lib';
-import { smmaC } from '../averages/smma';
-import { UnequalArraySizesError } from '../errors';
-import { HighLowClose, NonEmptyHighLowClose } from '../types';
-import { arr, big, num, rec } from '../utils';
+import { smmaC } from '../averages/smma.js';
+import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
+import { HighLowClose, NonEmptyHighLowClose } from '../types.js';
+import * as arr from '../utils/array.js';
+import * as big from '../utils/big.js';
+import * as num from '../utils/number.js';
+import * as rec from '../utils/record.js';
 
 const trueRange = (
 	values: NonEmptyHighLowClose<Big>,

@@ -1,6 +1,6 @@
 import { either as E, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
-import { ma } from './ma';
-import { wamean } from './wamean';
+import { ma } from './ma.js';
+import { wamean } from './wamean.js';
 
 /**
  * The Weighted Moving Average (WMA) takes newer values weighted into account

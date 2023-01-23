@@ -1,6 +1,7 @@
-import { NotEnoughDataError, UnequalArraySizesError } from '@src/errors';
-import { toPromise } from '@src/index';
 import { either as E } from 'fp-ts/lib';
+import { NotEnoughDataError } from 'src/errors/NotEnoughDataError.js';
+import { UnequalArraySizesError } from 'src/errors/UnequalArraySizesError.js';
+import { toPromise } from 'src/utils/toPromise.js';
 
 describe('toPromise', () => {
 	test.each([

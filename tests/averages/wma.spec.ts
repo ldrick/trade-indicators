@@ -1,6 +1,7 @@
-import { NotEnoughDataError, NotPositiveIntegerError } from '@src/errors';
-import { wma } from '@src/index';
 import { either as E } from 'fp-ts/lib';
+import { wma } from 'src/averages/wma.js';
+import { NotEnoughDataError } from 'src/errors/NotEnoughDataError.js';
+import { NotPositiveIntegerError } from 'src/errors/NotPositiveIntegerError.js';
 import * as prices from '../prices.json';
 
 describe('wma', () => {

@@ -1,6 +1,7 @@
 import { Big } from 'big.js';
 import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
-import { arr, num } from '../utils';
+import * as arr from '../utils/array.js';
+import * as num from '../utils/number.js';
 
 const calculation = (
 	values: RNEA.ReadonlyNonEmptyArray<Big>,

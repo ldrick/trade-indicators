@@ -6,7 +6,7 @@ import {
 	JestResult,
 	JestResultArray,
 	JestResultRecord,
-} from '../types';
+} from '../types.js';
 
 const formatArray =
 	(dec: number) =>

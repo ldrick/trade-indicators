@@ -1,6 +1,8 @@
-import { NotEnoughDataError, NotPositiveIntegerError, UnequalArraySizesError } from '@src/errors';
-import { atr } from '@src/index';
 import { either as E } from 'fp-ts/lib';
+import { NotEnoughDataError } from 'src/errors/NotEnoughDataError.js';
+import { NotPositiveIntegerError } from 'src/errors/NotPositiveIntegerError.js';
+import { UnequalArraySizesError } from 'src/errors/UnequalArraySizesError.js';
+import { atr } from 'src/movements/atr.js';
 import * as prices from '../prices.json';
 
 describe('atr', () => {
