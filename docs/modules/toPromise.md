@@ -19,7 +19,9 @@ export function toPromise<A>(values: E.Either<Error, A>): Promise<A>;
 ## Example
 
 ```typescript
-import { ema, macd, toPromise } from '@ldrick/trade-indicators';
+import { ema } from '@ldrick/trade-indicators/averages/ema.js';
+import { macd } from '@ldrick/trade-indicators/averages/macd.js';
+import { toPromise } from '@ldrick/trade-indicators/toPromise.js';
 
 const emaResult = ema([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5], 3);
 toPromise(emaResult).then(

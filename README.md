@@ -35,7 +35,8 @@ In TypeScript:
 
 ```typescript
 import { either as E, function as F } from 'fp-ts/lib';
-import { ema, toPromise } from '@ldrick/trade-indicators';
+import { ema } from '@ldrick/trade-indicators/averages/ema.js';
+import { toPromise } from '@ldrick/trade-indicators/toPromise.js';
 
 const prices = [3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5];
 const period = 3;
