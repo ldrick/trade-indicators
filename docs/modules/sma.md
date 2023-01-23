@@ -23,7 +23,7 @@ export declare const sma: (
 
 ```typescript
 import { either as E, function as F } from 'fp-ts/lib';
-import { sma } from '@ldrick/trade-indicators';
+import { sma } from '@ldrick/trade-indicators/averages/sma.js';
 
 const result = F.pipe(
 	sma([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5], 3),

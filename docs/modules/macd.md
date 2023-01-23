@@ -25,7 +25,7 @@ export declare const macd: (
 
 ```typescript
 import { either as E, function as F } from 'fp-ts/lib';
-import { macd } from '@ldrick/trade-indicators';
+import { macd } from '@ldrick/trade-indicators/averages/macd.js';
 
 const result = F.pipe(
 	macd([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5, 3.5, 5.44, 8.1, 9.1, 11], 4, 5, 3),

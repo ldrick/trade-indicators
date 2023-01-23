@@ -23,7 +23,7 @@ export declare const wma: (
 
 ```typescript
 import { either as E, function as F } from 'fp-ts/lib';
-import { wma } from '@ldrick/trade-indicators';
+import { wma } from '@ldrick/trade-indicators/averages/wma.js';
 
 const result = F.pipe(
 	wma([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5], 3),
