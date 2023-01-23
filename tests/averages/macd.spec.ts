@@ -1,6 +1,8 @@
-import { NotEnoughDataError, NotPositiveIntegerError, PeriodSizeMissmatchError } from '@src/errors';
-import { macd } from '@src/index';
 import { either as E } from 'fp-ts/lib';
+import { macd } from 'src/averages/macd.js';
+import { NotEnoughDataError } from 'src/errors/NotEnoughDataError.js';
+import { NotPositiveIntegerError } from 'src/errors/NotPositiveIntegerError.js';
+import { PeriodSizeMissmatchError } from 'src/errors/PeriodSizeMissmatchError.js';
 import * as prices from '../prices.json';
 
 describe('macd', () => {

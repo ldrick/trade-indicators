@@ -1,6 +1,7 @@
-import { NotEnoughDataError, NotPositiveIntegerError } from '@src/errors';
-import { sma } from '@src/index';
 import { either as E } from 'fp-ts/lib';
+import { sma } from 'src/averages/sma.js';
+import { NotEnoughDataError } from 'src/errors/NotEnoughDataError.js';
+import { NotPositiveIntegerError } from 'src/errors/NotPositiveIntegerError.js';
 import * as prices from '../prices.json';
 
 describe('sma', () => {

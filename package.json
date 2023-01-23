@@ -9,17 +9,66 @@
 		"email": "ricky.lippmann@gmail.com"
 	},
 	"homepage": "https://github.com/ldrick/trade-indicators",
-	"main": "dist/index.js",
-	"typings": "dist/index.d.ts",
+	"type": "module",
+	"exports": {
+		"./toPromise.js": {
+			"types": "./dist/utils/toPromise.d.ts",
+			"import": "./dist/utils/toPromise.js"
+		},
+		"./averages/dema.js": {
+			"types": "./dist/averages/dema.d.ts",
+			"import": "./dist/averages/dema.js"
+		},
+		"./averages/dma.js": {
+			"types": "./dist/averages/dma.d.ts",
+			"import": "./dist/averages/dma.js"
+		},
+		"./averages/ema.js": {
+			"types": "./dist/averages/ema.d.ts",
+			"import": "./dist/averages/ema.js"
+		},
+		"./averages/ma.js": {
+			"types": "./dist/averages/ma.d.ts",
+			"import": "./dist/averages/ma.js"
+		},
+		"./averages/macd.js": {
+			"types": "./dist/averages/macd.d.ts",
+			"import": "./dist/averages/macd.js"
+		},
+		"./averages/sma.js": {
+			"types": "./dist/averages/sma.d.ts",
+			"import": "./dist/averages/sma.js"
+		},
+		"./averages/smma.js": {
+			"types": "./dist/averages/smma.d.ts",
+			"import": "./dist/averages/smma.js"
+		},
+		"./averages/tema.js": {
+			"types": "./dist/averages/tema.d.ts",
+			"import": "./dist/averages/tema.js"
+		},
+		"./averages/wma.js": {
+			"types": "./dist/averages/wma.d.ts",
+			"import": "./dist/averages/wma.js"
+		},
+		"./movements/adx.js": {
+			"types": "./dist/movements/adx.d.ts",
+			"import": "./dist/movements/adx.js"
+		},
+		"./movements/atr.js": {
+			"types": "./dist/movements/atr.d.ts",
+			"import": "./dist/movements/atr.js"
+		}
+	},
 	"engines": {
-		"node": ">= 16.0"
+		"node": ">= 18.0"
 	},
 	"scripts": {
 		"build": "rimraf dist && tsc --project tsconfig.build.json",
 		"check:format": "prettier --check .",
 		"check:types": "tsc --noEmit",
 		"format": "prettier --write .",
-		"lint": "eslint .",
+		"lint": "eslint . && markdownlint '**/*.md' --ignore node_modules",
 		"postinstall": "husky install",
 		"postpublish": "pinst --enable",
 		"prepublishOnly": "pinst --disable",
@@ -71,19 +120,19 @@
 		"jest": "^29.3.1",
 		"jest-diff": "^29.3.1",
 		"lint-staged": "^13.1.0",
+		"markdownlint-cli": "^0.33.0",
 		"pinst": "^3.0.0",
 		"prettier": "^2.8.3",
 		"rimraf": "^4.1.1",
-		"typescript": "~4.9.4"
+		"typescript": "^4.9.4"
 	},
-	"types": "dist/index.d.ts",
 	"sideEffects": false,
 	"babel": {
 		"presets": [
 			[
 				"@babel/preset-env",
 				{
-					"corejs": "3.18",
+					"corejs": "3.27",
 					"targets": {
 						"node": "current"
 					},

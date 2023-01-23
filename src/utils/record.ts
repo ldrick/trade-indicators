@@ -5,8 +5,8 @@ import {
 	NonEmptyHighLowClose,
 	ReadonlyRecordArray,
 	ReadonlyRecordNonEmptyArray,
-} from '../types';
-import * as arr from './array';
+} from '../types.js';
+import * as arr from './array.js';
 
 /**
  * Safely convert `RR.ReadonlyRecord<string, RNEA.ReadonlyNonEmptyArray<number>>>`

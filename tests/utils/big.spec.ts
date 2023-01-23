@@ -1,6 +1,6 @@
-import { big } from '@src/utils';
-import Big from 'big.js';
+import { Big } from 'big.js';
 import { readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
+import * as big from 'src/utils/big.js';
 
 describe('ord.compare', () => {
 	test.each([

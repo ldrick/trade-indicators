@@ -1,9 +1,11 @@
 import { Big } from 'big.js';
 import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
-import { smmaC } from '../averages/smma';
-import { HighLowClose, NonEmptyHighLowClose, ReadonlyRecordNonEmptyArray } from '../types';
-import { arr, num, rec } from '../utils';
-import { atrC } from './atr';
+import { smmaC } from '../averages/smma.js';
+import { HighLowClose, NonEmptyHighLowClose, ReadonlyRecordNonEmptyArray } from '../types.js';
+import * as arr from '../utils/array.js';
+import * as num from '../utils/number.js';
+import * as rec from '../utils/record.js';
+import { atrC } from './atr.js';
 
 type Movement = 'up' | 'down';
 

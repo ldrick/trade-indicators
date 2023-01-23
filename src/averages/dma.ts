@@ -1,6 +1,6 @@
 import { Big } from 'big.js';
 import { function as F, readonlyArray as RA, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
-import { amean } from './amean';
+import { amean } from './amean.js';
 
 /**
  * Base implementation for the Exponential Moving Average (EMA) and
