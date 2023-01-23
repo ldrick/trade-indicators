@@ -1,9 +1,7 @@
 {
 	"extends": "./tsconfig.build.json",
 	"compilerOptions": {
-		"paths": {
-			"@src/*": ["./src/*"]
-		}
+		"types": ["jest"]
 	},
-	"include": ["tests"]
+	"include": ["src", "tests"]
 }

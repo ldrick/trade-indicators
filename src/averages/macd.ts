@@ -6,10 +6,11 @@ import {
 	readonlyArray as RA,
 	readonlyNonEmptyArray as RNEA,
 } from 'fp-ts/lib';
-import { PeriodSizeMissmatchError } from '../errors';
-import { ReadonlyRecordNonEmptyArray } from '../types';
-import { arr, num } from '../utils';
-import { emaC } from './ema';
+import { PeriodSizeMissmatchError } from '../errors/PeriodSizeMissmatchError.js';
+import { ReadonlyRecordNonEmptyArray } from '../types.js';
+import * as arr from '../utils/array.js';
+import * as num from '../utils/number.js';
+import { emaC } from './ema.js';
 
 type MACDReturn = ReadonlyRecordNonEmptyArray<number | null> & {
 	readonly macd: RNEA.ReadonlyNonEmptyArray<number>;

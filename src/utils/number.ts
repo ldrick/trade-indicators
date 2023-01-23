@@ -1,6 +1,6 @@
 import { Big } from 'big.js';
 import { either as E } from 'fp-ts/lib';
-import { NotPositiveIntegerError } from '../errors';
+import { NotPositiveIntegerError } from '../errors/NotPositiveIntegerError.js';
 
 /**
  * Safely convert `number` to `Big`.

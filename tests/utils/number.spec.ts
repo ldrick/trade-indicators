@@ -1,6 +1,6 @@
-import { num } from '@src/utils';
 import { Big } from 'big.js';
 import { either as E } from 'fp-ts/lib';
+import * as num from 'src/utils/number.js';
 
 describe('numberToBig', () => {
 	test.each([
