@@ -15,7 +15,7 @@
 		"strict": true,
 		"noEmitOnError": true,
 		"forceConsistentCasingInFileNames": true,
-		"skipLibCheck": false
+		"skipLibCheck": true
 	},
 	"include": ["src"]
 }

@@ -1,7 +1,4 @@
 {
 	"extends": "./tsconfig.build.json",
-	"compilerOptions": {
-		"types": ["jest"]
-	},
-	"include": ["src", "tests"]
+	"include": ["./src", "./tests", "./vitest.config.ts"]
 }

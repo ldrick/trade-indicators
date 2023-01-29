@@ -1,10 +1,11 @@
 import { either as E } from 'fp-ts/lib';
-import { NotEnoughDataError } from 'src/errors/NotEnoughDataError.js';
-import { UnequalArraySizesError } from 'src/errors/UnequalArraySizesError.js';
-import { toPromise } from 'src/utils/toPromise.js';
+import { describe, expect, it } from 'vitest';
+import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';
+import { UnequalArraySizesError } from '../../src/errors/UnequalArraySizesError.js';
+import { toPromise } from '../../src/utils/toPromise.js';
 
 describe('toPromise', () => {
-	test.each([
+	it.each([
 		{ v: E.left(new NotEnoughDataError(5, 5)), r: new NotEnoughDataError(5, 5) },
 		{ v: E.left(new UnequalArraySizesError()), r: new UnequalArraySizesError() },
 	])('rejects Either to Promise $v', async ({ v, r }) => {
@@ -12,7 +13,7 @@ describe('toPromise', () => {
 		await expect(toPromise(v)).rejects.toStrictEqual(r);
 	});
 
-	test.each([
+	it.each([
 		{ v: E.right([]), r: [] },
 		{ v: E.right([1.5, -2.5]), r: [1.5, -2.5] },
 	])('resolves Either to Promise $v', async ({ v, r }) => {
