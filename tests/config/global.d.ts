@@ -1,7 +1,7 @@
 import { TestResult } from '../types.js';
 
 interface CustomMatchers<R = unknown> {
-	eitherRightToEqualFixedPrecision(expected: TestResult, decimals?: number): R;
+	eitherRightToEqualFixedPrecision(expected: TestResult, decimals = 12): R;
 }
 
 declare global {
