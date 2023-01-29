@@ -1,11 +1,12 @@
 import { either as E } from 'fp-ts/lib';
-import { dema } from 'src/averages/dema.js';
-import { NotEnoughDataError } from 'src/errors/NotEnoughDataError.js';
-import { NotPositiveIntegerError } from 'src/errors/NotPositiveIntegerError.js';
-import * as prices from '../prices.json';
+import { describe, expect, it } from 'vitest';
+import { dema } from '../../src/averages/dema.js';
+import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';
+import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
+import * as prices from '../prices.json' assert { type: 'json' };
 
 describe('dema', () => {
-	test.each([{ p: NaN }, { p: Infinity }, { p: -Infinity }, { p: -1 }, { p: 0 }, { p: 1.5 }])(
+	it.each([{ p: NaN }, { p: Infinity }, { p: -Infinity }, { p: -1 }, { p: 0 }, { p: 1.5 }])(
 		'fails if period is not a positive integer $p',
 		({ p }) => {
 			expect(dema([], p)).toStrictEqual(E.left(new NotPositiveIntegerError()));
@@ -16,7 +17,7 @@ describe('dema', () => {
 		expect(dema([1, 2, 3, 4], 3)).toStrictEqual(E.left(new NotEnoughDataError(4, 5)));
 	});
 
-	test.each([{ v: [0, 0, NaN, 0] }, { v: [0, 0, Infinity, 0] }, { v: [0, 0, -Infinity, 0] }])(
+	it.each([{ v: [0, 0, NaN, 0] }, { v: [0, 0, Infinity, 0] }, { v: [0, 0, -Infinity, 0] }])(
 		'fails if values contains a infinit value $v',
 		({ v }) => {
 			expect(dema(v, 2)).toStrictEqual(E.left(new Error('[big.js] Invalid number')));
@@ -24,13 +25,13 @@ describe('dema', () => {
 	);
 
 	it('calculates the Double Exponential Moving Average with default period', () => {
-		expect(dema(prices.close)).eitherRightToEqualFixedPrecision(prices.dema.p20);
+		expect(dema(prices.default.close)).eitherRightToEqualFixedPrecision(prices.default.dema.p20);
 	});
 
-	test.each([
+	it.each([
 		{ v: [0, 0, 0, 0, 0], p: 3, r: [0] },
-		{ v: prices.close, p: 10, r: prices.dema.p10 },
-		{ v: prices.close, p: 20, r: prices.dema.p20 },
+		{ v: prices.default.close, p: 10, r: prices.default.dema.p10 },
+		{ v: prices.default.close, p: 20, r: prices.default.dema.p20 },
 	])('calculates the Double Exponential Moving Average with period $p', ({ v, p, r }) => {
 		expect(dema(v, p)).eitherRightToEqualFixedPrecision(r);
 	});

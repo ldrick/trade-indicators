@@ -1,9 +1,10 @@
 import { either as E, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
-import { EmptyArrayError } from 'src/errors/EmptyArrayError.js';
-import * as arr from 'src/utils/array.js';
+import { describe, expect, it } from 'vitest';
+import { EmptyArrayError } from '../../src/errors/EmptyArrayError.js';
+import * as arr from '../../src/utils/array.js';
 
 describe('tail', () => {
-	test.each<{
+	it.each<{
 		v: RNEA.ReadonlyNonEmptyArray<number>;
 		r: E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>>;
 	}>([
@@ -15,7 +16,7 @@ describe('tail', () => {
 });
 
 describe('fillLeftW', () => {
-	test.each<{
+	it.each<{
 		v: RNEA.ReadonlyNonEmptyArray<number>;
 		s: number;
 		r: RNEA.ReadonlyNonEmptyArray<number | undefined>;

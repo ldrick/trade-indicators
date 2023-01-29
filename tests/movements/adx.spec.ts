@@ -1,12 +1,13 @@
 import { either as E } from 'fp-ts/lib';
-import { NotEnoughDataError } from 'src/errors/NotEnoughDataError.js';
-import { NotPositiveIntegerError } from 'src/errors/NotPositiveIntegerError.js';
-import { UnequalArraySizesError } from 'src/errors/UnequalArraySizesError.js';
-import { adx } from 'src/movements/adx.js';
-import * as prices from '../prices.json';
+import { describe, expect, it } from 'vitest';
+import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';
+import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
+import { UnequalArraySizesError } from '../../src/errors/UnequalArraySizesError.js';
+import { adx } from '../../src/movements/adx.js';
+import * as prices from '../prices.json' assert { type: 'json' };
 
 describe('adx', () => {
-	test.each([{ p: NaN }, { p: Infinity }, { p: -Infinity }, { p: -1 }, { p: 0 }, { p: 1.5 }])(
+	it.each([{ p: NaN }, { p: Infinity }, { p: -Infinity }, { p: -1 }, { p: 0 }, { p: 1.5 }])(
 		'fails if period is not a positive integer $p',
 		({ p }) => {
 			expect(adx({ close: [1.3], high: [1.5], low: [0.9] }, p)).toStrictEqual(
@@ -27,7 +28,7 @@ describe('adx', () => {
 		).toStrictEqual(E.left(new UnequalArraySizesError()));
 	});
 
-	test.each([
+	it.each([
 		{
 			v: {
 				high: [0, 0, NaN, 0, 0],
@@ -55,11 +56,11 @@ describe('adx', () => {
 
 	it('calculates the Average Directional Index with default period', () => {
 		expect(
-			adx({ high: prices.high, low: prices.low, close: prices.close }),
-		).eitherRightToEqualFixedPrecision(prices.adx.p14);
+			adx({ high: prices.default.high, low: prices.default.low, close: prices.default.close }),
+		).eitherRightToEqualFixedPrecision(prices.default.adx.p14);
 	});
 
-	test.each([
+	it.each([
 		{
 			v: {
 				high: [0, 0, 0, 0, 0, 0],
@@ -69,7 +70,11 @@ describe('adx', () => {
 			p: 3,
 			r: { adx: [null, null, 0], mdi: [0, 0, 0], pdi: [0, 0, 0] },
 		},
-		{ v: { high: prices.high, low: prices.low, close: prices.close }, p: 14, r: prices.adx.p14 },
+		{
+			v: { high: prices.default.high, low: prices.default.low, close: prices.default.close },
+			p: 14,
+			r: prices.default.adx.p14,
+		},
 	])('calculates the Average Directional Index on prices with period $p', ({ v, p, r }) => {
 		expect(adx(v, p)).eitherRightToEqualFixedPrecision(r);
 	});
