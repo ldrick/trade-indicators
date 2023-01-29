@@ -68,7 +68,7 @@
 		"check:format": "prettier --check .",
 		"check:types": "tsc --noEmit",
 		"format": "prettier --write .",
-		"lint": "eslint . && markdownlint '**/*.md' --ignore node_modules",
+		"lint": "eslint . && markdownlint \"**/*.md\" --ignore node_modules",
 		"postinstall": "husky install",
 		"postpublish": "pinst --enable",
 		"prepublishOnly": "pinst --disable",

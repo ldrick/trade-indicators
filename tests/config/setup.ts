@@ -46,10 +46,10 @@ const compareResultRecords = (
 	Object.keys(exp).every((k) => compareResultArrays(exp[k], rec[k], decimals));
 
 expect.extend({
-	eitherRightToEqualFixedPrecision<E>(
-		received: E.Either<E, TestResult>,
+	eitherRightToEqualFixedPrecision(
+		received: E.Either<Error, TestResult>,
 		expected: TestResult,
-		decimals = 12,
+		decimals: number,
 	) {
 		const { isNot, promise, expand } = this;
 
@@ -73,31 +73,53 @@ expect.extend({
 			),
 		);
 
-		const message = (): string =>
-			F.pipe(
-				received,
-				E.fold(
-					() => `Either expected to be right, but was left.`,
-					(rec) => {
-						const formattedR = format(decimals)(rec);
-						const formattedE = format(decimals)(expected);
-						const diffString = this.utils.diff(formattedE, formattedR, {
-							expand,
-						});
-						return `${this.utils.matcherHint(
-							'eitherRightToEqualFixedPrecision',
-							undefined,
-							undefined,
-							options,
-						)}\n\n${
-							diffString && diffString.includes('- Expect')
-								? `Difference:\n\n${diffString}`
-								: `Expected: ${this.utils.printExpected(formattedE)}\n` +
-								  `Received: ${this.utils.printReceived(formattedR)}`
-						}`;
-					},
-				),
-			);
+		const message = pass
+			? (): string =>
+					F.pipe(
+						received,
+						E.fold(
+							() => `Either expected to be right, but was left.`,
+							(rec) => {
+								const formattedR = format(decimals)(rec);
+								const formattedE = format(decimals)(expected);
+								return (
+									`${this.utils.matcherHint(
+										'eitherRightToEqualFixedPrecision',
+										undefined,
+										undefined,
+										options,
+									)}\n\n` +
+									`Expected: not ${this.utils.printExpected(formattedE)}\n` +
+									`Received: ${this.utils.printReceived(formattedR)}`
+								);
+							},
+						),
+					)
+			: (): string =>
+					F.pipe(
+						received,
+						E.fold(
+							() => `Either expected to be right, but was left.`,
+							(rec) => {
+								const formattedR = format(decimals)(rec);
+								const formattedE = format(decimals)(expected);
+								const diffString = this.utils.diff(formattedE, formattedR, {
+									expand,
+								});
+								return `${this.utils.matcherHint(
+									'eitherRightToEqualFixedPrecision',
+									undefined,
+									undefined,
+									options,
+								)}\n\n${
+									diffString && diffString.includes('- Expect')
+										? `Difference:\n\n${diffString}`
+										: `Expected: ${this.utils.printExpected(formattedE)}\n` +
+										  `Received: ${this.utils.printReceived(formattedR)}`
+								}`;
+							},
+						),
+					);
 
 		return { message, pass };
 	},
