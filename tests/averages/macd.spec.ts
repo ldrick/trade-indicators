@@ -1,12 +1,13 @@
 import { either as E } from 'fp-ts/lib';
-import { macd } from 'src/averages/macd.js';
-import { NotEnoughDataError } from 'src/errors/NotEnoughDataError.js';
-import { NotPositiveIntegerError } from 'src/errors/NotPositiveIntegerError.js';
-import { PeriodSizeMissmatchError } from 'src/errors/PeriodSizeMissmatchError.js';
-import * as prices from '../prices.json';
+import { describe, expect, it } from 'vitest';
+import { macd } from '../../src/averages/macd.js';
+import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';
+import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
+import { PeriodSizeMissmatchError } from '../../src/errors/PeriodSizeMissmatchError.js';
+import * as prices from '../prices.json' assert { type: 'json' };
 
 describe('macd', () => {
-	test.each([
+	it.each([
 		{ p: [NaN] },
 		{ p: [1, NaN] },
 		{ p: [1, 1, NaN] },
@@ -39,7 +40,7 @@ describe('macd', () => {
 		expect(macd([1, 2, 3, 4], 3, 4, 2)).toStrictEqual(E.left(new NotEnoughDataError(4, 5)));
 	});
 
-	test.each([{ v: [0, 0, NaN, 0] }, { v: [0, 0, Infinity, 0] }, { v: [0, 0, -Infinity, 0] }])(
+	it.each([{ v: [0, 0, NaN, 0] }, { v: [0, 0, Infinity, 0] }, { v: [0, 0, -Infinity, 0] }])(
 		'fails if values contains a infinit value $v',
 		({ v }) => {
 			expect(macd(v, 2, 3, 1)).toStrictEqual(E.left(new Error('[big.js] Invalid number')));
@@ -47,16 +48,16 @@ describe('macd', () => {
 	);
 
 	it('calculates the Moving Average Convergence / Divergence with default period', () => {
-		expect(macd(prices.close)).eitherRightToEqualFixedPrecision(prices.macd);
+		expect(macd(prices.default.close)).eitherRightToEqualFixedPrecision(prices.default.macd);
 	});
 
-	test.each([
+	it.each([
 		{
 			v: [0, 0, 0, 0, 0],
 			p: [3, 4, 2],
 			r: { macd: [0, 0], signal: [null, 0] },
 		},
-		{ v: prices.close, p: [12, 26, 9], r: prices.macd },
+		{ v: prices.default.close, p: [12, 26, 9], r: prices.default.macd },
 	])(
 		'calculates the Moving Average Convergence / Divergence on prices in test $#',
 		({ v, p, r }) => {

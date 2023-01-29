@@ -72,7 +72,7 @@
 		"postinstall": "husky install",
 		"postpublish": "pinst --enable",
 		"prepublishOnly": "pinst --disable",
-		"test": "jest"
+		"test": "vitest run --coverage"
 	},
 	"files": [
 		"dist"
@@ -96,52 +96,31 @@
 		"fp-ts": "^2.13.1"
 	},
 	"devDependencies": {
-		"@babel/cli": "^7.20.7",
-		"@babel/core": "^7.20.12",
-		"@babel/preset-env": "^7.20.2",
-		"@babel/preset-typescript": "^7.18.6",
 		"@types/big.js": "^6.1.6",
-		"@types/jest": "^29.2.6",
-		"@typescript-eslint/eslint-plugin": "^5.48.2",
-		"@typescript-eslint/parser": "^5.48.2",
-		"babel-jest": "^29.3.1",
-		"core-js": "^3.27.2",
-		"eslint": "^8.32.0",
+		"@typescript-eslint/eslint-plugin": "^5.49.0",
+		"@typescript-eslint/parser": "^5.49.0",
+		"@vitest/coverage-c8": "^0.28.3",
+		"cross-env": "^7.0.3",
+		"eslint": "^8.33.0",
 		"eslint-config-airbnb-base": "^15.0.0",
 		"eslint-config-airbnb-typescript": "^17.0.0",
 		"eslint-config-prettier": "^8.6.0",
 		"eslint-import-resolver-node": "^0.3.7",
 		"eslint-plugin-eslint-comments": "^3.2.0",
-		"eslint-plugin-functional": "^4.4.1",
+		"eslint-plugin-functional": "^5.0.0",
 		"eslint-plugin-import": "^2.27.5",
-		"eslint-plugin-jest": "^27.2.1",
-		"eslint-plugin-jsdoc": "^39.6.7",
+		"eslint-plugin-jsdoc": "^39.7.4",
+		"eslint-plugin-vitest": "^0.0.32",
 		"husky": "^8.0.3",
-		"jest": "^29.3.1",
-		"jest-diff": "^29.3.1",
 		"lint-staged": "^13.1.0",
 		"markdownlint-cli": "^0.33.0",
 		"pinst": "^3.0.0",
 		"prettier": "^2.8.3",
-		"rimraf": "^4.1.1",
-		"typescript": "^4.9.4"
+		"rimraf": "^4.1.2",
+		"typescript": "^4.9.4",
+		"vitest": "^0.28.3"
 	},
 	"sideEffects": false,
-	"babel": {
-		"presets": [
-			[
-				"@babel/preset-env",
-				{
-					"corejs": "3.27",
-					"targets": {
-						"node": "current"
-					},
-					"useBuiltIns": "usage"
-				}
-			],
-			"@babel/preset-typescript"
-		]
-	},
 	"eslintConfig": {
 		"ignorePatterns": [
 			"**/node_modules/",
@@ -224,7 +203,6 @@
 					"functional"
 				],
 				"extends": [
-					"plugin:functional/external-recommended",
 					"plugin:functional/recommended"
 				],
 				"rules": {
@@ -234,41 +212,28 @@
 						{
 							"enforceParameterCount": false
 						}
-					]
+					],
+					"functional/prefer-immutable-types": "off"
 				}
 			},
 			{
 				"files": [
 					"*.spec*.ts?(x)"
 				],
-				"extends": [
-					"plugin:jest/recommended"
-				]
+				"plugins": [
+					"vitest"
+				],
+				"rules": {
+					"vitest/consistent-test-it": [
+						"warn",
+						{
+							"fn": "it",
+							"withinDescribe": "it"
+						}
+					]
+				}
 			}
 		]
-	},
-	"jest": {
-		"roots": [
-			"<rootDir>/tests"
-		],
-		"transform": {
-			"^.+\\.[t|j]sx?$": "babel-jest"
-		},
-		"setupFilesAfterEnv": [
-			"<rootDir>/tests/config/jest.setup.ts"
-		],
-		"moduleNameMapper": {
-			"^@src/(.*)$": "<rootDir>/src/$1"
-		},
-		"collectCoverage": true,
-		"coverageThreshold": {
-			"global": {
-				"branches": 100,
-				"functions": 100,
-				"lines": 100,
-				"statements": 100
-			}
-		}
 	},
 	"lint-staged": {
 		"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [

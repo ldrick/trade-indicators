@@ -1,9 +1,10 @@
 import { Big } from 'big.js';
 import { either as E } from 'fp-ts/lib';
-import * as num from 'src/utils/number.js';
+import { describe, expect, it } from 'vitest';
+import * as num from '../../src/utils/number.js';
 
 describe('numberToBig', () => {
-	test.each([
+	it.each([
 		{ v: 1, r: E.right(new Big(1)) },
 		{ v: 1.0000333, r: E.right(new Big(1.0000333)) },
 		{ v: 0, r: E.right(new Big(0)) },
