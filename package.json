@@ -61,7 +61,7 @@
 		}
 	},
 	"engines": {
-		"node": ">= 18.0"
+		"node": ">=18.0"
 	},
 	"scripts": {
 		"build": "rimraf dist && tsc --project tsconfig.build.json",
@@ -97,28 +97,28 @@
 	},
 	"devDependencies": {
 		"@types/big.js": "^6.1.6",
-		"@typescript-eslint/eslint-plugin": "^5.49.0",
-		"@typescript-eslint/parser": "^5.49.0",
-		"@vitest/coverage-c8": "^0.28.3",
+		"@typescript-eslint/eslint-plugin": "^5.58.0",
+		"@typescript-eslint/parser": "^5.58.0",
+		"@vitest/coverage-c8": "^0.30.1",
 		"cross-env": "^7.0.3",
-		"eslint": "^8.33.0",
+		"eslint": "^8.38.0",
 		"eslint-config-airbnb-base": "^15.0.0",
 		"eslint-config-airbnb-typescript": "^17.0.0",
-		"eslint-config-prettier": "^8.6.0",
+		"eslint-config-prettier": "^8.8.0",
 		"eslint-import-resolver-node": "^0.3.7",
 		"eslint-plugin-eslint-comments": "^3.2.0",
-		"eslint-plugin-functional": "^5.0.0",
+		"eslint-plugin-functional": "^5.0.7",
 		"eslint-plugin-import": "^2.27.5",
-		"eslint-plugin-jsdoc": "^39.7.4",
-		"eslint-plugin-vitest": "^0.0.32",
+		"eslint-plugin-jsdoc": "^41.1.1",
+		"eslint-plugin-vitest": "^0.1.4",
 		"husky": "^8.0.3",
-		"lint-staged": "^13.1.0",
+		"lint-staged": "^13.2.1",
 		"markdownlint-cli": "^0.33.0",
 		"pinst": "^3.0.0",
-		"prettier": "^2.8.3",
-		"rimraf": "^4.1.2",
-		"typescript": "^4.9.4",
-		"vitest": "^0.28.3"
+		"prettier": "^2.8.7",
+		"rimraf": "^5.0.0",
+		"typescript": "^5.0.4",
+		"vitest": "^0.30.1"
 	},
 	"sideEffects": false,
 	"eslintConfig": {
@@ -205,6 +205,17 @@
 				"extends": [
 					"plugin:functional/recommended"
 				],
+				"settings": {
+					"immutability": {
+						"overrides": [
+							{
+								"name": "Big",
+								"to": "Immutable",
+								"from": "Mutable"
+							}
+						]
+					}
+				},
 				"rules": {
 					"@typescript-eslint/prefer-readonly-parameter-types": "off",
 					"functional/functional-parameters": [
@@ -212,8 +223,7 @@
 						{
 							"enforceParameterCount": false
 						}
-					],
-					"functional/prefer-immutable-types": "off"
+					]
 				}
 			},
 			{
