@@ -93,158 +93,34 @@
 	],
 	"dependencies": {
 		"big.js": "^6.2.1",
-		"fp-ts": "^2.13.1"
+		"fp-ts": "^2.16.1"
 	},
 	"devDependencies": {
-		"@types/big.js": "^6.1.6",
-		"@typescript-eslint/eslint-plugin": "^5.58.0",
-		"@typescript-eslint/parser": "^5.58.0",
-		"@vitest/coverage-c8": "^0.30.1",
+		"@types/big.js": "^6.2.0",
+		"@typescript-eslint/eslint-plugin": "^6.2.1",
+		"@typescript-eslint/parser": "^6.2.1",
+		"@vitest/coverage-c8": "^0.33.0",
 		"cross-env": "^7.0.3",
-		"eslint": "^8.38.0",
+		"eslint": "^8.46.0",
 		"eslint-config-airbnb-base": "^15.0.0",
-		"eslint-config-airbnb-typescript": "^17.0.0",
-		"eslint-config-prettier": "^8.8.0",
-		"eslint-import-resolver-node": "^0.3.7",
+		"eslint-config-airbnb-typescript": "^17.1.0",
+		"eslint-config-prettier": "^9.0.0",
+		"eslint-import-resolver-node": "^0.3.8",
 		"eslint-plugin-eslint-comments": "^3.2.0",
-		"eslint-plugin-functional": "^5.0.8",
-		"eslint-plugin-import": "^2.27.5",
-		"eslint-plugin-jsdoc": "^41.1.2",
-		"eslint-plugin-vitest": "^0.1.4",
+		"eslint-plugin-functional": "^6.0.0",
+		"eslint-plugin-import": "^2.28.0",
+		"eslint-plugin-jsdoc": "^46.4.6",
+		"eslint-plugin-vitest": "^0.2.8",
 		"husky": "^8.0.3",
-		"lint-staged": "^13.2.1",
-		"markdownlint-cli": "^0.33.0",
+		"lint-staged": "^13.2.3",
+		"markdownlint-cli": "^0.35.0",
 		"pinst": "^3.0.0",
-		"prettier": "^2.8.7",
-		"rimraf": "^5.0.0",
-		"typescript": "^5.0.4",
-		"vitest": "^0.30.1"
+		"prettier": "^3.0.1",
+		"rimraf": "^5.0.1",
+		"typescript": "^5.1.6",
+		"vitest": "^0.34.1"
 	},
 	"sideEffects": false,
-	"eslintConfig": {
-		"ignorePatterns": [
-			"**/node_modules/",
-			"/dist",
-			"/coverage"
-		],
-		"env": {
-			"es6": true,
-			"node": true
-		},
-		"extends": [
-			"airbnb-base",
-			"plugin:eslint-comments/recommended",
-			"prettier"
-		],
-		"overrides": [
-			{
-				"files": [
-					"*.ts?(x)"
-				],
-				"extends": [
-					"airbnb-typescript/base",
-					"plugin:@typescript-eslint/eslint-recommended",
-					"plugin:@typescript-eslint/recommended",
-					"plugin:@typescript-eslint/recommended-requiring-type-checking",
-					"plugin:eslint-comments/recommended",
-					"plugin:jsdoc/recommended",
-					"plugin:eslint-comments/recommended",
-					"prettier"
-				],
-				"parserOptions": {
-					"project": "./tsconfig.json",
-					"warnOnUnsupportedTypeScriptVersion": false
-				},
-				"rules": {
-					"no-nested-ternary": "off",
-					"import/prefer-default-export": "off",
-					"import/no-default-export": "error",
-					"jsdoc/require-returns": "off",
-					"jsdoc/require-param": "off",
-					"jsdoc/require-jsdoc": [
-						"warn",
-						{
-							"publicOnly": {
-								"esm": true
-							},
-							"require": {
-								"ArrowFunctionExpression": true,
-								"ClassDeclaration": true,
-								"ClassExpression": true,
-								"FunctionDeclaration": true,
-								"FunctionExpression": true,
-								"MethodDefinition": false
-							}
-						}
-					],
-					"jsdoc/require-description": [
-						"warn",
-						{
-							"contexts": [
-								"any"
-							]
-						}
-					],
-					"jsdoc/check-tag-names": [
-						"warn",
-						{
-							"definedTags": [
-								"internal"
-							]
-						}
-					]
-				}
-			},
-			{
-				"files": [
-					"src/!(errors)/*.ts?(x)"
-				],
-				"plugins": [
-					"functional"
-				],
-				"extends": [
-					"plugin:functional/recommended"
-				],
-				"settings": {
-					"immutability": {
-						"overrides": [
-							{
-								"name": "Big",
-								"to": "Immutable",
-								"from": "Mutable"
-							}
-						]
-					}
-				},
-				"rules": {
-					"@typescript-eslint/prefer-readonly-parameter-types": "off",
-					"functional/functional-parameters": [
-						"warn",
-						{
-							"enforceParameterCount": false
-						}
-					]
-				}
-			},
-			{
-				"files": [
-					"*.spec*.ts?(x)"
-				],
-				"plugins": [
-					"vitest"
-				],
-				"rules": {
-					"vitest/consistent-test-it": [
-						"warn",
-						{
-							"fn": "it",
-							"withinDescribe": "it"
-						}
-					]
-				}
-			}
-		]
-	},
 	"lint-staged": {
 		"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
 			"prettier --write ."

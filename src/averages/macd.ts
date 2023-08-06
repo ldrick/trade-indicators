@@ -39,11 +39,10 @@ const calculate = (
  * two Exponential Moving Averages (EMA) with different periods.
  * It generates crosses with the generated signal EMA which can be used
  * to indicate uptrends or downtrends.
- *
  * @public
  */
 export const macd = (
-	values: ReadonlyArray<number>,
+	values: readonly number[],
 	fastPeriod = 12,
 	slowPeriod = 26,
 	signalPeriod = 9,
