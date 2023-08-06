@@ -7,7 +7,10 @@ describe('amean', () => {
 	it.each([
 		{ v: [new Big(0)], r: new Big(0) },
 		{ v: [new Big(1), new Big(2), new Big(3), new Big(-1)], r: new Big(1.25) },
-	] as { v: RNEA.ReadonlyNonEmptyArray<Big>; r: Big }[])('calculates the Average for values $v', ({ v, r }) => {
-		expect(amean(v)).toStrictEqual(r);
-	});
+	] as { v: RNEA.ReadonlyNonEmptyArray<Big>; r: Big }[])(
+		'calculates the Average for values $v',
+		({ v, r }) => {
+			expect(amean(v)).toStrictEqual(r);
+		},
+	);
 });
