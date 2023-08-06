@@ -5,7 +5,6 @@ import { amean } from './amean.js';
 /**
  * Base implementation for the Exponential Moving Average (EMA) and
  * the Smoothed Moving Average (SMMA) by providing a factor.
- *
  * @internal
  */
 export const dma = (
@@ -16,7 +15,7 @@ export const dma = (
 	const [init, rest] = RNEA.splitAt(period)(values);
 	return F.pipe(
 		rest,
-		RA.reduce(<RNEA.ReadonlyNonEmptyArray<Big>>[amean(init)], (reduced, value) => {
+		RA.reduce([amean(init)] as RNEA.ReadonlyNonEmptyArray<Big>, (reduced, value) => {
 			const prev = RNEA.last(reduced);
 			return RA.append(value.sub(prev).mul(factor).add(prev))(reduced);
 		}),

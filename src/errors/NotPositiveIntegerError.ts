@@ -1,6 +1,5 @@
 /**
  * Error for any `Number` lower 1 or not an Integer
- *
  * @internal
  */
 export class NotPositiveIntegerError extends Error {

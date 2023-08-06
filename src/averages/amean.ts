@@ -3,7 +3,6 @@ import { function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts';
 
 /**
  * Arithmetic Mean.
- *
  * @internal
  */
 export const amean = (values: RNEA.ReadonlyNonEmptyArray<Big>): Big =>
