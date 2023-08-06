@@ -7,6 +7,7 @@ export default defineConfig({
 		include: ['./tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
 		setupFiles: ['./tests/config/setup.ts'],
 		coverage: {
+			provider: 'v8',
 			branches: 100,
 			functions: 100,
 			lines: 100,
