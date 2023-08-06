@@ -1,11 +1,11 @@
 import { readonlyNonEmptyArray as RNEA, readonlyRecord as RR } from 'fp-ts';
 
 // record array
-export type ReadonlyRecordArray<A> = RR.ReadonlyRecord<Readonly<string>, ReadonlyArray<A>>;
+export type ReadonlyRecordArray<A> = RR.ReadonlyRecord<Readonly<string>, readonly A[]>;
 export type HighLowClose<A> = ReadonlyRecordArray<A> & {
-	readonly high: ReadonlyArray<A>;
-	readonly low: ReadonlyArray<A>;
-	readonly close: ReadonlyArray<A>;
+	readonly high: readonly A[];
+	readonly low: readonly A[];
+	readonly close: readonly A[];
 };
 
 export type NonEmpty<A, Type extends ReadonlyRecordArray<A>> = {

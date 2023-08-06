@@ -1,6 +1,5 @@
 /**
  * Error for `Array.length` not at least as required.
- *
  * @internal
  */
 export class NotEnoughDataError extends Error {

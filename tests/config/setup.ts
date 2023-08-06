@@ -26,7 +26,7 @@ const format =
 	(val: TestResult): FormattedArray | FormattedRecord =>
 		val instanceof Array ? formatArray(dec)(val) : formatRecord(dec)(val);
 
-const compareArrays = <A>(exp: ReadonlyArray<A>, rec: ReadonlyArray<A>) =>
+const compareArrays = <A>(exp: readonly A[], rec: readonly A[]) =>
 	exp.length === rec.length && exp.every((e, index) => e === rec[index]);
 
 const compareResultArrays = (

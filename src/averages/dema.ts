@@ -18,11 +18,10 @@ const calculate = (
  * The Double Exponential Moving Average (DEMA) uses two Exponential Moving Average (EMA)
  * to reduce noise. It can be used to identify support and resistance levels.
  * Also prices above the DEMA can indicate uptrends, prices below can indicate downtrends.
- *
  * @public
  */
 export const dema = (
-	values: ReadonlyArray<number>,
+	values: readonly number[],
 	period = 20,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
 	F.pipe(

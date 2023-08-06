@@ -13,7 +13,6 @@ const getFactor = (period: number): E.Either<Error, Big> =>
 
 /**
  * SMMA without checks and conversion.
- *
  * @internal
  */
 export const smmaC = (
@@ -30,11 +29,10 @@ export const smmaC = (
  * The Smoothed Moving Average (SMMA) is like the Exponential Moving Average (EMA),
  * with just a “smoother” factor. It can be used to identify support and resistance levels.
  * Also prices above the SMMA can indicate uptrends, prices below can indicate downtrends.
- *
  * @public
  */
 export const smma = (
-	values: ReadonlyArray<number>,
+	values: readonly number[],
 	period = 20,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
 	F.pipe(

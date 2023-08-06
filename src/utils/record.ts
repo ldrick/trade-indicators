@@ -11,7 +11,6 @@ import * as arr from './array.js';
 /**
  * Safely convert `RR.ReadonlyRecord<string, RNEA.ReadonlyNonEmptyArray<number>>>`
  * to `RR.ReadonlyRecord<string, RNEA.ReadonlyNonEmptyArray<Big>>>`.
- *
  * @internal
  */
 export const toBig = ((
@@ -24,7 +23,6 @@ export const toBig = ((
 
 /**
  * Validates if every Array in Record has the required size.
- *
  * @internal
  */
 export const validateRequiredSize = ((required: number) =>

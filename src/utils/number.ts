@@ -4,7 +4,6 @@ import { NotPositiveIntegerError } from '../errors/NotPositiveIntegerError.js';
 
 /**
  * Safely convert `number` to `Big`.
- *
  * @internal
  */
 export const toBig = (value: number): E.Either<Error, Big> =>
@@ -15,7 +14,6 @@ export const toBig = (value: number): E.Either<Error, Big> =>
 
 /**
  * Validate positive Integer.
- *
  * @internal
  */
 export const validatePositiveInteger = (period: number): E.Either<Error, number> =>

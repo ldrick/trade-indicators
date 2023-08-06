@@ -41,7 +41,6 @@ const trueRange = (
 
 /**
  * ATR without checks and conversion.
- *
  * @internal
  */
 export const atrC = (
@@ -59,7 +58,6 @@ export const atrC = (
  * being the greatest out of current high minus the current low,
  * the absolute value of current high minus previous close
  * and the absolute value of the current low minus the prevous close.
- *
  * @public
  */
 export const atr = (

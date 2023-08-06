@@ -12,5 +12,6 @@ export default defineConfig({
 			lines: 100,
 			statements: 100,
 		},
+		globals: false,
 	},
 });

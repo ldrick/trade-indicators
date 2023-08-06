@@ -13,7 +13,6 @@ const factor = (period: number): E.Either<Error, Big> =>
 
 /**
  * EMA without checks and conversion.
- *
  * @internal
  */
 export const emaC = (
@@ -31,11 +30,10 @@ export const emaC = (
  * and reacts closer to the prices compared to the Simple Moving Average (SMA).
  * It can be used to identify support and resistance levels.
  * Also prices above the EMA can indicate uptrends, prices below can indicate downtrends.
- *
  * @public
  */
 export const ema = (
-	values: ReadonlyArray<number>,
+	values: readonly number[],
 	period = 20,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
 	F.pipe(

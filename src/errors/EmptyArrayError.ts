@@ -1,6 +1,5 @@
 /**
  * Error for an empty Array.
- *
  * @internal
  */
 export class EmptyArrayError extends Error {

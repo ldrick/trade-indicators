@@ -3,7 +3,6 @@ import { function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts';
 
 /**
  * Weighted Arithmetic Mean.
- *
  * @internal
  */
 export const wamean = (values: RNEA.ReadonlyNonEmptyArray<Big>): Big => {

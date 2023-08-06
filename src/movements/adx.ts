@@ -77,7 +77,6 @@ const calculation = (
  * It also delivers Plus Directional Movement Indicator (PDI)
  * and Minus Directional Movement Indicator (MDI).
  * Crossings of these three values can be used to determine trend changes.
- *
  * @public
  */
 export const adx = (values: HighLowClose<number>, period = 14): E.Either<Error, ADXReturn> =>

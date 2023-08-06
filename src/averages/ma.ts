@@ -17,11 +17,10 @@ const calculation = (
 
 /**
  * Moving Average
- *
  * @internal
  */
 export const ma = (
-	values: ReadonlyArray<number>,
+	values: readonly number[],
 	period: number,
 	cb: (v: RNEA.ReadonlyNonEmptyArray<Big>) => Big,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>

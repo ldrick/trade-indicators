@@ -12,14 +12,12 @@ import * as num from './number.js';
 
 /**
  * Safely convert `RNEA.ReadonlyNonEmptyArray<number>` to `RNEA.ReadonlyNonEmptyArray<Big>`.
- *
  * @internal
  */
 export const toBig = RNEA.traverse(E.Applicative)(num.toBig);
 
 /**
  * Convert `RNEA.ReadonlyNonEmptyArray<Big>` to `RNEA.ReadonlyNonEmptyArray<number>`.
- *
  * @internal
  */
 export const toNumber = (
@@ -28,7 +26,6 @@ export const toNumber = (
 
 /**
  * Create new Array from given and fill left with value up to given size.
- *
  * @internal
  */
 export const fillLeftW =
@@ -42,7 +39,6 @@ export const fillLeftW =
 
 /**
  * Get all but the first of an `ReadonlyNonEmptyArray` as `ReadonlyNonEmptyArray`
- *
  * @internal
  */
 export const tail = <A>(
@@ -54,12 +50,11 @@ export const tail = <A>(
 
 /**
  * Validates if an Array has the required size.
- *
  * @internal
  */
 export const validateRequiredSize =
 	(required: number) =>
-	<A>(array: ReadonlyArray<A>): E.Either<Error, RNEA.ReadonlyNonEmptyArray<A>> =>
+	<A>(array: readonly A[]): E.Either<Error, RNEA.ReadonlyNonEmptyArray<A>> =>
 		RA.isNonEmpty(array) && array.length >= required
 			? E.right(array)
 			: E.left(new NotEnoughDataError(array.length, required));
