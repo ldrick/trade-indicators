@@ -69,7 +69,7 @@ expect.extend({
 								expected as TestResultRecord,
 								right as TestResultRecord,
 								decimals,
-						  ),
+							),
 			),
 		);
 
@@ -115,7 +115,7 @@ expect.extend({
 									diffString && diffString.includes('- Expect')
 										? `Difference:\n\n${diffString}`
 										: `Expected: ${this.utils.printExpected(formattedE)}\n` +
-										  `Received: ${this.utils.printReceived(formattedR)}`
+											`Received: ${this.utils.printReceived(formattedR)}`
 								}`;
 							},
 						),
