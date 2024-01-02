@@ -86,6 +86,7 @@ const config = {
 		{
 			files: ['*.spec.ts'],
 			plugins: ['vitest'],
+			extends: ['plugin:vitest/recommended'],
 			rules: {
 				'vitest/consistent-test-it': [
 					'warn',
