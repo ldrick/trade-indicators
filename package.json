@@ -93,13 +93,13 @@
 	],
 	"dependencies": {
 		"big.js": "^6.2.1",
-		"fp-ts": "^2.16.1"
+		"fp-ts": "^2.16.2"
 	},
 	"devDependencies": {
 		"@types/big.js": "^6.2.2",
-		"@typescript-eslint/eslint-plugin": "^6.17.0",
-		"@typescript-eslint/parser": "^6.17.0",
-		"@vitest/coverage-v8": "^1.1.1",
+		"@typescript-eslint/eslint-plugin": "^6.19.1",
+		"@typescript-eslint/parser": "^6.19.1",
+		"@vitest/coverage-v8": "^1.2.1",
 		"cross-env": "^7.0.3",
 		"eslint": "^8.56.0",
 		"eslint-config-airbnb-base": "^15.0.0",
@@ -109,16 +109,16 @@
 		"eslint-plugin-eslint-comments": "^3.2.0",
 		"eslint-plugin-functional": "^6.0.0",
 		"eslint-plugin-import": "^2.29.1",
-		"eslint-plugin-jsdoc": "^47.0.2",
+		"eslint-plugin-jsdoc": "^48.0.4",
 		"eslint-plugin-vitest": "^0.3.20",
-		"husky": "^8.0.3",
+		"husky": "^9.0.6",
 		"lint-staged": "^15.2.0",
 		"markdownlint-cli": "^0.38.0",
 		"pinst": "^3.0.0",
-		"prettier": "^3.1.1",
+		"prettier": "^3.2.4",
 		"rimraf": "^5.0.5",
 		"typescript": "^5.3.3",
-		"vitest": "^1.1.1"
+		"vitest": "^1.2.1"
 	},
 	"sideEffects": false,
 	"lint-staged": {
