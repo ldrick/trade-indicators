@@ -7,12 +7,13 @@ import {
 	readonlyArray as RA,
 	readonlyNonEmptyArray as RNEA,
 } from 'fp-ts/lib';
+
 import { smmaC } from '../averages/smma.js';
 import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
 import { HighLowClose, NonEmptyHighLowClose } from '../types.js';
-import * as arr from '../utils/array.js';
+import * as array from '../utils/array.js';
 import * as big from '../utils/big.js';
-import * as num from '../utils/number.js';
+import * as number_ from '../utils/number.js';
 import * as rec from '../utils/record.js';
 
 const trueRange = (
@@ -20,7 +21,7 @@ const trueRange = (
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
 	F.pipe(
 		values.high,
-		arr.tail,
+		array.tail,
 		E.chain(
 			RNEA.traverseWithIndex(E.Applicative)((index, high) =>
 				F.pipe(
@@ -66,10 +67,10 @@ export const atr = (
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
 	F.pipe(
 		AP.sequenceS(E.Applicative)({
-			periodV: num.validatePositiveInteger(period),
+			periodV: number_.validatePositiveInteger(period),
 			valuesV: rec.validateRequiredSize(period + 1)(values),
 		}),
 		E.bind('valuesB', ({ valuesV }) => rec.toBig(valuesV)),
 		E.chain(({ valuesB, periodV }) => atrC(valuesB, periodV)),
-		E.map(arr.toNumber),
+		E.map(array.toNumber),
 	);

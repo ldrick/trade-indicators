@@ -1,0 +1,202 @@
+// @ts-check
+
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { FlatCompat } from '@eslint/eslintrc';
+import eslint from '@eslint/js';
+import configPrettier from 'eslint-config-prettier';
+import functionalPlugin from 'eslint-plugin-functional';
+import importPlugin from 'eslint-plugin-import';
+import jsdocPlugin from 'eslint-plugin-jsdoc';
+import unicornPlugin from 'eslint-plugin-unicorn';
+import vitestPlugin from 'eslint-plugin-vitest';
+import globals from 'globals';
+import typescriptEslint from 'typescript-eslint';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const compat = new FlatCompat({
+	baseDirectory: __dirname,
+	resolvePluginsRelativeTo: __dirname,
+	recommendedConfig: eslint.configs.recommended,
+	allConfig: eslint.configs.all,
+});
+
+export default typescriptEslint.config(
+	// register all of the plugins upfront
+	{
+		plugins: {
+			['@typescript-eslint']: typescriptEslint.plugin,
+			['functional']: functionalPlugin,
+			['import']: importPlugin,
+			['jsdoc']: jsdocPlugin,
+			['vitest']: vitestPlugin,
+		},
+	},
+	// ignored files
+	{
+		ignores: ['node_modules', 'dist', 'coverage'],
+	},
+	// extends
+	eslint.configs.recommended,
+	...compat.extends('plugin:@eslint-community/eslint-comments/recommended'),
+	...typescriptEslint.configs.strictTypeChecked,
+	...typescriptEslint.configs.stylisticTypeChecked,
+	unicornPlugin.configs['flat/recommended'],
+	configPrettier,
+	// base config
+	{
+		languageOptions: {
+			globals: {
+				...globals.es2021,
+				...globals.node,
+			},
+			parserOptions: {
+				project: true,
+				tsconfigRootDir: __dirname,
+				warnOnUnsupportedTypeScriptVersion: false,
+			},
+		},
+		rules: {
+			// disallow non-import statements appearing before import statements
+			'import/first': 'error',
+			// Require a newline after the last import/require in a group
+			'import/newline-after-import': 'error',
+			// Forbid import of modules using absolute paths
+			'import/no-absolute-path': 'error',
+			// disallow AMD require/define
+			'import/no-amd': 'error',
+			// forbid default exports - we want to standardize on named exports so that imported names are consistent
+			'import/no-default-export': 'error',
+			// disallow imports from duplicate paths
+			'import/no-duplicates': 'error',
+			// Forbid the use of extraneous packages
+			'import/no-extraneous-dependencies': [
+				'error',
+				{
+					devDependencies: true,
+					peerDependencies: true,
+					optionalDependencies: false,
+				},
+			],
+			// Forbid mutable exports
+			'import/no-mutable-exports': 'error',
+			// Prevent importing the default as if it were named
+			'import/no-named-default': 'error',
+			// Prohibit named exports
+			'import/no-named-export': 'off', // we want everything to be a named export
+			// Forbid a module from importing itself
+			'import/no-self-import': 'error',
+			// Require modules with a single export to use a default export
+			'import/prefer-default-export': 'off', // we want everything to be named
+			'import/order': [
+				'error',
+				{
+					groups: ['builtin', 'external', ['sibling', 'parent'], 'index', 'object', 'type'],
+					'newlines-between': 'always',
+					alphabetize: {
+						order: 'asc',
+						caseInsensitive: true,
+					},
+				},
+			],
+			'unicorn/filename-case': ['error', { cases: { camelCase: true, pascalCase: true } }],
+			'unicorn/no-null': 'off',
+		},
+	},
+	// overrides for JavaScript files
+	{
+		files: ['*.js'],
+		...typescriptEslint.configs.disableTypeChecked,
+	},
+	// overrides for TypeScript files
+	{
+		files: ['*.ts'],
+		rules: {
+			...jsdocPlugin.configs['flat/recommended-typescript-error'].rules,
+			'no-nested-ternary': 'off',
+			'jsdoc/require-returns': 'off',
+			'jsdoc/require-param': 'off',
+			'jsdoc/require-jsdoc': [
+				'error',
+				{
+					publicOnly: {
+						esm: true,
+					},
+					require: {
+						ArrowFunctionExpression: true,
+						ClassDeclaration: true,
+						ClassExpression: true,
+						FunctionDeclaration: true,
+						FunctionExpression: true,
+						MethodDefinition: false,
+					},
+				},
+			],
+			'jsdoc/require-description': [
+				'error',
+				{
+					contexts: ['any'],
+				},
+			],
+			'jsdoc/check-tag-names': [
+				'error',
+				{
+					definedTags: ['internal'],
+				},
+			],
+		},
+	},
+	// overrides for functional TypeScript files
+	{
+		files: ['src/!(errors)/*.ts'],
+		settings: {
+			immutability: {
+				overrides: [
+					{
+						type: { from: 'package', package: 'big.js', name: 'Big' },
+						from: 'Mutable',
+						to: 'Immutable',
+					},
+				],
+			},
+		},
+		rules: {
+			...functionalPlugin.configs.recommended.rules,
+			'functional/functional-parameters': [
+				'error',
+				{
+					enforceParameterCount: false,
+				},
+			],
+		},
+	},
+	// overrides for Test files
+	{
+		files: ['*.spec.ts'],
+		languageOptions: {
+			globals: {
+				...vitestPlugin.environments.env.globals,
+			},
+		},
+		rules: {
+			...vitestPlugin.configs.recommended.rules,
+			'vitest/consistent-test-it': [
+				'error',
+				{
+					fn: 'it',
+					withinDescribe: 'it',
+				},
+			],
+		},
+	},
+	// overrides for ESLint config files
+	{
+		files: ['eslint.config.js'],
+		rules: {
+			// requirement
+			'import/no-default-export': 'off',
+		},
+	},
+);

@@ -5,16 +5,17 @@ import {
 	readonlyArray as RA,
 	readonlyNonEmptyArray as RNEA,
 } from 'fp-ts';
+
+import * as big from './big.js';
+import * as number_ from './number.js';
 import { EmptyArrayError } from '../errors/EmptyArrayError.js';
 import { NotEnoughDataError } from '../errors/NotEnoughDataError.js';
-import * as big from './big.js';
-import * as num from './number.js';
 
 /**
  * Safely convert `RNEA.ReadonlyNonEmptyArray<number>` to `RNEA.ReadonlyNonEmptyArray<Big>`.
  * @internal
  */
-export const toBig = RNEA.traverse(E.Applicative)(num.toBig);
+export const toBig = RNEA.traverse(E.Applicative)(number_.toBig);
 
 /**
  * Convert `RNEA.ReadonlyNonEmptyArray<Big>` to `RNEA.ReadonlyNonEmptyArray<number>`.

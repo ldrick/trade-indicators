@@ -1,8 +1,9 @@
 import { Big } from 'big.js';
 import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
-import * as arr from '../utils/array.js';
-import * as num from '../utils/number.js';
+
 import { emaC } from './ema.js';
+import * as array from '../utils/array.js';
+import * as number_ from '../utils/number.js';
 
 const calculate = (
 	one: RNEA.ReadonlyNonEmptyArray<Big>,
@@ -26,10 +27,10 @@ export const dema = (
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
 	F.pipe(
 		AP.sequenceS(E.Applicative)({
-			periodV: num.validatePositiveInteger(period),
-			valuesV: arr.validateRequiredSize(2 * period - 1)(values),
+			periodV: number_.validatePositiveInteger(period),
+			valuesV: array.validateRequiredSize(2 * period - 1)(values),
 		}),
-		E.bind('valuesB', ({ valuesV }) => arr.toBig(valuesV)),
+		E.bind('valuesB', ({ valuesV }) => array.toBig(valuesV)),
 		E.bind('emaOne', ({ valuesB, periodV }) => emaC(valuesB, periodV)),
 		E.bind('emaTwo', ({ emaOne, periodV }) => emaC(emaOne, periodV)),
 		E.map(({ emaOne, emaTwo, periodV }) => calculate(emaOne, emaTwo, periodV)),

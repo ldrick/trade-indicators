@@ -1,5 +1,6 @@
 import { either as E } from 'fp-ts/lib';
 import { describe, expect, it } from 'vitest';
+
 import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';
 import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
 import { UnequalArraySizesError } from '../../src/errors/UnequalArraySizesError.js';
@@ -7,7 +8,7 @@ import { adx } from '../../src/movements/adx.js';
 import * as prices from '../prices.json' assert { type: 'json' };
 
 describe('adx', () => {
-	it.each([{ p: NaN }, { p: Infinity }, { p: -Infinity }, { p: -1 }, { p: 0 }, { p: 1.5 }])(
+	it.each([{ p: Number.NaN }, { p: Number.POSITIVE_INFINITY }, { p: Number.NEGATIVE_INFINITY }, { p: -1 }, { p: 0 }, { p: 1.5 }])(
 		'fails if period is not a positive integer $p',
 		({ p }) => {
 			expect(adx({ close: [1.3], high: [1.5], low: [0.9] }, p)).toStrictEqual(
@@ -31,7 +32,7 @@ describe('adx', () => {
 	it.each([
 		{
 			v: {
-				high: [0, 0, NaN, 0, 0],
+				high: [0, 0, Number.NaN, 0, 0],
 				low: [0, 0, 0, 0, 0],
 				close: [0, 0, 0, 0, 0],
 			},
@@ -39,7 +40,7 @@ describe('adx', () => {
 		{
 			v: {
 				high: [0, 0, 0, 0, 0],
-				low: [0, 0, Infinity, 0, 0],
+				low: [0, 0, Number.POSITIVE_INFINITY, 0, 0],
 				close: [0, 0, 0, 0, 0],
 			},
 		},
@@ -47,7 +48,7 @@ describe('adx', () => {
 			v: {
 				high: [0, 0, 0, 0, 0],
 				low: [0, 0, 0, 0, 0],
-				close: [0, -Infinity, 0, 0, 0],
+				close: [0, Number.NEGATIVE_INFINITY, 0, 0, 0],
 			},
 		},
 	])('fails if any value is a infinit value $v', ({ v }) => {

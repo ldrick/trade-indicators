@@ -1,5 +1,6 @@
 import { either as E, function as F, readonlyArray as RA, readonlyRecord as RR } from 'fp-ts/lib';
 import { expect } from 'vitest';
+
 import {
 	FormattedArray,
 	FormattedRecord,
@@ -10,10 +11,10 @@ import {
 
 const formatArray =
 	(dec: number) =>
-	(arr: TestResultArray): FormattedArray =>
+	(array: TestResultArray): FormattedArray =>
 		F.pipe(
-			arr,
-			RA.map((el) => (el === null ? String(el) : el.toFixed(dec))),
+			array,
+			RA.map((element) => (element === null ? String(element) : element.toFixed(dec))),
 		);
 
 const formatRecord =
@@ -23,11 +24,11 @@ const formatRecord =
 
 const format =
 	(dec: number) =>
-	(val: TestResult): FormattedArray | FormattedRecord =>
-		val instanceof Array ? formatArray(dec)(val) : formatRecord(dec)(val);
+	(value: TestResult): FormattedArray | FormattedRecord =>
+		value instanceof Array ? formatArray(dec)(value) : formatRecord(dec)(value);
 
 const compareArrays = <A>(exp: readonly A[], rec: readonly A[]) =>
-	exp.length === rec.length && exp.every((e, index) => e === rec[index]);
+	exp.length === rec.length && exp.every((entry, index) => entry === rec[index]);
 
 const compareResultArrays = (
 	exp: TestResultArray,
@@ -35,7 +36,7 @@ const compareResultArrays = (
 	decimals: number,
 ): boolean =>
 	exp.length === rec.length &&
-	exp.every((e, index) => e?.toFixed(decimals) === rec[index]?.toFixed(decimals));
+	exp.every((entry, index) => entry?.toFixed(decimals) === rec[index]?.toFixed(decimals));
 
 const compareResultRecords = (
 	exp: TestResultRecord,
@@ -63,7 +64,7 @@ expect.extend({
 			E.fold(
 				() => false,
 				(right) =>
-					expected instanceof Array && right instanceof Array
+					Array.isArray(expected) && Array.isArray(right)
 						? compareResultArrays(expected, right, decimals)
 						: compareResultRecords(
 								expected as TestResultRecord,
