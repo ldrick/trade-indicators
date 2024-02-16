@@ -10,8 +10,7 @@
 	// trigger linting and fixes
 	"editor.formatOnSave": true,
 	"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": "explicit",
-		"source.organizeImports": "explicit"
+		"source.fixAll.eslint": "explicit"
 	},
 	"eslint.validate": [
 		"javascript",
@@ -21,7 +20,6 @@
 		"html",
 		"vue"
 	],
-	"eslint.packageManager": "npm",
 	// package manager
 	"npm.packageManager": "npm",
 	"typescript.enablePromptUseWorkspaceTsdk": true,

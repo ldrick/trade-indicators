@@ -1,7 +1,5 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { defineConfig } from 'vitest/config';
 
-// eslint-disable-next-line import/no-default-export
 export default defineConfig({
 	test: {
 		globals: true,
@@ -15,7 +13,7 @@ export default defineConfig({
 			 * as v8 collects them,	but they won't be covered.
 			 * @see https://github.com/vitest-dev/vitest/issues/3605
 			 */
-			exclude: ['src/types.ts'],
+			exclude: ['src/types.ts', 'src/**/*.d.ts'],
 			thresholds: {
 				100: true,
 			},
