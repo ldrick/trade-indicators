@@ -1,6 +1,7 @@
 import { Big } from 'big.js';
 import { readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
 import { describe, expect, it } from 'vitest';
+
 import { wamean } from '../../src/averages/wamean.js';
 
 describe('wamean', () => {

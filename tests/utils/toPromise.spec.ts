@@ -1,5 +1,6 @@
 import { either as E } from 'fp-ts/lib';
 import { describe, expect, it } from 'vitest';
+
 import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';
 import { UnequalArraySizesError } from '../../src/errors/UnequalArraySizesError.js';
 import { toPromise } from '../../src/utils/toPromise.js';

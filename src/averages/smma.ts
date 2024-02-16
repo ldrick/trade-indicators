@@ -1,13 +1,14 @@
 import { Big } from 'big.js';
 import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
-import * as arr from '../utils/array.js';
-import * as num from '../utils/number.js';
+
 import { dma } from './dma.js';
+import * as array from '../utils/array.js';
+import * as number_ from '../utils/number.js';
 
 const getFactor = (period: number): E.Either<Error, Big> =>
 	F.pipe(
 		period,
-		num.toBig,
+		number_.toBig,
 		E.map((periodB) => new Big(1).div(periodB)),
 	);
 
@@ -37,10 +38,10 @@ export const smma = (
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
 	F.pipe(
 		AP.sequenceS(E.Applicative)({
-			periodV: num.validatePositiveInteger(period),
-			valuesV: arr.validateRequiredSize(period)(values),
+			periodV: number_.validatePositiveInteger(period),
+			valuesV: array.validateRequiredSize(period)(values),
 		}),
-		E.bind('valuesB', ({ valuesV }) => arr.toBig(valuesV)),
+		E.bind('valuesB', ({ valuesV }) => array.toBig(valuesV)),
 		E.chain(({ valuesB, periodV }) => smmaC(valuesB, periodV)),
-		E.map(arr.toNumber),
+		E.map(array.toNumber),
 	);

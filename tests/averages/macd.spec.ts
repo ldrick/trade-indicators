@@ -1,5 +1,6 @@
 import { either as E } from 'fp-ts/lib';
 import { describe, expect, it } from 'vitest';
+
 import { macd } from '../../src/averages/macd.js';
 import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';
 import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
@@ -8,15 +9,15 @@ import * as prices from '../prices.json' assert { type: 'json' };
 
 describe('macd', () => {
 	it.each([
-		{ p: [NaN] },
-		{ p: [1, NaN] },
-		{ p: [1, 1, NaN] },
-		{ p: [Infinity] },
-		{ p: [1, Infinity] },
-		{ p: [1, 1, Infinity] },
-		{ p: [-Infinity] },
-		{ p: [1, -Infinity] },
-		{ p: [1, 1, -Infinity] },
+		{ p: [Number.NaN] },
+		{ p: [1, Number.NaN] },
+		{ p: [1, 1, Number.NaN] },
+		{ p: [Number.POSITIVE_INFINITY] },
+		{ p: [1, Number.POSITIVE_INFINITY] },
+		{ p: [1, 1, Number.POSITIVE_INFINITY] },
+		{ p: [Number.NEGATIVE_INFINITY] },
+		{ p: [1, Number.NEGATIVE_INFINITY] },
+		{ p: [1, 1, Number.NEGATIVE_INFINITY] },
 		{ p: [0] },
 		{ p: [1, 0] },
 		{ p: [1, 1, 0] },
@@ -40,12 +41,13 @@ describe('macd', () => {
 		expect(macd([1, 2, 3, 4], 3, 4, 2)).toStrictEqual(E.left(new NotEnoughDataError(4, 5)));
 	});
 
-	it.each([{ v: [0, 0, NaN, 0] }, { v: [0, 0, Infinity, 0] }, { v: [0, 0, -Infinity, 0] }])(
-		'fails if values contains a infinit value $v',
-		({ v }) => {
-			expect(macd(v, 2, 3, 1)).toStrictEqual(E.left(new Error('[big.js] Invalid number')));
-		},
-	);
+	it.each([
+		{ v: [0, 0, Number.NaN, 0] },
+		{ v: [0, 0, Number.POSITIVE_INFINITY, 0] },
+		{ v: [0, 0, Number.NEGATIVE_INFINITY, 0] },
+	])('fails if values contains a infinit value $v', ({ v }) => {
+		expect(macd(v, 2, 3, 1)).toStrictEqual(E.left(new Error('[big.js] Invalid number')));
+	});
 
 	it('calculates the Moving Average Convergence / Divergence with default period', () => {
 		expect(macd(prices.default.close)).eitherRightToEqualFixedPrecision(prices.default.macd);

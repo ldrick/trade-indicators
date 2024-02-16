@@ -1,11 +1,12 @@
 import { Big } from 'big.js';
 import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
+
+import { atrC } from './atr.js';
 import { smmaC } from '../averages/smma.js';
 import { HighLowClose, NonEmptyHighLowClose, ReadonlyRecordNonEmptyArray } from '../types.js';
-import * as arr from '../utils/array.js';
-import * as num from '../utils/number.js';
+import * as array from '../utils/array.js';
+import * as number_ from '../utils/number.js';
 import * as rec from '../utils/record.js';
-import { atrC } from './atr.js';
 
 type Movement = 'up' | 'down';
 
@@ -27,7 +28,7 @@ const directionalMovement = (
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
 	F.pipe(
 		values.low,
-		arr.tail,
+		array.tail,
 		E.map(
 			RNEA.mapWithIndex((index, low) => {
 				const previous = index;
@@ -82,7 +83,7 @@ const calculation = (
 export const adx = (values: HighLowClose<number>, period = 14): E.Either<Error, ADXReturn> =>
 	F.pipe(
 		AP.sequenceS(E.Applicative)({
-			periodV: num.validatePositiveInteger(period),
+			periodV: number_.validatePositiveInteger(period),
 			valuesV: rec.validateRequiredSize(2 * period)(values),
 		}),
 		E.bind('valuesB', ({ valuesV }) => rec.toBig(valuesV)),
@@ -96,10 +97,10 @@ export const adx = (values: HighLowClose<number>, period = 14): E.Either<Error, 
 			adx: F.pipe(
 				smoothed,
 				RNEA.map((value) => value.mul(100)),
-				arr.toNumber,
-				arr.fillLeftW(mdi.length, null),
+				array.toNumber,
+				array.fillLeftW(mdi.length, null),
 			),
-			mdi: arr.toNumber(mdi),
-			pdi: arr.toNumber(pdi),
+			mdi: array.toNumber(mdi),
+			pdi: array.toNumber(pdi),
 		})),
 	);

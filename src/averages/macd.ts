@@ -6,11 +6,12 @@ import {
 	readonlyArray as RA,
 	readonlyNonEmptyArray as RNEA,
 } from 'fp-ts/lib';
+
+import { emaC } from './ema.js';
 import { PeriodSizeMissmatchError } from '../errors/PeriodSizeMissmatchError.js';
 import { ReadonlyRecordNonEmptyArray } from '../types.js';
-import * as arr from '../utils/array.js';
-import * as num from '../utils/number.js';
-import { emaC } from './ema.js';
+import * as array from '../utils/array.js';
+import * as number_ from '../utils/number.js';
 
 type MACDReturn = ReadonlyRecordNonEmptyArray<number | null> & {
 	readonly macd: RNEA.ReadonlyNonEmptyArray<number>;
@@ -49,19 +50,19 @@ export const macd = (
 ): E.Either<Error, MACDReturn> =>
 	F.pipe(
 		AP.sequenceS(E.Applicative)({
-			fastPeriodV: num.validatePositiveInteger(fastPeriod),
-			slowPeriodV: num.validatePositiveInteger(slowPeriod),
-			signalPeriodV: num.validatePositiveInteger(signalPeriod),
+			fastPeriodV: number_.validatePositiveInteger(fastPeriod),
+			slowPeriodV: number_.validatePositiveInteger(slowPeriod),
+			signalPeriodV: number_.validatePositiveInteger(signalPeriod),
 			periodSizes: validatePeriodSizes(slowPeriod, fastPeriod),
-			valuesV: arr.validateRequiredSize(slowPeriod + signalPeriod - 1)(values),
+			valuesV: array.validateRequiredSize(slowPeriod + signalPeriod - 1)(values),
 		}),
-		E.bind('valuesB', ({ valuesV }) => arr.toBig(valuesV)),
+		E.bind('valuesB', ({ valuesV }) => array.toBig(valuesV)),
 		E.bind('emaSlow', ({ valuesB, slowPeriodV }) => emaC(valuesB, slowPeriodV)),
 		E.bind('emaFast', ({ valuesB, fastPeriodV }) => emaC(valuesB, fastPeriodV)),
 		E.bind('macdResult', ({ emaFast, emaSlow }) => E.right(calculate(emaFast, emaSlow))),
 		E.bind('signal', ({ macdResult, signalPeriodV }) => emaC(macdResult, signalPeriodV)),
 		E.map(({ macdResult, signal }) => ({
-			macd: arr.toNumber(macdResult),
-			signal: F.pipe(signal, arr.toNumber, arr.fillLeftW(macdResult.length, null)),
+			macd: array.toNumber(macdResult),
+			signal: F.pipe(signal, array.toNumber, array.fillLeftW(macdResult.length, null)),
 		})),
 	);

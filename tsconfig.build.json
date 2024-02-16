@@ -2,8 +2,8 @@
 	"compilerOptions": {
 		"baseUrl": "./",
 		"outDir": "dist",
-		"target": "ES2022",
-		"lib": ["ES2022"],
+		"target": "ESNext",
+		"lib": ["ESNext"],
 		"module": "NodeNext",
 		"moduleResolution": "nodenext",
 		"resolveJsonModule": true,
