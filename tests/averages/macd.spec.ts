@@ -41,12 +41,13 @@ describe('macd', () => {
 		expect(macd([1, 2, 3, 4], 3, 4, 2)).toStrictEqual(E.left(new NotEnoughDataError(4, 5)));
 	});
 
-	it.each([{ v: [0, 0, Number.NaN, 0] }, { v: [0, 0, Number.POSITIVE_INFINITY, 0] }, { v: [0, 0, Number.NEGATIVE_INFINITY, 0] }])(
-		'fails if values contains a infinit value $v',
-		({ v }) => {
-			expect(macd(v, 2, 3, 1)).toStrictEqual(E.left(new Error('[big.js] Invalid number')));
-		},
-	);
+	it.each([
+		{ v: [0, 0, Number.NaN, 0] },
+		{ v: [0, 0, Number.POSITIVE_INFINITY, 0] },
+		{ v: [0, 0, Number.NEGATIVE_INFINITY, 0] },
+	])('fails if values contains a infinit value $v', ({ v }) => {
+		expect(macd(v, 2, 3, 1)).toStrictEqual(E.left(new Error('[big.js] Invalid number')));
+	});
 
 	it('calculates the Moving Average Convergence / Divergence with default period', () => {
 		expect(macd(prices.default.close)).eitherRightToEqualFixedPrecision(prices.default.macd);

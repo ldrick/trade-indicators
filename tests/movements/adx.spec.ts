@@ -8,14 +8,18 @@ import { adx } from '../../src/movements/adx.js';
 import * as prices from '../prices.json' assert { type: 'json' };
 
 describe('adx', () => {
-	it.each([{ p: Number.NaN }, { p: Number.POSITIVE_INFINITY }, { p: Number.NEGATIVE_INFINITY }, { p: -1 }, { p: 0 }, { p: 1.5 }])(
-		'fails if period is not a positive integer $p',
-		({ p }) => {
-			expect(adx({ close: [1.3], high: [1.5], low: [0.9] }, p)).toStrictEqual(
-				E.left(new NotPositiveIntegerError()),
-			);
-		},
-	);
+	it.each([
+		{ p: Number.NaN },
+		{ p: Number.POSITIVE_INFINITY },
+		{ p: Number.NEGATIVE_INFINITY },
+		{ p: -1 },
+		{ p: 0 },
+		{ p: 1.5 },
+	])('fails if period is not a positive integer $p', ({ p }) => {
+		expect(adx({ close: [1.3], high: [1.5], low: [0.9] }, p)).toStrictEqual(
+			E.left(new NotPositiveIntegerError()),
+		);
+	});
 
 	it('fails if not enough data to calculate for period', () => {
 		expect(

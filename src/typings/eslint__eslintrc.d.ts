@@ -10,7 +10,7 @@ declare module '@eslint/eslintrc' {
 		});
 
 		config(eslintrcConfig: ClassicConfig.Config): FlatConfig.ConfigArray;
-		env(envConfig: ClassicConfig.EnvironmentConfig): FlatConfig.ConfigArray;
+		env(environmentConfig: ClassicConfig.EnvironmentConfig): FlatConfig.ConfigArray;
 		extends(...configsToExtend: string[]): FlatConfig.ConfigArray;
 		plugins(...plugins: string[]): FlatConfig.ConfigArray;
 	}

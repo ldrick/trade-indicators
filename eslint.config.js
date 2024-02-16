@@ -103,6 +103,8 @@ export default typescriptEslint.config(
 			],
 			'unicorn/filename-case': ['error', { cases: { camelCase: true, pascalCase: true } }],
 			'unicorn/no-null': 'off',
+			'unicorn/no-array-reduce': 'off',
+			'unicorn/no-array-callback-reference': 'off',
 		},
 	},
 	// overrides for JavaScript files
@@ -113,6 +115,7 @@ export default typescriptEslint.config(
 	// overrides for TypeScript files
 	{
 		files: ['*.ts'],
+		ignores: ['**/*.d.ts'],
 		rules: {
 			...jsdocPlugin.configs['flat/recommended-typescript-error'].rules,
 			'no-nested-ternary': 'off',
@@ -148,9 +151,17 @@ export default typescriptEslint.config(
 			],
 		},
 	},
+	// overrides for TypeScript Definition files
+	{
+		files: ['**/*.d.ts'],
+		rules: {
+			'unicorn/filename-case': 'off',
+		},
+	},
 	// overrides for functional TypeScript files
 	{
 		files: ['src/!(errors)/*.ts'],
+		ignores: ['**/*.d.ts'],
 		settings: {
 			immutability: {
 				overrides: [
@@ -191,11 +202,10 @@ export default typescriptEslint.config(
 			],
 		},
 	},
-	// overrides for ESLint config files
+	// overrides for Config files
 	{
-		files: ['eslint.config.js'],
+		files: ['eslint.config.js', 'vitest.config.ts'],
 		rules: {
-			// requirement
 			'import/no-default-export': 'off',
 		},
 	},

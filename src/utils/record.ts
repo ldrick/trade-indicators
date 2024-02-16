@@ -20,7 +20,9 @@ export const toBig = ((
 	F.pipe(object, RR.traverse(E.Applicative)(array.toBig))) as ((
 	object: NonEmptyHighLowClose<number>,
 ) => E.Either<Error, NonEmptyHighLowClose<Big>>) &
-	((object: ReadonlyRecordNonEmptyArray<number>) => E.Either<Error, ReadonlyRecordNonEmptyArray<Big>>);
+	((
+		object: ReadonlyRecordNonEmptyArray<number>,
+	) => E.Either<Error, ReadonlyRecordNonEmptyArray<Big>>);
 
 /**
  * Validates if every Array in Record has the required size.

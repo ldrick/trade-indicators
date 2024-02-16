@@ -25,7 +25,7 @@ const formatRecord =
 const format =
 	(dec: number) =>
 	(value: TestResult): FormattedArray | FormattedRecord =>
-		value instanceof Array ? formatArray(dec)(value) : formatRecord(dec)(value);
+		Array.isArray(value) ? formatArray(dec)(value) : formatRecord(dec)(value);
 
 const compareArrays = <A>(exp: readonly A[], rec: readonly A[]) =>
 	exp.length === rec.length && exp.every((entry, index) => entry === rec[index]);
