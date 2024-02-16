@@ -1,4 +1,5 @@
 import { either as E, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
+
 import { ma } from './ma.js';
 import { wamean } from './wamean.js';
 

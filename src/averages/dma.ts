@@ -1,5 +1,6 @@
 import { Big } from 'big.js';
 import { function as F, readonlyArray as RA, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
+
 import { amean } from './amean.js';
 
 /**
@@ -16,8 +17,8 @@ export const dma = (
 	return F.pipe(
 		rest,
 		RA.reduce([amean(init)] as RNEA.ReadonlyNonEmptyArray<Big>, (reduced, value) => {
-			const prev = RNEA.last(reduced);
-			return RA.append(value.sub(prev).mul(factor).add(prev))(reduced);
+			const previous = RNEA.last(reduced);
+			return RA.append(value.sub(previous).mul(factor).add(previous))(reduced);
 		}),
 	);
 };
