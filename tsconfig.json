@@ -1,8 +1,7 @@
 {
 	"extends": "./tsconfig.build.json",
 	"compilerOptions": {
-		"allowJs": true,
-		"maxNodeModuleJsDepth": 10,
+		"allowJs": true
 	},
-	"include": ["./src", "./tests", "./vitest.config.ts", "./eslintrc.cjs"],
+	"include": ["src", "tests", "vitest.config.ts", "eslint.config.js"]
 }

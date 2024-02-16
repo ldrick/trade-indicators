@@ -1,4 +1,4 @@
-import { TestResult } from '../types.js';
+import { TestResult } from '../types.ts';
 
 interface CustomMatchers<R = unknown> {
 	eitherRightToEqualFixedPrecision(expected: TestResult, decimals = 12): R;
