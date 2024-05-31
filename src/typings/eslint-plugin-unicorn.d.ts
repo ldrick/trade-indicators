@@ -1,7 +1,7 @@
 declare module 'eslint-plugin-unicorn' {
 	import type { ClassicConfig, FlatConfig, Linter } from '@typescript-eslint/utils/ts-eslint';
 
-	declare const exprt: {
+	declare const toBeExported: {
 		configs: {
 			all: ClassicConfig.Config;
 			'flat/all': FlatConfig.Config;
@@ -10,5 +10,5 @@ declare module 'eslint-plugin-unicorn' {
 		};
 		rules: NonNullable<Linter.Plugin['rules']>;
 	};
-	export = exprt;
+	export = toBeExported;
 }

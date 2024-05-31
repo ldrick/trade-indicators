@@ -11,9 +11,9 @@ import * as rec from '../utils/record.js';
 type Movement = 'up' | 'down';
 
 type ADXReturn = ReadonlyRecordNonEmptyArray<number | null> & {
-	readonly adx: RNEA.ReadonlyNonEmptyArray<number | null>;
-	readonly mdi: RNEA.ReadonlyNonEmptyArray<number>;
-	readonly pdi: RNEA.ReadonlyNonEmptyArray<number>;
+	adx: RNEA.ReadonlyNonEmptyArray<number | null>;
+	mdi: RNEA.ReadonlyNonEmptyArray<number>;
+	pdi: RNEA.ReadonlyNonEmptyArray<number>;
 };
 
 const compareMovement = (base: Big, comparision: Big): Big =>
