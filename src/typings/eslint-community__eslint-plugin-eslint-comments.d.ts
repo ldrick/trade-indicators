@@ -1,11 +1,8 @@
-declare module '@eslint/js' {
+declare module '@eslint-community/eslint-plugin-eslint-comments/configs' {
 	import type { FlatConfig } from '@typescript-eslint/utils/ts-eslint';
 
 	declare const toBeExported: {
-		configs: {
-			all: FlatConfig.Config;
-			recommended: FlatConfig.Config;
-		};
+		recommended: FlatConfig.Config;
 	};
 	export = toBeExported;
 }

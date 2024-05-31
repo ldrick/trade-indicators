@@ -3,10 +3,10 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { FlatCompat } from '@eslint/eslintrc';
 import eslint from '@eslint/js';
+import commentsPlugin from '@eslint-community/eslint-plugin-eslint-comments/configs';
 import configPrettier from 'eslint-config-prettier';
-import functionalPlugin from 'eslint-plugin-functional';
+import functionalPlugin from 'eslint-plugin-functional/flat';
 import importPlugin from 'eslint-plugin-import';
 import jsdocPlugin from 'eslint-plugin-jsdoc';
 import unicornPlugin from 'eslint-plugin-unicorn';
@@ -16,12 +16,6 @@ import typescriptEslint from 'typescript-eslint';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-	baseDirectory: __dirname,
-	resolvePluginsRelativeTo: __dirname,
-	recommendedConfig: eslint.configs.recommended,
-	allConfig: eslint.configs.all,
-});
 
 export default typescriptEslint.config(
 	// register all of the plugins upfront
@@ -40,7 +34,7 @@ export default typescriptEslint.config(
 	},
 	// extends
 	eslint.configs.recommended,
-	...compat.extends('plugin:@eslint-community/eslint-comments/recommended'),
+	commentsPlugin.recommended,
 	...typescriptEslint.configs.strictTypeChecked,
 	...typescriptEslint.configs.stylisticTypeChecked,
 	unicornPlugin.configs['flat/recommended'],
@@ -162,26 +156,10 @@ export default typescriptEslint.config(
 	{
 		files: ['src/!(errors)/*.ts'],
 		ignores: ['**/*.d.ts'],
-		settings: {
-			immutability: {
-				overrides: [
-					{
-						type: { from: 'package', package: 'big.js', name: 'Big' },
-						from: 'Mutable',
-						to: 'Immutable',
-					},
-				],
-			},
-		},
-		rules: {
-			...functionalPlugin.configs.recommended.rules,
-			'functional/functional-parameters': [
-				'error',
-				{
-					enforceParameterCount: false,
-				},
-			],
-		},
+		...functionalPlugin.configs.externalVanillaRecommended,
+		...functionalPlugin.configs.externalTypescriptRecommended,
+		...functionalPlugin.configs.recommended,
+		...functionalPlugin.configs.stylistic,
 	},
 	// overrides for Test files
 	{

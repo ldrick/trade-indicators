@@ -1,7 +1,7 @@
 declare module 'eslint-plugin-import' {
 	import type { ClassicConfig, Linter } from '@typescript-eslint/utils/ts-eslint';
 
-	declare const exprt: {
+	declare const toBeExported: {
 		configs: {
 			recommended: ClassicConfig.Config;
 			errors: ClassicConfig.Config;
@@ -14,5 +14,5 @@ declare module 'eslint-plugin-import' {
 		};
 		rules: NonNullable<Linter.Plugin['rules']>;
 	};
-	export = exprt;
+	export = toBeExported;
 }
