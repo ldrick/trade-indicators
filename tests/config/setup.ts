@@ -113,7 +113,7 @@ expect.extend({
 									undefined,
 									options,
 								)}\n\n${
-									diffString && diffString.includes('- Expect')
+									diffString?.includes('- Expect')
 										? `Difference:\n\n${diffString}`
 										: `Expected: ${this.utils.printExpected(formattedE)}\n` +
 											`Received: ${this.utils.printReceived(formattedR)}`

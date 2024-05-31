@@ -14,8 +14,8 @@ import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
 
 type MACDReturn = ReadonlyRecordNonEmptyArray<number | null> & {
-	readonly macd: RNEA.ReadonlyNonEmptyArray<number>;
-	readonly signal: RNEA.ReadonlyNonEmptyArray<number | null>;
+	macd: RNEA.ReadonlyNonEmptyArray<number>;
+	signal: RNEA.ReadonlyNonEmptyArray<number | null>;
 };
 
 const validatePeriodSizes = (slowPeriod: number, fastPeriod: number): E.Either<Error, boolean> =>
