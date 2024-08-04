@@ -150,6 +150,10 @@ export default typescriptEslint.config(
 		files: ['**/*.d.ts'],
 		rules: {
 			'unicorn/filename-case': 'off',
+			'@typescript-eslint/no-empty-object-type': [
+				'error',
+				{ allowInterfaces: 'with-single-extends', allowObjectTypes: 'never' },
+			],
 		},
 	},
 	// overrides for functional TypeScript files
