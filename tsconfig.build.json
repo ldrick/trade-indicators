@@ -5,7 +5,7 @@
 		"target": "ESNext",
 		"lib": ["ESNext"],
 		"module": "NodeNext",
-		"moduleResolution": "nodenext",
+		"moduleResolution": "NodeNext",
 		"resolveJsonModule": true,
 		"jsx": "react",
 		"declaration": true,

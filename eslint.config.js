@@ -1,8 +1,5 @@
 // @ts-check
 
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
 import eslint from '@eslint/js';
 import commentsPlugin from '@eslint-community/eslint-plugin-eslint-comments/configs';
 import configPrettier from 'eslint-config-prettier';
@@ -13,9 +10,6 @@ import unicornPlugin from 'eslint-plugin-unicorn';
 import vitestPlugin from 'eslint-plugin-vitest';
 import globals from 'globals';
 import typescriptEslint from 'typescript-eslint';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 export default typescriptEslint.config(
 	// register all of the plugins upfront
@@ -47,8 +41,8 @@ export default typescriptEslint.config(
 				...globals.node,
 			},
 			parserOptions: {
-				project: true,
-				tsconfigRootDir: __dirname,
+				projectService: true,
+				tsconfigRootDir: import.meta.url,
 				warnOnUnsupportedTypeScriptVersion: false,
 			},
 		},
