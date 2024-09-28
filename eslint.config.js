@@ -34,10 +34,10 @@ export default typescriptEslint.config(
 	...typescriptEslint.configs.stylisticTypeChecked,
 	unicornPlugin.configs['flat/recommended'],
 	perfectionist.configs['recommended-natural'],
-	configPrettier,
 	// base config
 	{
 		languageOptions: {
+			ecmaVersion: 2023,
 			globals: {
 				...globals.es2023,
 				...globals.node,
@@ -181,4 +181,6 @@ export default typescriptEslint.config(
 			'import/no-default-export': 'off',
 		},
 	},
+	// prettier has to be the last extension
+	configPrettier,
 );
