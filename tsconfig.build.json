@@ -3,7 +3,7 @@
 		"baseUrl": "./",
 		"outDir": "dist",
 		"target": "ESNext",
-		"lib": ["ESNext"],
+		"lib": ["ES2023"],
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
 		"resolveJsonModule": true,
@@ -14,8 +14,8 @@
 		"stripInternal": true,
 		"strict": true,
 		"noEmitOnError": true,
-		"forceConsistentCasingInFileNames": true,
 		"skipLibCheck": true
 	},
+	"exclude": ["node_modules", "dist"],
 	"include": ["src"]
 }

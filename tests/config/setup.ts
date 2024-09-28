@@ -52,7 +52,7 @@ expect.extend({
 		expected: TestResult,
 		decimals: number,
 	) {
-		const { isNot, promise, expand } = this;
+		const { expand, isNot, promise } = this;
 
 		const options = {
 			isNot,

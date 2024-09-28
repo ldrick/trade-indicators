@@ -2,12 +2,13 @@
 
 import eslint from '@eslint/js';
 import commentsPlugin from '@eslint-community/eslint-plugin-eslint-comments/configs';
+import vitestPlugin from '@vitest/eslint-plugin';
 import configPrettier from 'eslint-config-prettier';
 import functionalPlugin from 'eslint-plugin-functional/flat';
 import importPlugin from 'eslint-plugin-import';
 import jsdocPlugin from 'eslint-plugin-jsdoc';
+import perfectionist from 'eslint-plugin-perfectionist';
 import unicornPlugin from 'eslint-plugin-unicorn';
-import vitestPlugin from 'eslint-plugin-vitest';
 import globals from 'globals';
 import typescriptEslint from 'typescript-eslint';
 
@@ -32,17 +33,18 @@ export default typescriptEslint.config(
 	...typescriptEslint.configs.strictTypeChecked,
 	...typescriptEslint.configs.stylisticTypeChecked,
 	unicornPlugin.configs['flat/recommended'],
+	perfectionist.configs['recommended-natural'],
 	configPrettier,
 	// base config
 	{
 		languageOptions: {
 			globals: {
-				...globals.es2021,
+				...globals.es2023,
 				...globals.node,
 			},
 			parserOptions: {
 				projectService: true,
-				tsconfigRootDir: import.meta.url,
+				tsconfigRootDir: import.meta.dirname,
 				warnOnUnsupportedTypeScriptVersion: false,
 			},
 		},
@@ -64,8 +66,8 @@ export default typescriptEslint.config(
 				'error',
 				{
 					devDependencies: true,
-					peerDependencies: true,
 					optionalDependencies: false,
+					peerDependencies: true,
 				},
 			],
 			// Forbid mutable exports
@@ -78,21 +80,10 @@ export default typescriptEslint.config(
 			'import/no-self-import': 'error',
 			// Require modules with a single export to use a default export
 			'import/prefer-default-export': 'off', // we want everything to be named
-			'import/order': [
-				'error',
-				{
-					groups: ['builtin', 'external', ['sibling', 'parent'], 'index', 'object', 'type'],
-					'newlines-between': 'always',
-					alphabetize: {
-						order: 'asc',
-						caseInsensitive: true,
-					},
-				},
-			],
 			'unicorn/filename-case': ['error', { cases: { camelCase: true, pascalCase: true } }],
-			'unicorn/no-null': 'off',
-			'unicorn/no-array-reduce': 'off',
 			'unicorn/no-array-callback-reference': 'off',
+			'unicorn/no-array-reduce': 'off',
+			'unicorn/no-null': 'off',
 		},
 	},
 	// overrides for JavaScript files
@@ -106,9 +97,18 @@ export default typescriptEslint.config(
 		ignores: ['**/*.d.ts'],
 		rules: {
 			...jsdocPlugin.configs['flat/recommended-typescript-error'].rules,
-			'no-nested-ternary': 'off',
-			'jsdoc/require-returns': 'off',
-			'jsdoc/require-param': 'off',
+			'jsdoc/check-tag-names': [
+				'error',
+				{
+					definedTags: ['internal'],
+				},
+			],
+			'jsdoc/require-description': [
+				'error',
+				{
+					contexts: ['any'],
+				},
+			],
 			'jsdoc/require-jsdoc': [
 				'error',
 				{
@@ -125,29 +125,20 @@ export default typescriptEslint.config(
 					},
 				},
 			],
-			'jsdoc/require-description': [
-				'error',
-				{
-					contexts: ['any'],
-				},
-			],
-			'jsdoc/check-tag-names': [
-				'error',
-				{
-					definedTags: ['internal'],
-				},
-			],
+			'jsdoc/require-param': 'off',
+			'jsdoc/require-returns': 'off',
+			'no-nested-ternary': 'off',
 		},
 	},
 	// overrides for TypeScript Definition files
 	{
 		files: ['**/*.d.ts'],
 		rules: {
-			'unicorn/filename-case': 'off',
 			'@typescript-eslint/no-empty-object-type': [
 				'error',
 				{ allowInterfaces: 'with-single-extends', allowObjectTypes: 'never' },
 			],
+			'unicorn/filename-case': 'off',
 		},
 	},
 	// overrides for functional TypeScript files
@@ -176,6 +167,11 @@ export default typescriptEslint.config(
 					withinDescribe: 'it',
 				},
 			],
+		},
+		settings: {
+			vitest: {
+				typecheck: true,
+			},
 		},
 	},
 	// overrides for Config files

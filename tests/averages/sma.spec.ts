@@ -35,10 +35,10 @@ describe('sma', () => {
 	});
 
 	it.each([
-		{ v: [0, 0, 0], p: 3, r: [0] },
-		{ v: prices.default.close, p: 10, r: prices.default.sma.p10 },
-		{ v: prices.default.close, p: 20, r: prices.default.sma.p20 },
-	])('calculates the Simple Moving Average with period $p', ({ v, p, r }) => {
+		{ p: 3, r: [0], v: [0, 0, 0] },
+		{ p: 10, r: prices.default.sma.p10, v: prices.default.close },
+		{ p: 20, r: prices.default.sma.p20, v: prices.default.close },
+	])('calculates the Simple Moving Average with period $p', ({ p, r, v }) => {
 		expect(sma(v, p)).eitherRightToEqualFixedPrecision(r);
 	});
 });

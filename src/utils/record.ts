@@ -1,40 +1,28 @@
 import { Big } from 'big.js';
 import { either as E, function as F, readonlyRecord as RR } from 'fp-ts/lib';
 
+import { HighLowClose, NonEmptyHighLowClose } from '../types.js';
 import * as array from './array.js';
-import {
-	HighLowClose,
-	NonEmptyHighLowClose,
-	ReadonlyRecordArray,
-	ReadonlyRecordNonEmptyArray,
-} from '../types.js';
 
 /**
  * Safely convert `RR.ReadonlyRecord<string, RNEA.ReadonlyNonEmptyArray<number>>>`
  * to `RR.ReadonlyRecord<string, RNEA.ReadonlyNonEmptyArray<Big>>>`.
  * @internal
  */
-export const toBig = ((
-	object: ReadonlyRecordNonEmptyArray<number> | NonEmptyHighLowClose<number>,
-): E.Either<Error, ReadonlyRecordNonEmptyArray<Big> | NonEmptyHighLowClose<Big>> =>
-	F.pipe(object, RR.traverse(E.Applicative)(array.toBig))) as ((
-	object: NonEmptyHighLowClose<number>,
-) => E.Either<Error, NonEmptyHighLowClose<Big>>) &
-	((
-		object: ReadonlyRecordNonEmptyArray<number>,
-	) => E.Either<Error, ReadonlyRecordNonEmptyArray<Big>>);
+export const toBig = (
+	record: NonEmptyHighLowClose<number>,
+): E.Either<Error, NonEmptyHighLowClose<Big>> =>
+	F.pipe(record, RR.traverse(E.Applicative)(array.toBig));
 
 /**
  * Validates if every Array in Record has the required size.
  * @internal
  */
-export const validateRequiredSize = ((required: number) =>
-	<A>(
-		record: ReadonlyRecordArray<A> | HighLowClose<A>,
-	): E.Either<Error, ReadonlyRecordNonEmptyArray<A> | NonEmptyHighLowClose<A>> =>
-		F.pipe(record, RR.traverse(E.Applicative)(array.validateRequiredSize(required)))) as ((
-	required: number,
-) => <A>(record: HighLowClose<A>) => E.Either<Error, NonEmptyHighLowClose<A>>) &
-	((
-		required: number,
-	) => <A>(record: ReadonlyRecordArray<A>) => E.Either<Error, ReadonlyRecordNonEmptyArray<A>>);
+export const validateRequiredSize =
+	(required: number) =>
+	<A>(record: HighLowClose<A>): E.Either<Error, NonEmptyHighLowClose<A>> =>
+		F.pipe(
+			record,
+			// Not so cool, type inference for "a" is not working as expected
+			RR.traverse(E.Applicative)((a) => array.validateRequiredSize(required)(a as readonly A[])),
+		);

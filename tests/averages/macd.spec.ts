@@ -55,14 +55,14 @@ describe('macd', () => {
 
 	it.each([
 		{
-			v: [0, 0, 0, 0, 0],
 			p: [3, 4, 2],
 			r: { macd: [0, 0], signal: [null, 0] },
+			v: [0, 0, 0, 0, 0],
 		},
-		{ v: prices.default.close, p: [12, 26, 9], r: prices.default.macd },
+		{ p: [12, 26, 9], r: prices.default.macd, v: prices.default.close },
 	])(
 		'calculates the Moving Average Convergence / Divergence on prices in test $#',
-		({ v, p, r }) => {
+		({ p, r, v }) => {
 			expect(macd(v, ...p)).eitherRightToEqualFixedPrecision(r);
 		},
 	);

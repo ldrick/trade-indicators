@@ -7,17 +7,17 @@ import { toPromise } from '../../src/utils/toPromise.js';
 
 describe('toPromise', () => {
 	it.each([
-		{ v: E.left(new NotEnoughDataError(5, 5)), r: new NotEnoughDataError(5, 5) },
-		{ v: E.left(new UnequalArraySizesError()), r: new UnequalArraySizesError() },
-	])('rejects Either to Promise $v', async ({ v, r }) => {
+		{ r: new NotEnoughDataError(5, 5), v: E.left(new NotEnoughDataError(5, 5)) },
+		{ r: new UnequalArraySizesError(), v: E.left(new UnequalArraySizesError()) },
+	])('rejects Either to Promise $v', async ({ r, v }) => {
 		expect.assertions(1);
 		await expect(toPromise(v)).rejects.toStrictEqual(r);
 	});
 
 	it.each([
-		{ v: E.right([]), r: [] },
-		{ v: E.right([1.5, -2.5]), r: [1.5, -2.5] },
-	])('resolves Either to Promise $v', async ({ v, r }) => {
+		{ r: [], v: E.right([]) },
+		{ r: [1.5, -2.5], v: E.right([1.5, -2.5]) },
+	])('resolves Either to Promise $v', async ({ r, v }) => {
 		expect.assertions(1);
 		await expect(toPromise(v)).resolves.toStrictEqual(r);
 	});

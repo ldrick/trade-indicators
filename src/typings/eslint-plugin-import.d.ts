@@ -1,18 +1,19 @@
 declare module 'eslint-plugin-import' {
-	import type { ClassicConfig, Linter } from '@typescript-eslint/utils/ts-eslint';
+	import type { FlatConfig } from '@typescript-eslint/utils/ts-eslint';
 
-	declare const toBeExported: {
-		configs: {
-			recommended: ClassicConfig.Config;
-			errors: ClassicConfig.Config;
-			warnings: ClassicConfig.Config;
-			'stage-0': ClassicConfig.Config;
-			react: ClassicConfig.Config;
-			'react-native': ClassicConfig.Config;
-			electron: ClassicConfig.Config;
-			typescript: ClassicConfig.Config;
+	const toBeExported: {
+		flatConfigs: {
+			electron: FlatConfig.Config;
+			errors: FlatConfig.Config;
+			react: FlatConfig.Config;
+			'react-native': FlatConfig.Config;
+			recommended: FlatConfig.Config;
+			typescript: FlatConfig.Config;
+			warnings: FlatConfig.Config;
 		};
-		rules: NonNullable<Linter.Plugin['rules']>;
+		meta: FlatConfig.Plugin['meta'];
+		rules: FlatConfig.Plugin['rules'];
 	};
-	export = toBeExported;
+
+	export default toBeExported;
 }

@@ -36,23 +36,23 @@ describe('atr', () => {
 	it.each([
 		{
 			v: {
+				close: [0, 0, 0, 0],
 				high: [0, 0, Number.NaN, 0],
 				low: [0, 0, 0, 0],
-				close: [0, 0, 0, 0],
 			},
 		},
 		{
 			v: {
+				close: [0, 0, 0, 0],
 				high: [0, 0, 0, 0],
 				low: [0, 0, Number.POSITIVE_INFINITY, 0],
-				close: [0, 0, 0, 0],
 			},
 		},
 		{
 			v: {
+				close: [0, Number.NEGATIVE_INFINITY, 0, 0],
 				high: [0, 0, 0, 0],
 				low: [0, 0, 0, 0],
-				close: [0, Number.NEGATIVE_INFINITY, 0, 0],
 			},
 		},
 	])('fails if any value is a infinit value $v', ({ v }) => {
@@ -61,26 +61,26 @@ describe('atr', () => {
 
 	it('calculates the Average True Range with default period', () => {
 		expect(
-			atr({ high: prices.default.high, low: prices.default.low, close: prices.default.close }),
+			atr({ close: prices.default.close, high: prices.default.high, low: prices.default.low }),
 		).eitherRightToEqualFixedPrecision(prices.default.atr.p14);
 	});
 
 	it.each([
 		{
-			v: {
-				high: [0, 0, 0, 0],
-				low: [0, 0, 0, 0],
-				close: [0, 0, 0, 0],
-			},
 			p: 3,
 			r: [0],
+			v: {
+				close: [0, 0, 0, 0],
+				high: [0, 0, 0, 0],
+				low: [0, 0, 0, 0],
+			},
 		},
 		{
-			v: { high: prices.default.high, low: prices.default.low, close: prices.default.close },
 			p: 14,
 			r: prices.default.atr.p14,
+			v: { close: prices.default.close, high: prices.default.high, low: prices.default.low },
 		},
-	])('calculates the Average True Range on prices with period $p', ({ v, p, r }) => {
+	])('calculates the Average True Range on prices with period $p', ({ p, r, v }) => {
 		expect(atr(v, p)).eitherRightToEqualFixedPrecision(r);
 	});
 });

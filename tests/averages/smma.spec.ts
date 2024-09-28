@@ -35,10 +35,10 @@ describe('smma', () => {
 	});
 
 	it.each([
-		{ v: [0, 0, 0], p: 3, r: [0] },
-		{ v: prices.default.close, p: 10, r: prices.default.smma.p10 },
-		{ v: prices.default.close, p: 20, r: prices.default.smma.p20 },
-	])('calculates the Smoothed Moving Average with period $p', ({ v, p, r }) => {
+		{ p: 3, r: [0], v: [0, 0, 0] },
+		{ p: 10, r: prices.default.smma.p10, v: prices.default.close },
+		{ p: 20, r: prices.default.smma.p20, v: prices.default.close },
+	])('calculates the Smoothed Moving Average with period $p', ({ p, r, v }) => {
 		expect(smma(v, p)).eitherRightToEqualFixedPrecision(r);
 	});
 });

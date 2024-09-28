@@ -6,11 +6,11 @@ import { amean } from '../../src/averages/amean.js';
 
 describe('amean', () => {
 	it.each([
-		{ v: [new Big(0)], r: new Big(0) },
-		{ v: [new Big(1), new Big(2), new Big(3), new Big(-1)], r: new Big(1.25) },
-	] as { v: RNEA.ReadonlyNonEmptyArray<Big>; r: Big }[])(
+		{ r: new Big(0), v: [new Big(0)] },
+		{ r: new Big(1.25), v: [new Big(1), new Big(2), new Big(3), new Big(-1)] },
+	] as { r: Big; v: RNEA.ReadonlyNonEmptyArray<Big> }[])(
 		'calculates the Average for values $v',
-		({ v, r }) => {
+		({ r, v }) => {
 			expect(amean(v)).toStrictEqual(r);
 		},
 	);

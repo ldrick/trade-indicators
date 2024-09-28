@@ -35,10 +35,10 @@ describe('ema', () => {
 	});
 
 	it.each([
-		{ v: [0, 0, 0], p: 3, r: [0] },
-		{ v: prices.default.close, p: 10, r: prices.default.ema.p10 },
-		{ v: prices.default.close, p: 20, r: prices.default.ema.p20 },
-	])('calculates the Exponential Moving Average with period $p', ({ v, p, r }) => {
+		{ p: 3, r: [0], v: [0, 0, 0] },
+		{ p: 10, r: prices.default.ema.p10, v: prices.default.close },
+		{ p: 20, r: prices.default.ema.p20, v: prices.default.close },
+	])('calculates the Exponential Moving Average with period $p', ({ p, r, v }) => {
 		expect(ema(v, p)).eitherRightToEqualFixedPrecision(r);
 	});
 });

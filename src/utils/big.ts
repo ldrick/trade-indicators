@@ -3,15 +3,15 @@ import { function as F, ord as ORD, readonlyNonEmptyArray as RNEA } from 'fp-ts/
 
 export const ord: ORD.Ord<Big> = {
 	/**
-	 * Big equals.
-	 * @internal
-	 */
-	equals: (first, second) => first.eq(second),
-	/**
 	 * Big compare.
 	 * @internal
 	 */
 	compare: (first, second) => (first.lt(second) ? -1 : first.gt(second) ? 1 : 0),
+	/**
+	 * Big equals.
+	 * @internal
+	 */
+	equals: (first, second) => first.eq(second),
 };
 
 /**
