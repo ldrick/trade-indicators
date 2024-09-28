@@ -27,7 +27,7 @@ const trueRange = (
 				F.pipe(
 					O.bindTo('previousClose')(RA.lookup(index)(values.close)),
 					O.bind('currentLow', () => RA.lookup(index + 1)(values.low)),
-					O.map(({ previousClose, currentLow }) =>
+					O.map(({ currentLow, previousClose }) =>
 						big.max([
 							high.sub(currentLow),
 							high.sub(previousClose).abs(),
@@ -58,7 +58,7 @@ export const atrC = (
  * The Average True Range (ATR) a period of the True Range Indicator,
  * being the greatest out of current high minus the current low,
  * the absolute value of current high minus previous close
- * and the absolute value of the current low minus the prevous close.
+ * and the absolute value of the current low minus the previous close.
  * @public
  */
 export const atr = (
@@ -71,6 +71,6 @@ export const atr = (
 			valuesV: rec.validateRequiredSize(period + 1)(values),
 		}),
 		E.bind('valuesB', ({ valuesV }) => rec.toBig(valuesV)),
-		E.chain(({ valuesB, periodV }) => atrC(valuesB, periodV)),
+		E.chain(({ periodV, valuesB }) => atrC(valuesB, periodV)),
 		E.map(array.toNumber),
 	);

@@ -36,23 +36,23 @@ describe('adx', () => {
 	it.each([
 		{
 			v: {
+				close: [0, 0, 0, 0, 0],
 				high: [0, 0, Number.NaN, 0, 0],
 				low: [0, 0, 0, 0, 0],
-				close: [0, 0, 0, 0, 0],
 			},
 		},
 		{
 			v: {
+				close: [0, 0, 0, 0, 0],
 				high: [0, 0, 0, 0, 0],
 				low: [0, 0, Number.POSITIVE_INFINITY, 0, 0],
-				close: [0, 0, 0, 0, 0],
 			},
 		},
 		{
 			v: {
+				close: [0, Number.NEGATIVE_INFINITY, 0, 0, 0],
 				high: [0, 0, 0, 0, 0],
 				low: [0, 0, 0, 0, 0],
-				close: [0, Number.NEGATIVE_INFINITY, 0, 0, 0],
 			},
 		},
 	])('fails if any value is a infinit value $v', ({ v }) => {
@@ -61,26 +61,26 @@ describe('adx', () => {
 
 	it('calculates the Average Directional Index with default period', () => {
 		expect(
-			adx({ high: prices.default.high, low: prices.default.low, close: prices.default.close }),
+			adx({ close: prices.default.close, high: prices.default.high, low: prices.default.low }),
 		).eitherRightToEqualFixedPrecision(prices.default.adx.p14);
 	});
 
 	it.each([
 		{
-			v: {
-				high: [0, 0, 0, 0, 0, 0],
-				low: [0, 0, 0, 0, 0, 0],
-				close: [0, 0, 0, 0, 0, 0],
-			},
 			p: 3,
 			r: { adx: [null, null, 0], mdi: [0, 0, 0], pdi: [0, 0, 0] },
+			v: {
+				close: [0, 0, 0, 0, 0, 0],
+				high: [0, 0, 0, 0, 0, 0],
+				low: [0, 0, 0, 0, 0, 0],
+			},
 		},
 		{
-			v: { high: prices.default.high, low: prices.default.low, close: prices.default.close },
 			p: 14,
 			r: prices.default.adx.p14,
+			v: { close: prices.default.close, high: prices.default.high, low: prices.default.low },
 		},
-	])('calculates the Average Directional Index on prices with period $p', ({ v, p, r }) => {
+	])('calculates the Average Directional Index on prices with period $p', ({ p, r, v }) => {
 		expect(adx(v, p)).eitherRightToEqualFixedPrecision(r);
 	});
 });
