@@ -1,9 +1,9 @@
 import { Big } from 'big.js';
 import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
 
-import { dma } from './dma.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
+import { dma } from './dma.js';
 
 const getFactor = (period: number): E.Either<Error, Big> =>
 	F.pipe(
@@ -42,6 +42,6 @@ export const smma = (
 			valuesV: array.validateRequiredSize(period)(values),
 		}),
 		E.bind('valuesB', ({ valuesV }) => array.toBig(valuesV)),
-		E.chain(({ valuesB, periodV }) => smmaC(valuesB, periodV)),
+		E.chain(({ periodV, valuesB }) => smmaC(valuesB, periodV)),
 		E.map(array.toNumber),
 	);

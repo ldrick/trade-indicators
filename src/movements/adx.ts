@@ -1,20 +1,20 @@
 import { Big } from 'big.js';
 import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
 
-import { atrC } from './atr.js';
 import { smmaC } from '../averages/smma.js';
-import { HighLowClose, NonEmptyHighLowClose, ReadonlyRecordNonEmptyArray } from '../types.js';
+import { HighLowClose, NonEmptyHighLowClose } from '../types.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
 import * as rec from '../utils/record.js';
+import { atrC } from './atr.js';
 
-type Movement = 'up' | 'down';
+type Movement = 'down' | 'up';
 
-type ADXReturn = ReadonlyRecordNonEmptyArray<number | null> & {
-	adx: RNEA.ReadonlyNonEmptyArray<number | null>;
+interface ADXReturn {
+	adx: RNEA.ReadonlyNonEmptyArray<null | number>;
 	mdi: RNEA.ReadonlyNonEmptyArray<number>;
 	pdi: RNEA.ReadonlyNonEmptyArray<number>;
-};
+}
 
 const compareMovement = (base: Big, comparision: Big): Big =>
 	base.gt(comparision) && base.gt(0) ? base : new Big(0);
@@ -87,13 +87,13 @@ export const adx = (values: HighLowClose<number>, period = 14): E.Either<Error, 
 			valuesV: rec.validateRequiredSize(2 * period)(values),
 		}),
 		E.bind('valuesB', ({ valuesV }) => rec.toBig(valuesV)),
-		E.bind('pdi', ({ valuesB, periodV }) => directionalIndex(valuesB, periodV, 'up')),
-		E.bind('mdi', ({ valuesB, periodV }) => directionalIndex(valuesB, periodV, 'down')),
-		E.bind('smoothed', ({ pdi, mdi, periodV }) => {
+		E.bind('pdi', ({ periodV, valuesB }) => directionalIndex(valuesB, periodV, 'up')),
+		E.bind('mdi', ({ periodV, valuesB }) => directionalIndex(valuesB, periodV, 'down')),
+		E.bind('smoothed', ({ mdi, pdi, periodV }) => {
 			const calculated = calculation(pdi, mdi);
 			return smmaC(calculated, periodV);
 		}),
-		E.map(({ smoothed, pdi, mdi }) => ({
+		E.map(({ mdi, pdi, smoothed }) => ({
 			adx: F.pipe(
 				smoothed,
 				RNEA.map((value) => value.mul(100)),

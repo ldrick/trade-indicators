@@ -6,10 +6,10 @@ import {
 	readonlyNonEmptyArray as RNEA,
 } from 'fp-ts';
 
-import * as big from './big.js';
-import * as number_ from './number.js';
 import { EmptyArrayError } from '../errors/EmptyArrayError.js';
 import { NotEnoughDataError } from '../errors/NotEnoughDataError.js';
+import * as big from './big.js';
+import * as number_ from './number.js';
 
 /**
  * Safely convert `RNEA.ReadonlyNonEmptyArray<number>` to `RNEA.ReadonlyNonEmptyArray<Big>`.

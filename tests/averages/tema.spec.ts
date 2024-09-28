@@ -35,10 +35,10 @@ describe('tema', () => {
 	});
 
 	it.each([
-		{ v: [0, 0, 0, 0, 0, 0, 0], p: 3, r: [0] },
-		{ v: prices.default.close, p: 10, r: prices.default.tema.p10 },
-		{ v: prices.default.close, p: 20, r: prices.default.tema.p20 },
-	])('calculates the Triple Exponential Moving Average with period %p', ({ v, p, r }) => {
+		{ p: 3, r: [0], v: [0, 0, 0, 0, 0, 0, 0] },
+		{ p: 10, r: prices.default.tema.p10, v: prices.default.close },
+		{ p: 20, r: prices.default.tema.p20, v: prices.default.close },
+	])('calculates the Triple Exponential Moving Average with period %p', ({ p, r, v }) => {
 		expect(tema(v, p)).eitherRightToEqualFixedPrecision(r);
 	});
 });
