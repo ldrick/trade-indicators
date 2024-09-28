@@ -31,6 +31,6 @@ export const ma = (
 			valuesV: array.validateRequiredSize(period)(values),
 		}),
 		E.bind('valuesB', ({ valuesV }) => array.toBig(valuesV)),
-		E.chain(({ valuesB, periodV }) => calculation(valuesB, periodV, callback)),
+		E.chain(({ periodV, valuesB }) => calculation(valuesB, periodV, callback)),
 		E.map(array.toNumber),
 	);

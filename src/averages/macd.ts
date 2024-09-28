@@ -7,16 +7,15 @@ import {
 	readonlyNonEmptyArray as RNEA,
 } from 'fp-ts/lib';
 
-import { emaC } from './ema.js';
 import { PeriodSizeMissmatchError } from '../errors/PeriodSizeMissmatchError.js';
-import { ReadonlyRecordNonEmptyArray } from '../types.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
+import { emaC } from './ema.js';
 
-type MACDReturn = ReadonlyRecordNonEmptyArray<number | null> & {
+interface MACDReturn {
 	macd: RNEA.ReadonlyNonEmptyArray<number>;
-	signal: RNEA.ReadonlyNonEmptyArray<number | null>;
-};
+	signal: RNEA.ReadonlyNonEmptyArray<null | number>;
+}
 
 const validatePeriodSizes = (slowPeriod: number, fastPeriod: number): E.Either<Error, boolean> =>
 	slowPeriod > fastPeriod
@@ -52,13 +51,15 @@ export const macd = (
 		AP.sequenceS(E.Applicative)({
 			fastPeriodV: number_.validatePositiveInteger(fastPeriod),
 			slowPeriodV: number_.validatePositiveInteger(slowPeriod),
+			// eslint-disable-next-line perfectionist/sort-objects
 			signalPeriodV: number_.validatePositiveInteger(signalPeriod),
+			// eslint-disable-next-line perfectionist/sort-objects
 			periodSizes: validatePeriodSizes(slowPeriod, fastPeriod),
 			valuesV: array.validateRequiredSize(slowPeriod + signalPeriod - 1)(values),
 		}),
 		E.bind('valuesB', ({ valuesV }) => array.toBig(valuesV)),
-		E.bind('emaSlow', ({ valuesB, slowPeriodV }) => emaC(valuesB, slowPeriodV)),
-		E.bind('emaFast', ({ valuesB, fastPeriodV }) => emaC(valuesB, fastPeriodV)),
+		E.bind('emaSlow', ({ slowPeriodV, valuesB }) => emaC(valuesB, slowPeriodV)),
+		E.bind('emaFast', ({ fastPeriodV, valuesB }) => emaC(valuesB, fastPeriodV)),
 		E.bind('macdResult', ({ emaFast, emaSlow }) => E.right(calculate(emaFast, emaSlow))),
 		E.bind('signal', ({ macdResult, signalPeriodV }) => emaC(macdResult, signalPeriodV)),
 		E.map(({ macdResult, signal }) => ({

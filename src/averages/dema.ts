@@ -1,9 +1,9 @@
 import { Big } from 'big.js';
 import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
 
-import { emaC } from './ema.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
+import { emaC } from './ema.js';
 
 const calculate = (
 	one: RNEA.ReadonlyNonEmptyArray<Big>,
@@ -31,7 +31,7 @@ export const dema = (
 			valuesV: array.validateRequiredSize(2 * period - 1)(values),
 		}),
 		E.bind('valuesB', ({ valuesV }) => array.toBig(valuesV)),
-		E.bind('emaOne', ({ valuesB, periodV }) => emaC(valuesB, periodV)),
+		E.bind('emaOne', ({ periodV, valuesB }) => emaC(valuesB, periodV)),
 		E.bind('emaTwo', ({ emaOne, periodV }) => emaC(emaOne, periodV)),
 		E.map(({ emaOne, emaTwo, periodV }) => calculate(emaOne, emaTwo, periodV)),
 	);
