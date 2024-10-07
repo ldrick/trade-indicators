@@ -4,7 +4,7 @@ import eslint from '@eslint/js';
 import commentsPlugin from '@eslint-community/eslint-plugin-eslint-comments/configs';
 import vitestPlugin from '@vitest/eslint-plugin';
 import configPrettier from 'eslint-config-prettier';
-import functionalPlugin from 'eslint-plugin-functional/flat';
+import functionalPlugin from 'eslint-plugin-functional';
 import importPlugin from 'eslint-plugin-import';
 import jsdocPlugin from 'eslint-plugin-jsdoc';
 import perfectionist from 'eslint-plugin-perfectionist';
@@ -138,6 +138,7 @@ export default typescriptEslint.config(
 				'error',
 				{ allowInterfaces: 'with-single-extends', allowObjectTypes: 'never' },
 			],
+			'import/no-default-export': 'off',
 			'unicorn/filename-case': 'off',
 		},
 	},
@@ -145,7 +146,6 @@ export default typescriptEslint.config(
 	{
 		files: ['src/!(errors)/*.ts'],
 		ignores: ['**/*.d.ts'],
-		...functionalPlugin.configs.externalVanillaRecommended,
 		...functionalPlugin.configs.externalTypescriptRecommended,
 		...functionalPlugin.configs.recommended,
 		...functionalPlugin.configs.stylistic,
