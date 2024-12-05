@@ -8,13 +8,13 @@ import * as number_ from '../utils/number.js';
 import * as rec from '../utils/record.js';
 import { atrC } from './atr.js';
 
-type Movement = 'down' | 'up';
-
 interface ADXReturn {
 	adx: RNEA.ReadonlyNonEmptyArray<null | number>;
 	mdi: RNEA.ReadonlyNonEmptyArray<number>;
 	pdi: RNEA.ReadonlyNonEmptyArray<number>;
 }
+
+type Movement = 'down' | 'up';
 
 const compareMovement = (base: Big, comparision: Big): Big =>
 	base.gt(comparision) && base.gt(0) ? base : new Big(0);
