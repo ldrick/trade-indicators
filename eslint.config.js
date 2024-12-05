@@ -1,7 +1,7 @@
 // @ts-check
 
-import eslint from '@eslint/js';
 import commentsPlugin from '@eslint-community/eslint-plugin-eslint-comments/configs';
+import eslint from '@eslint/js';
 import vitestPlugin from '@vitest/eslint-plugin';
 import configPrettier from 'eslint-config-prettier';
 import functionalPlugin from 'eslint-plugin-functional';
