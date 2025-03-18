@@ -1,11 +1,11 @@
-import { either as E } from 'fp-ts/lib';
+import { either as E } from 'fp-ts';
 import { describe, expect, it } from 'vitest';
 
 import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';
 import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
 import { UnequalArraySizesError } from '../../src/errors/UnequalArraySizesError.js';
 import { adx } from '../../src/movements/adx.js';
-import * as prices from '../prices.json' assert { type: 'json' };
+import * as prices from '../prices.json' with { type: 'json' };
 
 describe('adx', () => {
 	it.each([
@@ -34,13 +34,7 @@ describe('adx', () => {
 	});
 
 	it.each([
-		{
-			v: {
-				close: [0, 0, 0, 0, 0],
-				high: [0, 0, Number.NaN, 0, 0],
-				low: [0, 0, 0, 0, 0],
-			},
-		},
+		{ v: { close: [0, 0, 0, 0, 0], high: [0, 0, Number.NaN, 0, 0], low: [0, 0, 0, 0, 0] } },
 		{
 			v: {
 				close: [0, 0, 0, 0, 0],
@@ -69,11 +63,7 @@ describe('adx', () => {
 		{
 			p: 3,
 			r: { adx: [null, null, 0], mdi: [0, 0, 0], pdi: [0, 0, 0] },
-			v: {
-				close: [0, 0, 0, 0, 0, 0],
-				high: [0, 0, 0, 0, 0, 0],
-				low: [0, 0, 0, 0, 0, 0],
-			},
+			v: { close: [0, 0, 0, 0, 0, 0], high: [0, 0, 0, 0, 0, 0], low: [0, 0, 0, 0, 0, 0] },
 		},
 		{
 			p: 14,

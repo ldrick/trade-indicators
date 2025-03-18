@@ -11,7 +11,7 @@ The Weighted Moving Average (WMA) takes newer values weighted into account and r
 ## Signature
 
 ```typescript
-import { either as E } from 'fp-ts/lib';
+import { either as E } from 'fp-ts';
 
 export declare const wma: (
   values: ReadonlyArray<number>,
@@ -22,7 +22,7 @@ export declare const wma: (
 ## Example
 
 ```typescript
-import { either as E, function as F } from 'fp-ts/lib';
+import { either as E, function as F } from 'fp-ts';
 import { wma } from '@ldrick/trade-indicators/averages/wma.js';
 
 const result = F.pipe(

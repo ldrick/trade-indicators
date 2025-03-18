@@ -1,4 +1,4 @@
-import { either as E, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
+import { either as E, readonlyNonEmptyArray as RNEA } from 'fp-ts';
 import { describe, expect, it } from 'vitest';
 
 import { EmptyArrayError } from '../../src/errors/EmptyArrayError.js';

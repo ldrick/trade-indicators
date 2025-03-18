@@ -1,4 +1,4 @@
-import { either as E, function as F } from 'fp-ts/lib';
+import { either as E, function as F } from 'fp-ts';
 
 /**
  * Provides a way to transform Either to Promise.
