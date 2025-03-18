@@ -11,7 +11,7 @@ The Simple Moving Average (SMA) calculates the arithmetic mean of prices over an
 ## Signature
 
 ```typescript
-import { either as E } from 'fp-ts/lib';
+import { either as E } from 'fp-ts';
 
 export declare const sma: (
   values: ReadonlyArray<number>,
@@ -22,7 +22,7 @@ export declare const sma: (
 ## Example
 
 ```typescript
-import { either as E, function as F } from 'fp-ts/lib';
+import { either as E, function as F } from 'fp-ts';
 import { sma } from '@ldrick/trade-indicators/averages/sma.js';
 
 const result = F.pipe(

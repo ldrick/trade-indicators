@@ -1,5 +1,5 @@
 import { Big } from 'big.js';
-import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
+import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts';
 
 import { smmaC } from '../averages/smma.js';
 import { HighLowClose, NonEmptyHighLowClose } from '../types.js';

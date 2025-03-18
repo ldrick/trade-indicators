@@ -11,7 +11,7 @@ The Average True Range (ATR) a period of the True Range Indicator, being the gre
 ## Signature
 
 ```typescript
-import { either as E } from 'fp-ts/lib';
+import { either as E } from 'fp-ts';
 
 export declare const atr: (
 	values: Readonly<Record<'high' | 'low' | 'close', ReadonlyArray<number>>>,
@@ -22,7 +22,7 @@ export declare const atr: (
 ## Example
 
 ```typescript
-import { either as E, function as F } from 'fp-ts/lib';
+import { either as E, function as F } from 'fp-ts';
 import { atr } from '@ldrick/trade-indicators/movements/atr.js';
 
 const result = F.pipe(

@@ -1,5 +1,5 @@
 import { Big } from 'big.js';
-import { either as E } from 'fp-ts/lib';
+import { either as E } from 'fp-ts';
 
 import { NotPositiveIntegerError } from '../errors/NotPositiveIntegerError.js';
 

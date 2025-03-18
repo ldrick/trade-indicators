@@ -11,7 +11,7 @@ The Double Exponential Moving Average (DEMA) uses two Exponential Moving Average
 ## Signature
 
 ```typescript
-import { either as E } from 'fp-ts/lib';
+import { either as E } from 'fp-ts';
 
 export declare const dema: (
 	values: ReadonlyArray<number>,
@@ -22,7 +22,7 @@ export declare const dema: (
 ## Example
 
 ```typescript
-import { either as E, function as F } from 'fp-ts/lib';
+import { either as E, function as F } from 'fp-ts';
 import { dema } from '@ldrick/trade-indicators/averages/dema.js';
 
 const result = F.pipe(

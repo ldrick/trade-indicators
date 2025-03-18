@@ -11,7 +11,7 @@ The Moving Average Convergence Divergence (MACD) is the relationship of two Expo
 ## Signature
 
 ```typescript
-import { either as E } from 'fp-ts/lib';
+import { either as E } from 'fp-ts';
 
 export declare const macd: (
   values: ReadonlyArray<number>,
@@ -24,7 +24,7 @@ export declare const macd: (
 ## Example
 
 ```typescript
-import { either as E, function as F } from 'fp-ts/lib';
+import { either as E, function as F } from 'fp-ts';
 import { macd } from '@ldrick/trade-indicators/averages/macd.js';
 
 const result = F.pipe(

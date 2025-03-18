@@ -11,7 +11,7 @@ The Triple Exponential Moving Average (TEMA) uses three Exponential Moving Avera
 ## Signature
 
 ```typescript
-import { either as E } from 'fp-ts/lib';
+import { either as E } from 'fp-ts';
 
 export declare const tema: (
   values: ReadonlyArray<number>,
@@ -22,7 +22,7 @@ export declare const tema: (
 ## Example
 
 ```typescript
-import { either as E, function as F } from 'fp-ts/lib';
+import { either as E, function as F } from 'fp-ts';
 import { tema } from '@ldrick/trade-indicators/averages/tema.js';
 
 const result = F.pipe(

@@ -1,10 +1,10 @@
-import { either as E } from 'fp-ts/lib';
+import { either as E } from 'fp-ts';
 import { describe, expect, it } from 'vitest';
 
 import { tema } from '../../src/averages/tema.js';
 import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';
 import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
-import * as prices from '../prices.json' assert { type: 'json' };
+import * as prices from '../prices.json' with { type: 'json' };
 
 describe('tema', () => {
 	it.each([

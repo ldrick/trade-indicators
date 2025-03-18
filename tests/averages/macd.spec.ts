@@ -1,11 +1,11 @@
-import { either as E } from 'fp-ts/lib';
+import { either as E } from 'fp-ts';
 import { describe, expect, it } from 'vitest';
 
 import { macd } from '../../src/averages/macd.js';
 import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';
 import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
 import { PeriodSizeMissmatchError } from '../../src/errors/PeriodSizeMissmatchError.js';
-import * as prices from '../prices.json' assert { type: 'json' };
+import * as prices from '../prices.json' with { type: 'json' };
 
 describe('macd', () => {
 	it.each([
@@ -54,11 +54,7 @@ describe('macd', () => {
 	});
 
 	it.each([
-		{
-			p: [3, 4, 2],
-			r: { macd: [0, 0], signal: [null, 0] },
-			v: [0, 0, 0, 0, 0],
-		},
+		{ p: [3, 4, 2], r: { macd: [0, 0], signal: [null, 0] }, v: [0, 0, 0, 0, 0] },
 		{ p: [12, 26, 9], r: prices.default.macd, v: prices.default.close },
 	])(
 		'calculates the Moving Average Convergence / Divergence on prices in test $#',

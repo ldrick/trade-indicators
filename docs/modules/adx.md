@@ -11,7 +11,7 @@ The Average Directional Index (ADX) determines trend strength. It also delivers 
 ## Signature
 
 ```typescript
-import { either as E } from 'fp-ts/lib';
+import { either as E } from 'fp-ts';
 
 export declare const adx: (
 	values: Readonly<Record<'high' | 'low' | 'close', ReadonlyArray<number>>>,
@@ -22,7 +22,7 @@ export declare const adx: (
 ## Example
 
 ```typescript
-import { either as E, function as F } from 'fp-ts/lib';
+import { either as E, function as F } from 'fp-ts';
 import { adx } from '@ldrick/trade-indicators/movements/adx.js';
 
 const result = F.pipe(

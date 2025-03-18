@@ -1,4 +1,4 @@
-import { either as E, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
+import { either as E, readonlyNonEmptyArray as RNEA } from 'fp-ts';
 
 import { amean } from './amean.js';
 import { ma } from './ma.js';
