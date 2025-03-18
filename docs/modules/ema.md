@@ -11,7 +11,7 @@ The Exponential Moving Average (EMA) takes newer values weighted into account an
 ## Signature
 
 ```typescript
-import { either as E } from 'fp-ts/lib';
+import { either as E } from 'fp-ts';
 
 export declare const ema: (
 	values: ReadonlyArray<number>,
@@ -22,7 +22,7 @@ export declare const ema: (
 ## Example
 
 ```typescript
-import { either as E, function as F } from 'fp-ts/lib';
+import { either as E, function as F } from 'fp-ts';
 import { ema } from '@ldrick/trade-indicators/averages/ema.js';
 
 const result = F.pipe(

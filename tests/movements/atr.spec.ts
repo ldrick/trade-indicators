@@ -1,11 +1,11 @@
-import { either as E } from 'fp-ts/lib';
+import { either as E } from 'fp-ts';
 import { describe, expect, it } from 'vitest';
 
 import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';
 import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
 import { UnequalArraySizesError } from '../../src/errors/UnequalArraySizesError.js';
 import { atr } from '../../src/movements/atr.js';
-import * as prices from '../prices.json' assert { type: 'json' };
+import * as prices from '../prices.json' with { type: 'json' };
 
 describe('atr', () => {
 	it.each([
@@ -34,27 +34,9 @@ describe('atr', () => {
 	});
 
 	it.each([
-		{
-			v: {
-				close: [0, 0, 0, 0],
-				high: [0, 0, Number.NaN, 0],
-				low: [0, 0, 0, 0],
-			},
-		},
-		{
-			v: {
-				close: [0, 0, 0, 0],
-				high: [0, 0, 0, 0],
-				low: [0, 0, Number.POSITIVE_INFINITY, 0],
-			},
-		},
-		{
-			v: {
-				close: [0, Number.NEGATIVE_INFINITY, 0, 0],
-				high: [0, 0, 0, 0],
-				low: [0, 0, 0, 0],
-			},
-		},
+		{ v: { close: [0, 0, 0, 0], high: [0, 0, Number.NaN, 0], low: [0, 0, 0, 0] } },
+		{ v: { close: [0, 0, 0, 0], high: [0, 0, 0, 0], low: [0, 0, Number.POSITIVE_INFINITY, 0] } },
+		{ v: { close: [0, Number.NEGATIVE_INFINITY, 0, 0], high: [0, 0, 0, 0], low: [0, 0, 0, 0] } },
 	])('fails if any value is a infinit value $v', ({ v }) => {
 		expect(atr(v, 2)).toStrictEqual(E.left(new Error('[big.js] Invalid number')));
 	});
@@ -66,15 +48,7 @@ describe('atr', () => {
 	});
 
 	it.each([
-		{
-			p: 3,
-			r: [0],
-			v: {
-				close: [0, 0, 0, 0],
-				high: [0, 0, 0, 0],
-				low: [0, 0, 0, 0],
-			},
-		},
+		{ p: 3, r: [0], v: { close: [0, 0, 0, 0], high: [0, 0, 0, 0], low: [0, 0, 0, 0] } },
 		{
 			p: 14,
 			r: prices.default.atr.p14,

@@ -1,5 +1,5 @@
 import { Big } from 'big.js';
-import { function as F, readonlyArray as RA, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
+import { function as F, readonlyArray as RA, readonlyNonEmptyArray as RNEA } from 'fp-ts';
 
 import { amean } from './amean.js';
 

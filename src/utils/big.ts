@@ -1,5 +1,5 @@
 import { Big } from 'big.js';
-import { function as F, ord as ORD, readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
+import { function as F, ord as ORD, readonlyNonEmptyArray as RNEA } from 'fp-ts';
 
 export const ord: ORD.Ord<Big> = {
 	/**
