@@ -1,4 +1,4 @@
-import { either as E, function as F, readonlyArray as RA, readonlyRecord as RR } from 'fp-ts/lib';
+import { either as E, function as F, readonlyArray as RA, readonlyRecord as RR } from 'fp-ts';
 import { expect } from 'vitest';
 
 import {
@@ -54,10 +54,7 @@ expect.extend({
 	) {
 		const { expand, isNot, promise } = this;
 
-		const options = {
-			isNot,
-			promise,
-		};
+		const options = { isNot, promise };
 
 		const pass: boolean = F.pipe(
 			received,
@@ -104,9 +101,7 @@ expect.extend({
 							(rec) => {
 								const formattedR = format(decimals)(rec);
 								const formattedE = format(decimals)(expected);
-								const diffString = this.utils.diff(formattedE, formattedR, {
-									expand,
-								});
+								const diffString = this.utils.diff(formattedE, formattedR, { expand });
 								return `${this.utils.matcherHint(
 									'eitherRightToEqualFixedPrecision',
 									undefined,

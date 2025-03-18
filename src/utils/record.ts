@@ -1,5 +1,5 @@
 import { Big } from 'big.js';
-import { either as E, function as F, readonlyRecord as RR } from 'fp-ts/lib';
+import { either as E, function as F, readonlyRecord as RR } from 'fp-ts';
 
 import { HighLowClose, NonEmptyHighLowClose } from '../types.js';
 import * as array from './array.js';

@@ -1,4 +1,4 @@
-import { either as E } from 'fp-ts/lib';
+import { either as E } from 'fp-ts';
 import { describe, expect, it } from 'vitest';
 
 import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';

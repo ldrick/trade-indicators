@@ -5,7 +5,7 @@ import {
 	function as F,
 	readonlyArray as RA,
 	readonlyNonEmptyArray as RNEA,
-} from 'fp-ts/lib';
+} from 'fp-ts';
 
 import { PeriodSizeMissmatchError } from '../errors/PeriodSizeMissmatchError.js';
 import * as array from '../utils/array.js';

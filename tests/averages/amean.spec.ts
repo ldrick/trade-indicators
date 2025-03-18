@@ -1,5 +1,5 @@
 import { Big } from 'big.js';
-import { readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
+import { readonlyNonEmptyArray as RNEA } from 'fp-ts';
 import { describe, expect, it } from 'vitest';
 
 import { amean } from '../../src/averages/amean.js';

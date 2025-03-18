@@ -6,7 +6,7 @@ import {
 	option as O,
 	readonlyArray as RA,
 	readonlyNonEmptyArray as RNEA,
-} from 'fp-ts/lib';
+} from 'fp-ts';
 
 import { smmaC } from '../averages/smma.js';
 import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';

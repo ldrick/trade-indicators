@@ -34,7 +34,7 @@ or \
 In TypeScript:
 
 ```typescript
-import { either as E, function as F } from 'fp-ts/lib';
+import { either as E, function as F } from 'fp-ts';
 import { ema } from '@ldrick/trade-indicators/averages/ema.js';
 import { toPromise } from '@ldrick/trade-indicators/toPromise.js';
 

@@ -11,7 +11,7 @@ The Smoothed Moving Average (SMMA) is like the Exponential Moving Average (EMA),
 ## Signature
 
 ```typescript
-import { either as E } from 'fp-ts/lib';
+import { either as E } from 'fp-ts';
 
 export declare const smma: (
   values: ReadonlyArray<number>,
@@ -22,7 +22,7 @@ export declare const smma: (
 ## Example
 
 ```typescript
-import { either as E, function as F } from 'fp-ts/lib';
+import { either as E, function as F } from 'fp-ts';
 import { smma } from '@ldrick/trade-indicators/averages/smma.js';
 
 const result = F.pipe(

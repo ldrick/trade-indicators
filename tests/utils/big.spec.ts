@@ -1,5 +1,5 @@
 import { Big } from 'big.js';
-import { readonlyNonEmptyArray as RNEA } from 'fp-ts/lib';
+import { readonlyNonEmptyArray as RNEA } from 'fp-ts';
 import { describe, expect, it } from 'vitest';
 
 import * as big from '../../src/utils/big.js';
@@ -25,10 +25,7 @@ describe('ord.equals', () => {
 });
 
 describe('max', () => {
-	it.each<{
-		r: Big;
-		v: RNEA.ReadonlyNonEmptyArray<Big>;
-	}>([
+	it.each<{ r: Big; v: RNEA.ReadonlyNonEmptyArray<Big> }>([
 		{ r: new Big(-1), v: [new Big(-1)] },
 		{ r: new Big(0), v: [new Big(0)] },
 		{ r: new Big(2), v: [new Big(1), new Big(1), new Big(2)] },
