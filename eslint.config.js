@@ -32,7 +32,7 @@ export default typescriptEslint.config(
 	commentsPlugin.recommended,
 	...typescriptEslint.configs.strictTypeChecked,
 	...typescriptEslint.configs.stylisticTypeChecked,
-	unicornPlugin.configs['flat/recommended'],
+	unicornPlugin.configs['recommended'],
 	perfectionist.configs['recommended-natural'],
 	// base config
 	{
