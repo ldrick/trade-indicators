@@ -2,11 +2,11 @@ import { either as E, function as F, readonlyArray as RA, readonlyRecord as RR }
 import { expect } from 'vitest';
 
 import {
-	FormattedArray,
-	FormattedRecord,
-	TestResult,
-	TestResultArray,
-	TestResultRecord,
+	type FormattedArray,
+	type FormattedRecord,
+	type TestResult,
+	type TestResultArray,
+	type TestResultRecord,
 } from '../types.js';
 
 const formatArray =
