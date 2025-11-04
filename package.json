@@ -1,9 +1,12 @@
 {
 	"name": "@ldrick/trade-indicators",
-	"version": "0.6.0",
+	"version": "0.7.0",
 	"description": "Trade Indicators",
 	"license": "MIT",
-	"repository": "ldrick/trade-indicators",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ldrick/trade-indicators.git"
+	},
 	"author": {
 		"name": "Ricky Lippmann",
 		"email": "ricky.lippmann@gmail.com"
