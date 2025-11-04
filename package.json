@@ -61,7 +61,7 @@
 		}
 	},
 	"engines": {
-		"node": ">=20.0"
+		"node": ">=22.16"
 	},
 	"scripts": {
 		"build": "rimraf dist && tsc --project tsconfig.build.json",
@@ -99,6 +99,9 @@
 		"@eslint/js": "^9.39.1",
 		"@eslint/json": "^0.13.2",
 		"@eslint/markdown": "^7.5.0",
+		"@tsconfig/node-lts": "^22.0.2",
+		"@tsconfig/node-ts": "^23.6.1",
+		"@tsconfig/recommended": "^1.0.11",
 		"@types/big.js": "^6.2.2",
 		"@types/node": "^24.10.0",
 		"@vitest/coverage-v8": "^4.0.6",

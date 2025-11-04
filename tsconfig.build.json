@@ -1,20 +1,17 @@
 {
+	"extends": [
+		"@tsconfig/recommended/tsconfig.json",
+		"@tsconfig/node-lts/tsconfig.json",
+		"@tsconfig/node-ts/tsconfig.json"
+	],
 	"compilerOptions": {
 		"baseUrl": "./",
 		"outDir": "dist",
-		"target": "ESNext",
-		"lib": ["ES2023"],
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
-		"resolveJsonModule": true,
-		"jsx": "react",
 		"declaration": true,
 		"pretty": true,
 		"newLine": "lf",
 		"stripInternal": true,
-		"strict": true,
-		"noEmitOnError": true,
-		"skipLibCheck": true
+		"noEmitOnError": true
 	},
 	"exclude": ["node_modules", "dist"],
 	"include": ["src"]

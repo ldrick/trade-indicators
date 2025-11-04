@@ -70,9 +70,9 @@ export default defineConfig(
 			...EXTENSIONS_MINIMATCH.TypeScriptDefinition,
 		],
 		languageOptions: {
-			ecmaVersion: 2023,
+			ecmaVersion: 2024,
 			globals: {
-				...globals.es2023,
+				...globals.es2024,
 				...globals.node,
 			},
 			parserOptions: {
