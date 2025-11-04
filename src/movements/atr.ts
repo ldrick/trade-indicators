@@ -10,7 +10,7 @@ import {
 
 import { smmaC } from '../averages/smma.js';
 import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
-import { HighLowClose, NonEmptyHighLowClose } from '../types.js';
+import { type HighLowClose, type NonEmptyHighLowClose } from '../types.js';
 import * as array from '../utils/array.js';
 import * as big from '../utils/big.js';
 import * as number_ from '../utils/number.js';
