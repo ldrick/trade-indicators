@@ -1,6 +1,6 @@
 // @ts-check
 
-import commentsPlugin from '@eslint-community/eslint-plugin-eslint-comments/configs';
+import commentsPlugin from '@eslint-community/eslint-plugin-eslint-comments';
 import eslint from '@eslint/js';
 import jsonPlugin from '@eslint/json';
 import markdownPlugin from '@eslint/markdown';
@@ -30,8 +30,7 @@ export default defineConfig(
 	// register all of the plugins upfront
 	{
 		plugins: {
-			['@eslint-community/eslint-comments']:
-				commentsPlugin.recommended.plugins['@eslint-community/eslint-comments'],
+			['@eslint-community/eslint-comments']: commentsPlugin,
 			['@typescript-eslint']: typescriptEslint.plugin,
 			// @ts-expect-error Plugin seems improperly typed
 			// @see https://github.com/eslint-functional/eslint-plugin-functional/issues/998
@@ -82,7 +81,7 @@ export default defineConfig(
 			},
 		},
 		rules: {
-			...commentsPlugin.recommended.rules,
+			...commentsPlugin.configs.recommended.rules,
 			...unicornPlugin.configs['recommended'].rules,
 			...perfectionist.configs['recommended-natural'].rules,
 			// disallow non-import statements appearing before import statements
