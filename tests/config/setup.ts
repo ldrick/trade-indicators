@@ -52,7 +52,7 @@ expect.extend({
 		expected: TestResult,
 		decimals: number,
 	) {
-		const { expand, isNot, promise } = this;
+		const { isNot, promise } = this;
 
 		const options = { isNot, promise };
 
@@ -101,7 +101,7 @@ expect.extend({
 							(rec) => {
 								const formattedR = format(decimals)(rec);
 								const formattedE = format(decimals)(expected);
-								const diffString = this.utils.diff(formattedE, formattedR, { expand });
+								const diffString = this.utils.diff(formattedE, formattedR);
 								return `${this.utils.matcherHint(
 									'eitherRightToEqualFixedPrecision',
 									undefined,
