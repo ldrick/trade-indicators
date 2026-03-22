@@ -8,6 +8,8 @@
 	"files.insertFinalNewline": true,
 	"files.trimFinalNewlines": true,
 	// trigger linting and fixes
+	"oxc.fmt.configPath": "oxfmt.config.ts",
+	"editor.defaultFormatter": "oxc.oxc-vscode",
 	"editor.formatOnSave": true,
 	"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": "explicit"
@@ -21,8 +23,8 @@
 		"vue"
 	],
 	// package manager
-	"npm.packageManager": "npm",
-	"typescript.enablePromptUseWorkspaceTsdk": true,
+	"npm.packageManager": "pnpm",
 	// typescript
-	"typescript.tsdk": "node_modules/typescript/lib"
+	"js/ts.tsdk.promptToUseWorkspaceVersion": true,
+	"js/ts.tsdk.path": "node_modules/typescript/lib"
 }
