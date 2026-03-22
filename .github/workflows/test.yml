@@ -14,23 +14,28 @@ jobs:
         node-version: [22.x, 24.x]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v5
+        with:
+          version: 10
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
       - name: Install Dependencies
-        run: npm ci
+        run: pnpm i --frozen-lockfile
       - name: Format Check
-        run: npm run format:check
+        run: pnpm format:check
       - name: Type Check
-        run: npm run types:check
+        run: pnpm types:check
       - name: Lint
-        run: npm run lint
+        run: pnpm lint
       - name: Test
-        run: npm run test
+        run: pnpm test
       - name: Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: ./coverage
