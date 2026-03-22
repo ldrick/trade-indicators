@@ -2,17 +2,35 @@
 	"name": "@ldrick/trade-indicators",
 	"version": "0.7.0",
 	"description": "Trade Indicators",
+	"keywords": [
+		"average",
+		"dema",
+		"ema",
+		"indicators",
+		"moving",
+		"signals",
+		"sma",
+		"smma",
+		"technical",
+		"trade",
+		"trading",
+		"true-range"
+	],
+	"homepage": "https://github.com/ldrick/trade-indicators",
 	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/ldrick/trade-indicators.git"
-	},
 	"author": {
 		"name": "Ricky Lippmann",
 		"email": "ricky.lippmann@gmail.com"
 	},
-	"homepage": "https://github.com/ldrick/trade-indicators",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ldrick/trade-indicators.git"
+	},
+	"files": [
+		"dist"
+	],
 	"type": "module",
+	"sideEffects": false,
 	"exports": {
 		"./toPromise.js": {
 			"types": "./dist/utils/toPromise.d.ts",
@@ -63,36 +81,16 @@
 			"import": "./dist/movements/atr.js"
 		}
 	},
-	"engines": {
-		"node": ">=22.16"
-	},
 	"scripts": {
 		"build": "rimraf dist && tsc --project tsconfig.build.json",
-		"check:format": "prettier --check .",
-		"check:types": "tsc --noEmit",
 		"deps:update": "npx npm-check-updates@latest -u",
-		"format": "prettier --write .",
+		"format:check": "oxfmt --check",
+		"format": "oxfmt",
 		"lint": "eslint .",
 		"prepare": "husky",
-		"test": "vitest run --coverage"
+		"test": "vitest run --coverage",
+		"types:check": "tsc --noEmit"
 	},
-	"files": [
-		"dist"
-	],
-	"keywords": [
-		"average",
-		"dema",
-		"ema",
-		"indicators",
-		"moving",
-		"signals",
-		"sma",
-		"smma",
-		"technical",
-		"trade",
-		"trading",
-		"true-range"
-	],
 	"dependencies": {
 		"big.js": "^7.0.1",
 		"fp-ts": "^2.16.11"
@@ -121,24 +119,16 @@
 		"globals": "^17.4.0",
 		"husky": "^9.1.7",
 		"lint-staged": "^16.4.0",
-		"prettier": "^3.8.1",
+		"oxfmt": "^0.41.0",
 		"rimraf": "^6.1.3",
 		"typescript": "^5.9.3",
 		"typescript-eslint": "^8.57.0",
 		"vitest": "^4.1.0"
 	},
-	"sideEffects": false,
 	"lint-staged": {
-		"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-			"prettier --write ."
-		]
+		"*": "oxfmt --no-error-on-unmatched-pattern"
 	},
-	"prettier": {
-		"useTabs": true,
-		"singleQuote": true,
-		"printWidth": 100,
-		"trailingComma": "all",
-		"arrowParens": "always",
-		"endOfLine": "lf"
+	"engines": {
+		"node": ">=22.16"
 	}
 }

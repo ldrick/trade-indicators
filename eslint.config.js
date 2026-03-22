@@ -239,7 +239,7 @@ export default defineConfig(
 	},
 	// overrides for Config files
 	{
-		files: ['eslint.config.js', 'vitest.config.ts'],
+		files: ['eslint.config.js', 'oxfmt.config.ts', 'vitest.config.ts'],
 		rules: {
 			'import-x/no-default-export': 'off',
 		},
