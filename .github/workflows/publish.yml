@@ -10,35 +10,38 @@ jobs:
       packages: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v5
       - name: Setup publish to npmjs.org
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: '22.x'
+          node-version: '24.x'
           registry-url: 'https://registry.npmjs.org'
+          cache: 'pnpm'
       - name: Install Dependencies
-        run: npm ci
+        run: pnpm i --frozen-lockfile
       - name: Format Check
-        run: npm run check:format
+        run: pnpm format:check
       - name: Type Check
-        run: npm run check:types
+        run: pnpm types:check
       - name: Lint
-        run: npm run lint
+        run: pnpm lint
       - name: Test
-        run: npm run test
+        run: pnpm test
       - name: Build Package
-        run: npm run build
+        run: pnpm build
       - name: Publish Package to npmjs.org
-        run: npm publish --access=public
+        run: pnpm publish --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Setup publish to Github Packages
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: '22.x'
+          node-version: '24.x'
           registry-url: 'https://npm.pkg.github.com'
           scope: '@ldrick'
       - name: Publish Package to Github Packages
-        run: npm publish
+        run: pnpm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
