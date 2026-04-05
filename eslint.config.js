@@ -220,7 +220,6 @@ export default defineConfig(
 		extends: [markdownPlugin.configs.recommended],
 		files: EXTENSIONS_MINIMATCH.Markdown,
 		plugins: {
-			// @ts-expect-error - markdown plugin currently not supporting eslint@10
 			['markdown']: markdownPlugin,
 		},
 	},
