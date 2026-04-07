@@ -5,14 +5,14 @@
 		"@tsconfig/node-ts/tsconfig.json"
 	],
 	"compilerOptions": {
-		"baseUrl": "./",
 		"outDir": "dist",
 		"declaration": true,
 		"pretty": true,
 		"newLine": "lf",
 		"stripInternal": true,
-		"noEmitOnError": true
+		"noEmitOnError": true,
+		"rootDir": "./src"
 	},
 	"exclude": ["node_modules", "dist"],
-	"include": ["src"]
+	"include": ["src/**/*"]
 }
