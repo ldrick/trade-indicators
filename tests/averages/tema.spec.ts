@@ -31,7 +31,9 @@ describe('tema', () => {
 	});
 
 	it('calculates the Triple Exponential Moving Average with default period', () => {
-		expect(tema(prices.default.close)).eitherRightToEqualFixedPrecision(prices.default.tema.p20);
+		expect(tema(prices.default.close)).eitherRightToEqualFixedPrecision(
+			prices.default.tema.p20,
+		);
 	});
 
 	it.each([

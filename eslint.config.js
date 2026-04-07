@@ -162,7 +162,11 @@ export default defineConfig(
 					{
 						// Always treat big.js's Big as Immutable.
 						to: 'Immutable',
-						type: { from: 'package', package: 'big.js', pattern: /^Big.BigConstructor.Big$/ },
+						type: {
+							from: 'package',
+							package: 'big.js',
+							pattern: /^Big.BigConstructor.Big$/,
+						},
 					},
 					{
 						// Always treat TypeScript's ReadonlyArrays as Immutable.

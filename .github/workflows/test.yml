@@ -1,41 +1,41 @@
 name: Test
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
 permissions:
-  contents: read
+    contents: read
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [22.x, 24.x]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-      - name: Install pnpm
-        uses: pnpm/action-setup@v5
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
-      - name: Install Dependencies
-        run: pnpm i --frozen-lockfile
-      - name: Format Check
-        run: pnpm format:check
-      - name: Type Check
-        run: pnpm types:check
-      - name: Lint
-        run: pnpm lint
-      - name: Test
-        run: pnpm test
-      - name: Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./coverage
-          flags: unittests
-          fail_ci_if_error: true
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [22.x, 24.x]
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+            - name: Install pnpm
+              uses: pnpm/action-setup@v5
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v6
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'pnpm'
+            - name: Install Dependencies
+              run: pnpm i --frozen-lockfile
+            - name: Format Check
+              run: pnpm format:check
+            - name: Type Check
+              run: pnpm types:check
+            - name: Lint
+              run: pnpm lint
+            - name: Test
+              run: pnpm test
+            - name: Codecov
+              uses: codecov/codecov-action@v5
+              with:
+                  token: ${{ secrets.CODECOV_TOKEN }}
+                  directory: ./coverage
+                  flags: unittests
+                  fail_ci_if_error: true
