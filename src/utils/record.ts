@@ -24,5 +24,7 @@ export const validateRequiredSize =
 		F.pipe(
 			record,
 			// Not so cool, type inference for "a" is not working as expected
-			RR.traverse(E.Applicative)((a) => array.validateRequiredSize(required)(a as readonly A[])),
+			RR.traverse(E.Applicative)((a) =>
+				array.validateRequiredSize(required)(a as readonly A[]),
+			),
 		);
