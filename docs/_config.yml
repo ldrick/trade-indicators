@@ -5,9 +5,9 @@ search_enabled: true
 
 # Aux links for the upper right navigation
 aux_links:
-  'Docs':
-    - '//ldrick.github.io/trade-indicators/'
-  'API Reference':
-    - '//ldrick.github.io/trade-indicators/modules/'
-  'GitHub':
-    - '//github.com/ldrick/trade-indicators'
+    'Docs':
+        - '//ldrick.github.io/trade-indicators/'
+    'API Reference':
+        - '//ldrick.github.io/trade-indicators/modules/'
+    'GitHub':
+        - '//github.com/ldrick/trade-indicators'

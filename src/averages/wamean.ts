@@ -8,7 +8,9 @@ import { function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts';
 export const wamean = (values: RNEA.ReadonlyNonEmptyArray<Big>): Big => {
 	const dividend = F.pipe(
 		values,
-		RNEA.reduceWithIndex(new Big(0), (index, reduced, value) => reduced.add(value.mul(index + 1))),
+		RNEA.reduceWithIndex(new Big(0), (index, reduced, value) =>
+			reduced.add(value.mul(index + 1)),
+		),
 	);
 	const divisor = F.pipe(
 		values,
