@@ -12,7 +12,11 @@ const calculation = (
 	F.pipe(
 		RNEA.range(0, values.length - period),
 		RNEA.traverse(E.Applicative)((r) =>
-			F.pipe(values.slice(r, period + r), array.validateRequiredSize(period), E.map(callback)),
+			F.pipe(
+				values.slice(r, period + r),
+				array.validateRequiredSize(period),
+				E.map(callback),
+			),
 		),
 	);
 

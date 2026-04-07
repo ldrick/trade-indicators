@@ -11,14 +11,12 @@ import configPrettier from 'eslint-config-prettier';
 import functionalPlugin from 'eslint-plugin-functional';
 import { importX as importXPlugin } from 'eslint-plugin-import-x';
 import jsdocPlugin from 'eslint-plugin-jsdoc';
+import { configs as packageJsonConfigs } from 'eslint-plugin-package-json';
 import { configs as perfectionistConfigs } from 'eslint-plugin-perfectionist';
 import unicornPlugin from 'eslint-plugin-unicorn';
-import { defineConfig } from 'eslint/config';
+import { defineConfig, globalIgnores } from 'eslint/config';
 import globals from 'globals';
-import {
-	configs as typescriptEslintConfigs,
-	plugin as typescriptEslintPlugin,
-} from 'typescript-eslint';
+import { configs as typescriptEslintConfigs } from 'typescript-eslint';
 
 const EXTENSIONS_MINIMATCH = {
 	JavaScript: ['**/*.cjs', '**/*.mjs', '**/*.js'],
@@ -32,22 +30,8 @@ const EXTENSIONS_MINIMATCH = {
 };
 
 export default defineConfig(
-	// register all of the plugins upfront
-	{
-		plugins: {
-			['@eslint-community/eslint-comments']: commentsPlugin,
-			['@typescript-eslint']: typescriptEslintPlugin,
-			['functional']: functionalPlugin,
-			['import-x']: importXPlugin,
-			['jsdoc']: jsdocPlugin,
-			['unicorn']: unicornPlugin,
-			['vitest']: vitestPlugin,
-		},
-	},
 	// ignored files
-	{
-		ignores: ['node_modules', 'dist', 'coverage', 'package-lock.json'],
-	},
+	globalIgnores(['node_modules', 'dist', 'coverage', 'package-lock.json']),
 	// restrict eslint recommended only to js and ts files
 	{
 		extends: [eslint.configs.recommended],
@@ -87,6 +71,9 @@ export default defineConfig(
 				tsconfigRootDir: import.meta.dirname,
 				warnOnUnsupportedTypeScriptVersion: false,
 			},
+		},
+		plugins: {
+			['@eslint-community/eslint-comments']: commentsPlugin,
 		},
 		rules: {
 			...commentsConfigs.recommended.rules,
@@ -175,7 +162,11 @@ export default defineConfig(
 					{
 						// Always treat big.js's Big as Immutable.
 						to: 'Immutable',
-						type: { from: 'package', package: 'big.js', pattern: /^Big.BigConstructor.Big$/ },
+						type: {
+							from: 'package',
+							package: 'big.js',
+							pattern: /^Big.BigConstructor.Big$/,
+						},
 					},
 					{
 						// Always treat TypeScript's ReadonlyArrays as Immutable.
@@ -233,7 +224,6 @@ export default defineConfig(
 		extends: [markdownPlugin.configs.recommended],
 		files: EXTENSIONS_MINIMATCH.Markdown,
 		plugins: {
-			// @ts-expect-error - markdown plugin currently not supporting eslint@10
 			['markdown']: markdownPlugin,
 		},
 	},
@@ -243,6 +233,15 @@ export default defineConfig(
 		rules: {
 			'import-x/no-default-export': 'off',
 		},
+	},
+	// overrides for package.json files
+	{
+		extends: [
+			packageJsonConfigs.recommended,
+			packageJsonConfigs['recommended-publishable'],
+			packageJsonConfigs.stylistic,
+		],
+		files: ['package.json'],
 	},
 	// prettier has to be the last extension
 	configPrettier,

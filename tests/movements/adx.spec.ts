@@ -29,7 +29,10 @@ describe('adx', () => {
 
 	it('fails if data given has unequal sizes', () => {
 		expect(
-			adx({ close: [1.3, 2.1, 2, 3, 1.9], high: [1.5, 2.4, 2.8, 2.3], low: [0.9, 1.5, 2.3] }, 1),
+			adx(
+				{ close: [1.3, 2.1, 2, 3, 1.9], high: [1.5, 2.4, 2.8, 2.3], low: [0.9, 1.5, 2.3] },
+				1,
+			),
 		).toStrictEqual(E.left(new UnequalArraySizesError()));
 	});
 
@@ -55,7 +58,11 @@ describe('adx', () => {
 
 	it('calculates the Average Directional Index with default period', () => {
 		expect(
-			adx({ close: prices.default.close, high: prices.default.high, low: prices.default.low }),
+			adx({
+				close: prices.default.close,
+				high: prices.default.high,
+				low: prices.default.low,
+			}),
 		).eitherRightToEqualFixedPrecision(prices.default.adx.p14);
 	});
 

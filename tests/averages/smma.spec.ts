@@ -31,7 +31,9 @@ describe('smma', () => {
 	});
 
 	it('calculates the Smoothed Moving Average with default period', () => {
-		expect(smma(prices.default.close)).eitherRightToEqualFixedPrecision(prices.default.smma.p20);
+		expect(smma(prices.default.close)).eitherRightToEqualFixedPrecision(
+			prices.default.smma.p20,
+		);
 	});
 
 	it.each([

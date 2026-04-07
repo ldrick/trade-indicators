@@ -42,5 +42,7 @@ export const tema = (
 		E.bind('emaOne', ({ periodV, valuesB }) => emaC(valuesB, periodV)),
 		E.bind('emaTwo', ({ emaOne, periodV }) => emaC(emaOne, periodV)),
 		E.bind('emaThree', ({ emaTwo, periodV }) => emaC(emaTwo, periodV)),
-		E.map(({ emaOne, emaThree, emaTwo, periodV }) => calculate(emaOne, emaTwo, emaThree, periodV)),
+		E.map(({ emaOne, emaThree, emaTwo, periodV }) =>
+			calculate(emaOne, emaTwo, emaThree, periodV),
+		),
 	);

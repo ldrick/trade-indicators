@@ -31,7 +31,9 @@ describe('dema', () => {
 	});
 
 	it('calculates the Double Exponential Moving Average with default period', () => {
-		expect(dema(prices.default.close)).eitherRightToEqualFixedPrecision(prices.default.dema.p20);
+		expect(dema(prices.default.close)).eitherRightToEqualFixedPrecision(
+			prices.default.dema.p20,
+		);
 	});
 
 	it.each([
