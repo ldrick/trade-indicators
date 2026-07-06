@@ -32,6 +32,12 @@ describe('adx', () => {
 		).toStrictEqual(E.left(new UnequalArraySizesError()));
 	});
 
+	it('fails if high has fewer values than low', () => {
+		expect(adx({ close: [1, 2], high: [1, 2], low: [1, 2, 3] }, 1)).toStrictEqual(
+			E.left(new UnequalArraySizesError()),
+		);
+	});
+
 	it.each([
 		{ v: { close: [0, 0, 0, 0, 0], high: [0, 0, NaN, 0, 0], low: [0, 0, 0, 0, 0] } },
 		{
