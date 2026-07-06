@@ -27,10 +27,10 @@ const format =
 	(value: TestResult): FormattedArray | FormattedRecord =>
 		Array.isArray(value) ? formatArray(dec)(value) : formatRecord(dec)(value);
 
-const compareArrays = <A>(exp: readonly A[], rec: readonly A[]) =>
+const areArraysEqual = <A>(exp: readonly A[], rec: readonly A[]) =>
 	exp.length === rec.length && exp.every((entry, index) => entry === rec[index]);
 
-const compareResultArrays = (
+const areResultArraysEqual = (
 	exp: TestResultArray,
 	rec: TestResultArray,
 	decimals: number,
@@ -38,15 +38,17 @@ const compareResultArrays = (
 	exp.length === rec.length &&
 	exp.every((entry, index) => entry?.toFixed(decimals) === rec[index]?.toFixed(decimals));
 
-const compareResultRecords = (
+const areResultRecordsEqual = (
 	exp: TestResultRecord,
 	rec: TestResultRecord,
 	decimals: number,
 ): boolean =>
-	compareArrays(Object.keys(exp), Object.keys(rec)) &&
-	Object.keys(exp).every((k) => compareResultArrays(exp[k], rec[k], decimals));
+	areArraysEqual(Object.keys(exp), Object.keys(rec)) &&
+	Object.keys(exp).every((k) => areResultArraysEqual(exp[k], rec[k], decimals));
 
 expect.extend({
+	// vitest's `expect.extend` matcher API binds `this` to the matcher context
+	/* eslint-disable unicorn/no-this-outside-of-class */
 	eitherRightToEqualFixedPrecision(
 		received: E.Either<Error, TestResult>,
 		expected: TestResult,
@@ -56,14 +58,14 @@ expect.extend({
 
 		const options = { isNot, promise };
 
-		const pass: boolean = F.pipe(
+		const isPass: boolean = F.pipe(
 			received,
 			E.fold(
 				() => false,
 				(right) =>
 					Array.isArray(expected) && Array.isArray(right)
-						? compareResultArrays(expected, right, decimals)
-						: compareResultRecords(
+						? areResultArraysEqual(expected, right, decimals)
+						: areResultRecordsEqual(
 								expected as TestResultRecord,
 								right as TestResultRecord,
 								decimals,
@@ -71,7 +73,7 @@ expect.extend({
 			),
 		);
 
-		const message = pass
+		const message = isPass
 			? (): string =>
 					F.pipe(
 						received,
@@ -117,6 +119,7 @@ expect.extend({
 						),
 					);
 
-		return { message, pass };
+		return { message, pass: isPass };
 	},
+	/* eslint-enable unicorn/no-this-outside-of-class */
 });

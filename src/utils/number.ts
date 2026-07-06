@@ -18,6 +18,6 @@ export const toBig = (value: number): E.Either<Error, Big> =>
  * @internal
  */
 export const validatePositiveInteger = (period: number): E.Either<Error, number> =>
-	period > 0 && Number.isInteger(period)
+	period > 0 && Number.isSafeInteger(period)
 		? E.right(period)
 		: E.left(new NotPositiveIntegerError());
