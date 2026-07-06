@@ -1,6 +1,14 @@
 import { Big } from 'big.js';
-import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts';
+import {
+	apply as AP,
+	either as E,
+	function as F,
+	option as O,
+	readonlyArray as RA,
+	readonlyNonEmptyArray as RNEA,
+} from 'fp-ts';
 
+import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
 import { emaC } from './ema.js';
@@ -10,15 +18,19 @@ const calculate = (
 	two: RNEA.ReadonlyNonEmptyArray<Big>,
 	three: RNEA.ReadonlyNonEmptyArray<Big>,
 	period: number,
-): RNEA.ReadonlyNonEmptyArray<number> =>
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
 	F.pipe(
 		three,
-		RNEA.mapWithIndex((index, value) =>
-			one[index + 2 * (period - 1)]
-				.mul(3)
-				.sub(two[index + period - 1].mul(3))
-				.add(value)
-				.toNumber(),
+		RNEA.traverseWithIndex(E.Applicative)((index, value) =>
+			F.pipe(
+				O.bindTo('oneValue')(RA.lookup(index + 2 * (period - 1))(one)),
+				O.bind('twoValue', () => RA.lookup(index + period - 1)(two)),
+				O.map(({ oneValue, twoValue }) =>
+					oneValue.mul(3).sub(twoValue.mul(3)).add(value).toNumber(),
+				),
+				// v8 ignore next -- `one`, `two` and `three` are all derived from the same EMA chain, so their lengths are always in sync
+				E.fromOption(() => new UnequalArraySizesError()),
+			),
 		),
 	);
 
@@ -42,7 +54,7 @@ export const tema = (
 		E.bind('emaOne', ({ periodV, valuesB }) => emaC(valuesB, periodV)),
 		E.bind('emaTwo', ({ emaOne, periodV }) => emaC(emaOne, periodV)),
 		E.bind('emaThree', ({ emaTwo, periodV }) => emaC(emaTwo, periodV)),
-		E.map(({ emaOne, emaThree, emaTwo, periodV }) =>
+		E.chain(({ emaOne, emaThree, emaTwo, periodV }) =>
 			calculate(emaOne, emaTwo, emaThree, periodV),
 		),
 	);
