@@ -1,4 +1,10 @@
-import { either as E, function as F, readonlyArray as RA, readonlyRecord as RR } from 'fp-ts';
+import {
+	either as E,
+	function as F,
+	option as O,
+	readonlyArray as RA,
+	readonlyRecord as RR,
+} from 'fp-ts';
 import { expect } from 'vitest';
 
 import {
@@ -44,7 +50,15 @@ const areResultRecordsEqual = (
 	decimals: number,
 ): boolean =>
 	areArraysEqual(Object.keys(exp), Object.keys(rec)) &&
-	Object.keys(exp).every((k) => areResultArraysEqual(exp[k], rec[k], decimals));
+	Object.keys(exp).every((k) =>
+		F.pipe(
+			O.bindTo('expValue')(RR.lookup(k)(exp)),
+			O.bind('recValue', () => RR.lookup(k)(rec)),
+			O.exists(({ expValue, recValue }) =>
+				areResultArraysEqual(expValue, recValue, decimals),
+			),
+		),
+	);
 
 expect.extend({
 	// vitest's `expect.extend` matcher API binds `this` to the matcher context

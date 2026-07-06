@@ -8,6 +8,7 @@ import {
 } from 'fp-ts';
 
 import { PeriodSizeMissmatchError } from '../errors/PeriodSizeMissmatchError.js';
+import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
 import { emaC } from './ema.js';
@@ -25,13 +26,17 @@ const validatePeriodSizes = (slowPeriod: number, fastPeriod: number): E.Either<E
 const calculate = (
 	fast: RNEA.ReadonlyNonEmptyArray<Big>,
 	slow: RNEA.ReadonlyNonEmptyArray<Big>,
-): RNEA.ReadonlyNonEmptyArray<Big> =>
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
 	F.pipe(
 		slow,
-		RNEA.mapWithIndex((index, value) => {
-			const shortened = RA.takeRight(slow.length)(fast);
-			return shortened[index].sub(value);
-		}),
+		RNEA.traverseWithIndex(E.Applicative)((index, value) =>
+			F.pipe(
+				RA.lookup(fast.length - slow.length + index)(fast),
+				// v8 ignore next -- `fast` is always at least as long as `slow`, guaranteed by validatePeriodSizes
+				E.fromOption(() => new UnequalArraySizesError()),
+				E.map((fastValue) => fastValue.sub(value)),
+			),
+		),
 	);
 
 /**
@@ -60,7 +65,7 @@ export const macd = (
 		E.bind('valuesB', ({ valuesV }) => array.toBig(valuesV)),
 		E.bind('emaSlow', ({ slowPeriodV, valuesB }) => emaC(valuesB, slowPeriodV)),
 		E.bind('emaFast', ({ fastPeriodV, valuesB }) => emaC(valuesB, fastPeriodV)),
-		E.bind('macdResult', ({ emaFast, emaSlow }) => E.right(calculate(emaFast, emaSlow))),
+		E.bind('macdResult', ({ emaFast, emaSlow }) => calculate(emaFast, emaSlow)),
 		E.bind('signal', ({ macdResult, signalPeriodV }) => emaC(macdResult, signalPeriodV)),
 		E.map(({ macdResult, signal }) => ({
 			macd: array.toNumber(macdResult),
