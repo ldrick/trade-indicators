@@ -3,6 +3,7 @@
 		"dbaeumer.vscode-eslint",
 		"editorconfig.editorconfig",
 		"oxc.oxc-vscode",
+		"typescriptteam.native-preview",
 		"vitest.explorer"
 	]
 }
