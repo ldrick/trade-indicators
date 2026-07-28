@@ -1,24 +1,22 @@
 name: Publish Node.js Package
 on:
     release:
-        types: [created]
+        types: [published]
 jobs:
-    build:
+    test:
         runs-on: ubuntu-latest
+        timeout-minutes: 15
         permissions:
             contents: read
-            packages: write
-            id-token: write
         steps:
             - name: Checkout
-              uses: actions/checkout@v6
+              uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
             - name: Install pnpm
-              uses: pnpm/action-setup@v5
-            - name: Setup publish to npmjs.org
-              uses: actions/setup-node@v6
+              uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5
+            - name: Use Node.js
+              uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
               with:
                   node-version: '24.x'
-                  registry-url: 'https://registry.npmjs.org'
                   cache: 'pnpm'
             - name: Install Dependencies
               run: pnpm i --frozen-lockfile
@@ -30,16 +28,53 @@ jobs:
               run: pnpm lint
             - name: Test
               run: pnpm test
+    publish-npm:
+        needs: test
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        permissions:
+            contents: read
+            id-token: write
+        steps:
+            - name: Checkout
+              uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+            - name: Install pnpm
+              uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5
+            - name: Setup Node.js for npmjs.org
+              uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+              with:
+                  node-version: '24.x'
+                  registry-url: 'https://registry.npmjs.org'
+                  cache: 'pnpm'
+            - name: Install Dependencies
+              run: pnpm i --frozen-lockfile
             - name: Build Package
               run: pnpm build
             - name: Publish Package to npmjs.org
-              run: pnpm publish --access=public --no-git-checks
-            - name: Setup publish to Github Packages
-              uses: actions/setup-node@v6
+              run: pnpm publish --access=public --no-git-checks --provenance
+    publish-github-packages:
+        needs: test
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        permissions:
+            contents: read
+            packages: write
+        steps:
+            - name: Checkout
+              uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+            - name: Install pnpm
+              uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5
+            - name: Setup Node.js for Github Packages
+              uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
               with:
                   node-version: '24.x'
                   registry-url: 'https://npm.pkg.github.com'
                   scope: '@ldrick'
+                  cache: 'pnpm'
+            - name: Install Dependencies
+              run: pnpm i --frozen-lockfile
+            - name: Build Package
+              run: pnpm build
             - name: Publish Package to Github Packages
               run: pnpm publish --no-git-checks
               env:
