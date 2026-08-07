@@ -1,14 +1,13 @@
 {
 	"extends": "./tsconfig.build.json",
 	"compilerOptions": {
-		"allowJs": true,
 		"rootDir": "./"
 	},
 	"include": [
 		"src",
 		"tests",
 		"vitest.config.ts",
-		"eslint.config.js",
+		"eslint.config.ts",
 		"oxfmt.config.ts",
 		"knip.config.ts"
 	]

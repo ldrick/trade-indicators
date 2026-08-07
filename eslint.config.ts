@@ -1,5 +1,3 @@
-// @ts-check
-
 import commentsPlugin, {
 	configs as commentsConfigs,
 } from '@eslint-community/eslint-plugin-eslint-comments';
@@ -229,7 +227,7 @@ export default defineConfig(
 	},
 	// overrides for Config files
 	{
-		files: ['eslint.config.js', 'oxfmt.config.ts', 'vitest.config.ts', 'knip.config.ts'],
+		files: ['eslint.config.ts', 'oxfmt.config.ts', 'vitest.config.ts', 'knip.config.ts'],
 		rules: {
 			'import-x/no-default-export': 'off',
 		},
