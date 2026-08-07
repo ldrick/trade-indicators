@@ -4,5 +4,12 @@
 		"allowJs": true,
 		"rootDir": "./"
 	},
-	"include": ["src", "tests", "vitest.config.ts", "eslint.config.js", "oxfmt.config.ts"]
+	"include": [
+		"src",
+		"tests",
+		"vitest.config.ts",
+		"eslint.config.js",
+		"oxfmt.config.ts",
+		"knip.config.ts"
+	]
 }

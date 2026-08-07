@@ -28,17 +28,19 @@ If any of these fail, stop and report — do not attempt to fix issues without a
 
 Run in this order:
 
-- **A.** `pnpm format:check`
-- **B.** `pnpm types:check`
-- **C.** `pnpm lint`
-- **D.** `pnpm test`
+- **A.** `pnpm knip`
+- **B.** `pnpm format:check`
+- **C.** `pnpm types:check`
+- **D.** `pnpm lint`
+- **E.** `pnpm test`
 
 Self-healing rule when a check fails:
 
-- **A fails** → run `pnpm format` (auto-fixes formatting), then re-run **A** to confirm.
-- **B fails** → try to fix the type errors, then re-run **A**, then **B** again.
-- **C fails** → try to fix the lint errors, then re-run **A**, **B**, then **C** again.
-- **D fails** → try to fix the failing tests, then re-run **A**, **B**, **C**, then **D** again.
+- **A fails** → an updated dependency likely introduced (or removed the last usage of) a devDependency, or the `knip.config.ts` entry list is stale — fix the actual cause (remove the unused devDependency, or update `knip.config.ts` if a source file legitimately moved), then re-run **A**.
+- **B fails** → run `pnpm format` (auto-fixes formatting), then re-run **A**, then **B** again.
+- **C fails** → try to fix the type errors, then re-run **A**, **B**, then **C** again.
+- **D fails** → try to fix the lint errors, then re-run **A**, **B**, **C**, then **D** again.
+- **E fails** → try to fix the failing tests, then re-run **A**, **B**, **C**, **D**, then **E** again.
 
 In general: whenever a check fails and you make a fix, restart from **A** and work forward through the failed check again before moving on. Only proceed past a check once it passes. If a check keeps failing after a reasonable fix attempt, stop and report instead of looping indefinitely.
 
