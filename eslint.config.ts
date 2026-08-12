@@ -8,8 +8,8 @@ import vitestPlugin from '@vitest/eslint-plugin';
 import configPrettier from 'eslint-config-prettier';
 import functionalPlugin from 'eslint-plugin-functional';
 import { importX as importXPlugin } from 'eslint-plugin-import-x';
-import jsdocPlugin from 'eslint-plugin-jsdoc';
-import { configs as packageJsonConfigs } from 'eslint-plugin-package-json';
+import { configs as jsdocConfigs } from 'eslint-plugin-jsdoc';
+import { configs as packageJsonConfigs } from 'eslint-plugin-package-json/experimental';
 import { configs as perfectionistConfigs } from 'eslint-plugin-perfectionist';
 import unicornPlugin from 'eslint-plugin-unicorn';
 import { defineConfig, globalIgnores } from 'eslint/config';
@@ -96,7 +96,7 @@ export default defineConfig(
 	},
 	// overrides for TypeScript files
 	{
-		extends: [jsdocPlugin.configs['flat/recommended-typescript-error']],
+		extends: [jsdocConfigs['flat/recommended-typescript-error']],
 		files: [...EXTENSIONS_MINIMATCH.TypeScript, ...EXTENSIONS_MINIMATCH.TypeScriptReact],
 		ignores: EXTENSIONS_MINIMATCH.TypeScriptDefinition,
 		rules: {
@@ -234,11 +234,7 @@ export default defineConfig(
 	},
 	// overrides for package.json files
 	{
-		extends: [
-			packageJsonConfigs.recommended,
-			packageJsonConfigs['recommended-publishable'],
-			packageJsonConfigs.stylistic,
-		],
+		extends: [packageJsonConfigs.recommended, packageJsonConfigs.stylistic],
 		files: ['package.json'],
 	},
 	// prettier has to be the last extension
