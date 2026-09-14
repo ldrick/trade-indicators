@@ -36,6 +36,8 @@ jobs:
               run: pnpm types:check
             - name: Lint
               run: pnpm lint
+            - name: Claude Lint
+              run: pnpm lint:claude
             - name: Test
               run: pnpm test
             - name: Codecov
