@@ -86,7 +86,7 @@
 		"format:check": "oxfmt --check",
 		"knip": "knip",
 		"lint": "eslint --max-warnings 0 .",
-		"lint:claude": "claudelint check-all",
+		"lint:claude": "claudelint check-all --strict",
 		"lint:claude:fix": "claudelint format --fix",
 		"prepare": "husky",
 		"test": "vitest run --coverage",

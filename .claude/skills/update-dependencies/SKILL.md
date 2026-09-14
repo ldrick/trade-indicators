@@ -1,16 +1,19 @@
 ---
+name: update-dependencies
 description: Update all dependencies via pnpm, reinstall clean, and run the same checks as the CI test workflow with self-healing retries
 ---
 
-Run these steps in order, in the project root.
+## Usage
+
+Invoke this skill (`/update-dependencies` or by asking to update dependencies) from the project root. Run the steps below in order.
 
 ## 1. Toolchain versions (pnpm & Node.js)
 
-1. **pnpm**: run `corepack use pnpm@latest` to bump the `packageManager` field in [package.json](package.json) to the latest pnpm release.
+1. **pnpm**: run `corepack use pnpm@latest` to bump the `packageManager` field in [package.json](../../../package.json) to the latest pnpm release.
 2. **Node.js**: check the current official Node.js release schedule (e.g. via [nodejs.org/en/about/previous-releases](https://nodejs.org/en/about/previous-releases) or [endoflife.date/nodejs](https://endoflife.date/nodejs)) for all lines currently in **Active LTS** or **Maintenance LTS** (exclude anything EOL'd, and exclude the "Current"/non-LTS line — it hasn't graduated to LTS yet). Update these to match exactly that set of LTS majors:
-    - `engines.node` in [package.json](package.json) (lower bound = oldest supported LTS major, minor from that line's initial LTS release)
-    - the `node-version` matrix in [.github/workflows/test.yml](.github/workflows/test.yml) (should list every currently supported LTS major)
-    - `node-version` in [.github/workflows/publish.yml](.github/workflows/publish.yml) (pin to the newest Active LTS major)
+    - `engines.node` in [package.json](../../../package.json) (lower bound = oldest supported LTS major, minor from that line's initial LTS release)
+    - the `node-version` matrix in [.github/workflows/test.yml](../../../.github/workflows/test.yml) (should list every currently supported LTS major)
+    - `node-version` in [.github/workflows/publish.yml](../../../.github/workflows/publish.yml) (pin to the newest Active LTS major)
 
     If nothing changed since the last run, say so explicitly rather than silently skipping.
 
@@ -22,9 +25,9 @@ If any of these fail, stop and report — do not attempt to fix issues without a
 2. `pnpm clean --lockfile`
 3. `pnpm install` — regenerates `node_modules` and a fresh `pnpm-lock.yaml` from the updated `package.json`
 
-If any of these fail, stop and report — do not attempt to fix issues without asking first. Note: [pnpm-workspace.yaml](pnpm-workspace.yaml) enforces a `minimumReleaseAge` (supply-chain cooldown) — if `pnpm install` rejects a version as too new, relax that specific dependency's version range back down (pnpm will then resolve the newest release that already satisfies the cooldown) rather than disabling or lowering the policy.
+If any of these fail, stop and report — do not attempt to fix issues without asking first. Note: [pnpm-workspace.yaml](../../../pnpm-workspace.yaml) enforces a `minimumReleaseAge` (supply-chain cooldown) — if `pnpm install` rejects a version as too new, relax that specific dependency's version range back down (pnpm will then resolve the newest release that already satisfies the cooldown) rather than disabling or lowering the policy.
 
-## 3. Checks (mirrors the `build` job in [.github/workflows/test.yml](.github/workflows/test.yml))
+## 3. Checks (mirrors the `build` job in [.github/workflows/test.yml](../../../.github/workflows/test.yml))
 
 Run in this order:
 
