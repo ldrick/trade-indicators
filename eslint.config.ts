@@ -79,6 +79,7 @@ export default defineConfig(
 			'unicorn/filename-case': ['error', { cases: { camelCase: true, pascalCase: true } }],
 			'unicorn/no-array-callback-reference': 'off',
 			'unicorn/no-array-reduce': 'off',
+			'unicorn/no-asterisk-prefix-in-documentation-comments': 'off',
 			'unicorn/no-null': 'off',
 		},
 	},
@@ -230,6 +231,7 @@ export default defineConfig(
 		files: ['eslint.config.ts', 'oxfmt.config.ts', 'vitest.config.ts', 'knip.config.ts'],
 		rules: {
 			'import-x/no-default-export': 'off',
+			'unicorn/no-top-level-side-effects': 'off',
 		},
 	},
 	// overrides for package.json files
