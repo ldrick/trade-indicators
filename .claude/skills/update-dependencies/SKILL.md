@@ -9,7 +9,7 @@ Invoke this skill (`/update-dependencies` or by asking to update dependencies) f
 
 ## 1. Toolchain versions (pnpm & Node.js)
 
-1. **pnpm**: run `corepack use pnpm@latest` to bump the `packageManager` field in [package.json](../../../package.json) to the latest pnpm release.
+1. **pnpm**: run `pnpm self-update` to bump the `packageManager` field in [package.json](../../../package.json) to the latest pnpm release.
 2. **Node.js**: check the current official Node.js release schedule (e.g. via [nodejs.org/en/about/previous-releases](https://nodejs.org/en/about/previous-releases) or [endoflife.date/nodejs](https://endoflife.date/nodejs)) for all lines currently in **Active LTS** or **Maintenance LTS** (exclude anything EOL'd, and exclude the "Current"/non-LTS line — it hasn't graduated to LTS yet). Update these to match exactly that set of LTS majors:
     - `engines.node` in [package.json](../../../package.json) (lower bound = oldest supported LTS major, minor from that line's initial LTS release)
     - the `node-version` matrix in [.github/workflows/test.yml](../../../.github/workflows/test.yml) (should list every currently supported LTS major)
