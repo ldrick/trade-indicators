@@ -1,3 +1,8 @@
 allowBuilds:
     unrs-resolver: false
 minimumReleaseAge: 4320 # 3 days
+overrides:
+    # GHSA: minimatch < 11.0.1 DoS via globparts amplification (eslint/typescript-eslint still pin ^10)
+    minimatch: ^11.0.1
+    # GHSA: katex < 0.18.2 prototype pollution (micromark-extension-math still pins ^0.16)
+    katex: ^0.18.2
