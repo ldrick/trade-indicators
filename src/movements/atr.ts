@@ -9,10 +9,16 @@ import {
 
 import { smmaC } from '../averages/smma.js';
 import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
-import { type HighLowClose, type NonEmptyHighLowClose } from '../types.js';
+import {
+	type HighLowClose,
+	type NonEmptyArray,
+	type NonEmptyHighLowClose,
+	type Result,
+} from '../types.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
 import * as rec from '../utils/record.js';
+import { fromEither } from '../utils/result.js';
 
 const trueRange = (
 	values: NonEmptyHighLowClose<number>,
@@ -60,10 +66,7 @@ export const atrC = (
  * and the absolute value of the current low minus the previous close.
  * @public
  */
-export const atr = (
-	values: HighLowClose<number>,
-	period = 14,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
+export const atr = (values: HighLowClose<number>, period = 14): Result<NonEmptyArray<number>> =>
 	F.pipe(
 		AP.sequenceS(E.Applicative)({
 			periodV: number_.validatePositiveInteger(period),
@@ -72,4 +75,5 @@ export const atr = (
 		}),
 		E.bind('valuesF', ({ valuesV }) => rec.validateFinite(valuesV)),
 		E.chain(({ periodV, valuesF }) => atrC(valuesF, periodV)),
+		fromEither,
 	);

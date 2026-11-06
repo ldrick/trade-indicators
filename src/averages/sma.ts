@@ -1,5 +1,5 @@
-import { either as E, readonlyNonEmptyArray as RNEA } from 'fp-ts';
-
+import { type NonEmptyArray, type Result } from '../types.js';
+import { fromEither } from '../utils/result.js';
 import { amean } from './amean.js';
 import { ma } from './ma.js';
 
@@ -9,7 +9,5 @@ import { ma } from './ma.js';
  * Also prices above the SMA can indicate uptrends, prices below can indicate downtrends.
  * @public
  */
-export const sma = (
-	values: readonly number[],
-	period = 20,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> => ma(values, period, amean);
+export const sma = (values: readonly number[], period = 20): Result<NonEmptyArray<number>> =>
+	fromEither(ma(values, period, amean));

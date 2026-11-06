@@ -1,12 +1,12 @@
 ---
 title: errors
-nav_order: 12
+nav_order: 13
 parent: Modules
 ---
 
 ## Overview
 
-No function of `trade-indicators` throws. Invalid input is returned as `E.left` with an instance of one of these error classes, so it can be distinguished with `instanceof`.
+No function of `trade-indicators` throws. Invalid input is returned as `{ ok: false, error }` with an instance of one of these error classes, so it can be distinguished with `instanceof`. The type `IndicatorError` from `@ldrick/trade-indicators/types.js` is the union of all of them.
 
 | Error                     | Import path                                                  | Returned when                                                       |
 | ------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------- |
@@ -20,15 +20,12 @@ No function of `trade-indicators` throws. Invalid input is returned as `E.left` 
 ## Example
 
 ```typescript
-import { either as E, function as F } from 'fp-ts';
 import { ema } from '@ldrick/trade-indicators/averages/ema.js';
 import { NotEnoughDataError } from '@ldrick/trade-indicators/errors/NotEnoughDataError.js';
 
-F.pipe(
-	ema([1, 2], 3),
-	E.fold(
-		(error) => console.log(error instanceof NotEnoughDataError ? 'need more data' : error),
-		(values) => console.log(values),
-	),
-);
+const result = ema([1, 2], 3);
+
+if (!result.ok) {
+	console.log(result.error instanceof NotEnoughDataError ? 'need more data' : result.error);
+}
 ```

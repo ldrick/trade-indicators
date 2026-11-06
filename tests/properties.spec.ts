@@ -1,5 +1,4 @@
 import * as fc from 'fast-check';
-import { either as E } from 'fp-ts';
 import { describe, expect, it } from 'vitest';
 
 import { dema } from '../src/averages/dema.js';
@@ -12,7 +11,7 @@ import { wma } from '../src/averages/wma.js';
 import { adx } from '../src/movements/adx.js';
 import { atr } from '../src/movements/atr.js';
 import { rsi } from '../src/oscillators/rsi.js';
-import { type HighLowClose } from '../src/types.js';
+import { type HighLowClose, type Result } from '../src/types.js';
 
 const price = fc.double({ max: 1e6, min: 0.01, noDefaultInfinity: true, noNaN: true });
 const period = fc.integer({ max: 30, min: 1 });
@@ -52,11 +51,11 @@ const candlesWithPeriod = (minLength: (p: number) => number) =>
 // Relative tolerance for floating point comparisons against input bounds.
 const tolerance = (reference: number) => Math.max(1, Math.abs(reference)) * 1e-9;
 
-const getRight = <A>(result: E.Either<Error, A>): A => {
-	if (E.isLeft(result)) {
-		throw result.left;
+const getRight = <A>(result: Result<A, Error>): A => {
+	if (!result.ok) {
+		throw result.error;
 	}
-	return result.right;
+	return result.value;
 };
 
 const isBetween = (value: number, min: number, max: number) =>

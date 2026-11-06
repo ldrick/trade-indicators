@@ -3,6 +3,7 @@ import type { KnipConfig } from 'knip';
 const config: KnipConfig = {
 	entry: [
 		'src/utils/toPromise.ts',
+		'src/utils/toEither.ts',
 		'src/averages/dema.ts',
 		'src/averages/ema.ts',
 		'src/averages/macd.ts',

@@ -1,8 +1,10 @@
 import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts';
 
 import { smmaC } from '../averages/smma.js';
+import { type NonEmptyArray, type Result } from '../types.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
+import { fromEither } from '../utils/result.js';
 
 const changes = (
 	values: RNEA.ReadonlyNonEmptyArray<number>,
@@ -39,10 +41,7 @@ const calculate = (
  * A series without any change yields the neutral value 50.
  * @public
  */
-export const rsi = (
-	values: readonly number[],
-	period = 14,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
+export const rsi = (values: readonly number[], period = 14): Result<NonEmptyArray<number>> =>
 	F.pipe(
 		AP.sequenceS(E.Applicative)({
 			periodV: number_.validatePositiveInteger(period),
@@ -50,4 +49,5 @@ export const rsi = (
 		}),
 		E.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
 		E.chain(({ periodV, valuesF }) => calculate(valuesF, periodV)),
+		fromEither,
 	);

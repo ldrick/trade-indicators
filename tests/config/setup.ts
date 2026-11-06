@@ -7,6 +7,7 @@ import {
 } from 'fp-ts';
 import { expect } from 'vitest';
 
+import { type Result } from '../../src/types.js';
 import {
 	type FormattedArray,
 	type FormattedRecord,
@@ -76,18 +77,21 @@ const areResultRecordsEqual = (
 expect.extend({
 	// vitest's `expect.extend` matcher API binds `this` to the matcher context
 	/* eslint-disable unicorn/no-this-outside-of-class */
-	eitherRightToEqualFixedPrecision(
-		received: E.Either<Error, TestResult>,
+	okToEqualFixedPrecision(
+		received: Result<TestResult, Error>,
 		expected: TestResult,
 		decimalsOption?: number,
 	) {
 		const decimals = decimalsOption ?? DEFAULT_DECIMALS;
 		const { isNot, promise } = this;
+		const either: E.Either<Error, TestResult> = received.ok
+			? E.right(received.value)
+			: E.left(received.error);
 
 		const options = { isNot, promise };
 
 		const isPass: boolean = F.pipe(
-			received,
+			either,
 			E.fold(
 				() => false,
 				(right) =>
@@ -104,15 +108,15 @@ expect.extend({
 		const message = isPass
 			? (): string =>
 					F.pipe(
-						received,
+						either,
 						E.fold(
-							() => `Either expected to be right, but was left.`,
+							(error) => `Result expected to be ok, but failed with ${error.name}.`,
 							(rec) => {
 								const formattedR = format(decimals)(rec);
 								const formattedE = format(decimals)(expected);
 								return (
 									`${this.utils.matcherHint(
-										'eitherRightToEqualFixedPrecision',
+										'okToEqualFixedPrecision',
 										undefined,
 										undefined,
 										options,
@@ -125,15 +129,15 @@ expect.extend({
 					)
 			: (): string =>
 					F.pipe(
-						received,
+						either,
 						E.fold(
-							() => `Either expected to be right, but was left.`,
+							(error) => `Result expected to be ok, but failed with ${error.name}.`,
 							(rec) => {
 								const formattedR = format(decimals)(rec);
 								const formattedE = format(decimals)(expected);
 								const diffString = this.utils.diff(formattedE, formattedR);
 								return `${this.utils.matcherHint(
-									'eitherRightToEqualFixedPrecision',
+									'okToEqualFixedPrecision',
 									undefined,
 									undefined,
 									options,

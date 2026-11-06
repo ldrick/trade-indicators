@@ -169,6 +169,10 @@ overrides:
 importers:
 
   .:
+    dependencies:
+      fp-ts:
+        specifier: ^2.16.11
+        version: 2.16.11
     devDependencies:
       '@arethetypeswrong/cli':
         specifier: ^0.18.5
@@ -239,9 +243,6 @@ importers:
       fast-check:
         specifier: ^4.10.2
         version: 4.10.2
-      fp-ts:
-        specifier: ^2.16.11
-        version: 2.16.11
       globals:
         specifier: ^17.12.0
         version: 17.13.0

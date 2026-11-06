@@ -29,7 +29,7 @@ const EXTENSIONS_MINIMATCH = {
 
 export default defineConfig(
 	// ignored files
-	globalIgnores(['node_modules', 'dist', 'coverage', 'package-lock.json']),
+	globalIgnores(['node_modules', 'dist', 'coverage', 'scratch', 'package-lock.json']),
 	// restrict eslint recommended only to js and ts files
 	{
 		extends: [eslint.configs.recommended],

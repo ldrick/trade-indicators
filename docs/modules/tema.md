@@ -11,12 +11,12 @@ The Triple Exponential Moving Average (TEMA) uses three Exponential Moving Avera
 ## Signature
 
 ```typescript
-import { either as E, readonlyNonEmptyArray as RNEA } from 'fp-ts';
+import { type NonEmptyArray, type Result } from '@ldrick/trade-indicators/types.js';
 
 export declare const tema: (
 	values: readonly number[],
 	period?: number, // default: 20
-) => E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>>;
+) => Result<NonEmptyArray<number>>;
 ```
 
 ## Output
@@ -26,14 +26,13 @@ Requires at least `3 * period - 2` values. Returns `values.length - 3 * period +
 ## Example
 
 ```typescript
-import { either as E, function as F } from 'fp-ts';
 import { tema } from '@ldrick/trade-indicators/averages/tema.js';
 
-F.pipe(
-	tema([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5], 3),
-	E.fold(
-		(error) => console.log(error),
-		(values) => console.log(values),
-	),
-);
+const result = tema([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5], 3);
+
+if (result.ok) {
+	console.log(result.value);
+} else {
+	console.log(result.error);
+}
 ```

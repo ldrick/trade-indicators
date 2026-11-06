@@ -8,8 +8,10 @@ import {
 
 import { PeriodSizeMismatchError } from '../errors/PeriodSizeMismatchError.js';
 import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
+import { type NonEmptyArray, type Result } from '../types.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
+import { fromEither } from '../utils/result.js';
 import { emaC } from './ema.js';
 
 /**
@@ -18,9 +20,9 @@ import { emaC } from './ema.js';
  * @public
  */
 export interface MACDReturn {
-	histogram: RNEA.ReadonlyNonEmptyArray<null | number>;
-	macd: RNEA.ReadonlyNonEmptyArray<number>;
-	signal: RNEA.ReadonlyNonEmptyArray<null | number>;
+	histogram: NonEmptyArray<null | number>;
+	macd: NonEmptyArray<number>;
+	signal: NonEmptyArray<null | number>;
 }
 
 const validatePeriodSizes = (slowPeriod: number, fastPeriod: number): E.Either<Error, boolean> =>
@@ -56,7 +58,7 @@ export const macd = (
 	fastPeriod = 12,
 	slowPeriod = 26,
 	signalPeriod = 9,
-): E.Either<Error, MACDReturn> =>
+): Result<MACDReturn> =>
 	F.pipe(
 		AP.sequenceS(E.Applicative)({
 			fastPeriodV: number_.validatePositiveInteger(fastPeriod),
@@ -82,4 +84,5 @@ export const macd = (
 			macd: macdResult,
 			signal: signalPadded,
 		})),
+		fromEither,
 	);

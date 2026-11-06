@@ -8,8 +8,10 @@ import {
 } from 'fp-ts';
 
 import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
+import { type NonEmptyArray, type Result } from '../types.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
+import { fromEither } from '../utils/result.js';
 import { emaC } from './ema.js';
 
 const calculate = (
@@ -38,10 +40,7 @@ const calculate = (
  * Also prices above the TEMA can indicate uptrends, prices below can indicate downtrends.
  * @public
  */
-export const tema = (
-	values: readonly number[],
-	period = 20,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
+export const tema = (values: readonly number[], period = 20): Result<NonEmptyArray<number>> =>
 	F.pipe(
 		AP.sequenceS(E.Applicative)({
 			periodV: number_.validatePositiveInteger(period),
@@ -54,4 +53,5 @@ export const tema = (
 		E.chain(({ emaOne, emaThree, emaTwo, periodV }) =>
 			calculate(emaOne, emaTwo, emaThree, periodV),
 		),
+		fromEither,
 	);

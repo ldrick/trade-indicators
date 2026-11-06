@@ -8,18 +8,19 @@ has_toc: false
 
 ## Trade Indicators
 
-> Trade Indicators written in pure functional Typescript. \
-> Results will be \
-> `Either<Error, ReadonlyArray<number> | Readonly<Record<string, ReadonlyArray<number>>>>` \
-> depending on what is returned using this amazing library: \
-> 🚀 [fp-ts](https://github.com/gcanti/fp-ts)
+> Trade Indicators written in pure functional TypeScript. \
+> No function throws: every indicator returns a `Result`, \
+> either `{ ok: true, value }` or `{ ok: false, error }`. \
+> The public API exposes no third-party types; adapters for Promises and fp-ts are included.
 
 ## Ideas
 
 Calculation of common indicators used for stock market trading, commodity trading and many more. \
-`trade-indicators` shall fail early and never throw Errors. Instead it provides the Error or Result wrapped in Either.
-To achieve this goal, `trade-indicators` uses fp-ts. \
-For convenience use, it provides the possibility to unwrap to Promise, still enforcing an Error-Handling.
+`trade-indicators` shall fail early and never throw Errors. Instead every indicator returns a `Result`,
+which is either `{ ok: true, value }` or `{ ok: false, error }`. \
+Internally it is built with a functional library, but none of its types are part of the public API. \
+For convenience, `toPromise` unwraps a `Result` to a Promise (still enforcing error handling)
+and `toEither` converts it to an fp-ts compatible `Either`.
 
 Calculations use plain JavaScript `Number` (IEEE 754 double precision). \
 Inputs are already `Number`s, so arbitrary-precision decimals would not add meaningful accuracy, but cost a lot of performance.

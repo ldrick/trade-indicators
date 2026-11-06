@@ -6,11 +6,10 @@
 [![npm license](https://img.shields.io/npm/l/@ldrick/trade-indicators)](https://www.npmjs.com/package/@ldrick/trade-indicators)
 [![made with](https://img.shields.io/github/languages/top/ldrick/trade-indicators)](https://www.typescriptlang.org/)
 
-> Trade Indicators written in pure functional Typescript. \
-> Results will be \
-> `Either<Error, ReadonlyArray<number> | Readonly<Record<string, ReadonlyArray<number>>>>` \
-> depending on what is returned using this amazing library: \
-> 🚀 [fp-ts](https://github.com/gcanti/fp-ts)
+> Trade Indicators written in pure functional TypeScript. \
+> No function throws: every indicator returns a `Result`, \
+> either `{ ok: true, value }` or `{ ok: false, error }`. \
+> The public API exposes no third-party types; adapters for Promises and fp-ts are included.
 >
 > - Average Directional Index (adx)
 > - Average True Range (atr)
@@ -25,40 +24,43 @@
 
 ## Install
 
-`npm install @ldrick/trade-indicators fp-ts` \
+`npm install @ldrick/trade-indicators` \
 or \
-`pnpm add @ldrick/trade-indicators fp-ts`
-
-`fp-ts` is a peer dependency, so your project and `trade-indicators` share the same `Either`.
+`pnpm add @ldrick/trade-indicators`
 
 ## Usage
 
 In TypeScript:
 
 ```typescript
-import { either as E, function as F } from 'fp-ts';
 import { ema } from '@ldrick/trade-indicators/averages/ema.js';
+import { toEither } from '@ldrick/trade-indicators/toEither.js';
 import { toPromise } from '@ldrick/trade-indicators/toPromise.js';
 
 const prices = [3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5];
 const period = 3;
 
-// possible usage to pipe the Result E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>>
-const expMovingAverage = F.pipe(
-	ema(prices, period),
-	E.getOrElse(() => <ReadonlyArray<number>>[]),
-);
+// check the Result directly
+const result = ema(prices, period);
+if (result.ok) {
+	console.log(result.value);
+} else {
+	console.log(result.error);
+}
 
-// or convert the Result to Promise<RNEA.ReadonlyNonEmptyArray<number>>
+// or convert the Result to a Promise
 toPromise(ema(prices, period)).then(
-	(result) => console.log(result),
+	(values) => console.log(values),
 	(error) => console.log(error),
 );
+
+// or to an fp-ts compatible Either
+const either = toEither(ema(prices, period));
 ```
 
 ## Errors
 
-No function throws. Invalid input is returned as `E.left` with one of the error classes from
+No function throws. Invalid input is returned as `{ ok: false, error }` with one of the error classes from
 `@ldrick/trade-indicators/errors/*.js` (e.g. `NotEnoughDataError`, `NotFiniteNumberError`),
 so errors can be distinguished with `instanceof`.
 

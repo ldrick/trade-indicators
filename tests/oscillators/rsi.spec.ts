@@ -1,4 +1,3 @@
-import { either as E } from 'fp-ts';
 import { describe, expect, it } from 'vitest';
 
 import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';
@@ -6,6 +5,7 @@ import { NotFiniteNumberError } from '../../src/errors/NotFiniteNumberError.js';
 import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
 import { rsi } from '../../src/oscillators/rsi.js';
 import * as prices from '../prices.json' with { type: 'json' };
+import { failure } from '../result.js';
 
 // StockCharts' published RSI(14) example ("cs-rsi.xls")
 const stockCharts = {
@@ -20,23 +20,23 @@ describe('rsi', () => {
 	it.each([{ p: NaN }, { p: Infinity }, { p: -Infinity }, { p: -1 }, { p: 0 }, { p: 1.5 }])(
 		'fails if period is not a positive integer $p',
 		({ p }) => {
-			expect(rsi([], p)).toStrictEqual(E.left(new NotPositiveIntegerError()));
+			expect(rsi([], p)).toStrictEqual(failure(new NotPositiveIntegerError()));
 		},
 	);
 
 	it('fails if not enough data to calculate for period', () => {
-		expect(rsi([1, 2, 3], 3)).toStrictEqual(E.left(new NotEnoughDataError(3, 4)));
+		expect(rsi([1, 2, 3], 3)).toStrictEqual(failure(new NotEnoughDataError(3, 4)));
 	});
 
 	it.each([{ v: [0, 0, NaN, 0] }, { v: [0, 0, Infinity, 0] }, { v: [0, 0, -Infinity, 0] }])(
 		'fails if values contains a infinit value $v',
 		({ v }) => {
-			expect(rsi(v, 2)).toStrictEqual(E.left(new NotFiniteNumberError()));
+			expect(rsi(v, 2)).toStrictEqual(failure(new NotFiniteNumberError()));
 		},
 	);
 
 	it('calculates the Relative Strength Index with default period', () => {
-		expect(rsi(prices.default.close)).eitherRightToEqualFixedPrecision(prices.default.rsi.p14);
+		expect(rsi(prices.default.close)).okToEqualFixedPrecision(prices.default.rsi.p14);
 	});
 
 	it.each([
@@ -46,10 +46,10 @@ describe('rsi', () => {
 		// deltas [1, -1, 2, -2]: avg gain/loss 1/2 & 1/2, then 5/4 & 1/4, then 5/8 & 9/8
 		{ d: 'smoothed gains and losses', p: 2, r: [50, 250 / 3, 250 / 7], v: [1, 2, 1, 3, 1] },
 	])('calculates $d', ({ p, r, v }) => {
-		expect(rsi(v, p)).eitherRightToEqualFixedPrecision(r);
+		expect(rsi(v, p)).okToEqualFixedPrecision(r);
 	});
 
 	it('matches the published StockCharts example', () => {
-		expect(rsi(stockCharts.v, 14)).eitherRightToEqualFixedPrecision(stockCharts.r, 2);
+		expect(rsi(stockCharts.v, 14)).okToEqualFixedPrecision(stockCharts.r, 2);
 	});
 });

@@ -6,14 +6,14 @@ parent: Modules
 
 ## Overview
 
-It might be easier to use `trade-indicators` within an existing project by handling errors with Promises. Therefore `toPromise` transforms each result of the other modules into a `Promise`, which rejects with the respective error.
+It might be easier to use `trade-indicators` within an existing project by handling errors with Promises. Therefore `toPromise` transforms each `Result` of the other modules into a `Promise`, which rejects with the respective error.
 
 ## Signature
 
 ```typescript
-import { either as E } from 'fp-ts';
+import { type Result } from '@ldrick/trade-indicators/types.js';
 
-export declare const toPromise: <A>(values: E.Either<Error, A>) => Promise<A>;
+export declare const toPromise: <A, E extends Error>(result: Result<A, E>) => Promise<A>;
 ```
 
 ## Example

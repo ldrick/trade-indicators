@@ -1,14 +1,8 @@
-import { either as E, function as F } from 'fp-ts';
+import { type Result } from '../types.js';
 
 /**
- * Provides a way to transform Either to Promise.
+ * Transform a `Result` into a `Promise`, which rejects with the error.
  * @public
  */
-export const toPromise = <A>(values: E.Either<Error, A>): Promise<A> =>
-	F.pipe(
-		values,
-		E.fold(
-			(error) => Promise.reject(error),
-			(result) => Promise.resolve(result),
-		),
-	);
+export const toPromise = <A, E extends Error>(result: Result<A, E>): Promise<A> =>
+	result.ok ? Promise.resolve(result.value) : Promise.reject(result.error);

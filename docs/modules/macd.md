@@ -11,12 +11,12 @@ The Moving Average Convergence Divergence (MACD) is the relationship of two Expo
 ## Signature
 
 ```typescript
-import { either as E, readonlyNonEmptyArray as RNEA } from 'fp-ts';
+import { type NonEmptyArray, type Result } from '@ldrick/trade-indicators/types.js';
 
 export interface MACDReturn {
-	histogram: RNEA.ReadonlyNonEmptyArray<null | number>;
-	macd: RNEA.ReadonlyNonEmptyArray<number>;
-	signal: RNEA.ReadonlyNonEmptyArray<null | number>;
+	histogram: NonEmptyArray<null | number>;
+	macd: NonEmptyArray<number>;
+	signal: NonEmptyArray<null | number>;
 }
 
 export declare const macd: (
@@ -24,7 +24,7 @@ export declare const macd: (
 	fastPeriod?: number, // default: 12
 	slowPeriod?: number, // default: 26
 	signalPeriod?: number, // default: 9
-) => E.Either<Error, MACDReturn>;
+) => Result<MACDReturn>;
 ```
 
 ## Output
@@ -34,14 +34,13 @@ export declare const macd: (
 ## Example
 
 ```typescript
-import { either as E, function as F } from 'fp-ts';
 import { macd } from '@ldrick/trade-indicators/averages/macd.js';
 
-F.pipe(
-	macd([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5, 3.5, 5.44, 8.1, 9.1, 11], 4, 5, 3),
-	E.fold(
-		(error) => console.log(error),
-		(values) => console.log(values),
-	),
-);
+const result = macd([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5, 3.5, 5.44, 8.1, 9.1, 11], 4, 5, 3);
+
+if (result.ok) {
+	console.log(result.value);
+} else {
+	console.log(result.error);
+}
 ```

@@ -1,4 +1,3 @@
-import { either as E } from 'fp-ts';
 import { describe, expect, it } from 'vitest';
 
 import { macd } from '../../src/averages/macd.js';
@@ -7,6 +6,7 @@ import { NotFiniteNumberError } from '../../src/errors/NotFiniteNumberError.js';
 import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
 import { PeriodSizeMismatchError } from '../../src/errors/PeriodSizeMismatchError.js';
 import * as prices from '../prices.json' with { type: 'json' };
+import { failure } from '../result.js';
 
 // histogram is derived from the macd and signal fixtures: macd - signal
 const expected = {
@@ -37,28 +37,28 @@ describe('macd', () => {
 		{ p: [1, 1.5] },
 		{ p: [1, 1, 1.5] },
 	])('fails if any period is not a positive integer $p', ({ p }) => {
-		expect(macd([], ...p)).toStrictEqual(E.left(new NotPositiveIntegerError()));
+		expect(macd([], ...p)).toStrictEqual(failure(new NotPositiveIntegerError()));
 	});
 
 	it('fails if slowPeriod is lower or equal fastPeriod', () => {
 		expect(macd([], 3, 1)).toStrictEqual(
-			E.left(new PeriodSizeMismatchError('slowPeriod', 'fastPeriod')),
+			failure(new PeriodSizeMismatchError('slowPeriod', 'fastPeriod')),
 		);
 	});
 
 	it('fails if not enough data to calculate for periods', () => {
-		expect(macd([1, 2, 3, 4], 3, 4, 2)).toStrictEqual(E.left(new NotEnoughDataError(4, 5)));
+		expect(macd([1, 2, 3, 4], 3, 4, 2)).toStrictEqual(failure(new NotEnoughDataError(4, 5)));
 	});
 
 	it.each([{ v: [0, 0, NaN, 0] }, { v: [0, 0, Infinity, 0] }, { v: [0, 0, -Infinity, 0] }])(
 		'fails if values contains a infinit value $v',
 		({ v }) => {
-			expect(macd(v, 2, 3, 1)).toStrictEqual(E.left(new NotFiniteNumberError()));
+			expect(macd(v, 2, 3, 1)).toStrictEqual(failure(new NotFiniteNumberError()));
 		},
 	);
 
 	it('calculates the Moving Average Convergence / Divergence with default period', () => {
-		expect(macd(prices.default.close)).eitherRightToEqualFixedPrecision(expected);
+		expect(macd(prices.default.close)).okToEqualFixedPrecision(expected);
 	});
 
 	it.each([
@@ -81,7 +81,7 @@ describe('macd', () => {
 	])(
 		'calculates the Moving Average Convergence / Divergence on prices in test $#',
 		({ p, r, v }) => {
-			expect(macd(v, ...p)).eitherRightToEqualFixedPrecision(r);
+			expect(macd(v, ...p)).okToEqualFixedPrecision(r);
 		},
 	);
 });

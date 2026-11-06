@@ -9,10 +9,16 @@ import {
 
 import { smmaC } from '../averages/smma.js';
 import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
-import { type HighLowClose, type NonEmptyHighLowClose } from '../types.js';
+import {
+	type HighLowClose,
+	type NonEmptyArray,
+	type NonEmptyHighLowClose,
+	type Result,
+} from '../types.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
 import * as rec from '../utils/record.js';
+import { fromEither } from '../utils/result.js';
 import { atrC } from './atr.js';
 
 /**
@@ -20,9 +26,9 @@ import { atrC } from './atr.js';
  * @public
  */
 export interface ADXReturn {
-	adx: RNEA.ReadonlyNonEmptyArray<null | number>;
-	mdi: RNEA.ReadonlyNonEmptyArray<number>;
-	pdi: RNEA.ReadonlyNonEmptyArray<number>;
+	adx: NonEmptyArray<null | number>;
+	mdi: NonEmptyArray<number>;
+	pdi: NonEmptyArray<number>;
 }
 
 type Movement = 'down' | 'up';
@@ -108,7 +114,7 @@ const calculation = (
  * Crossings of these three values can be used to determine trend changes.
  * @public
  */
-export const adx = (values: HighLowClose<number>, period = 14): E.Either<Error, ADXReturn> =>
+export const adx = (values: HighLowClose<number>, period = 14): Result<ADXReturn> =>
 	F.pipe(
 		AP.sequenceS(E.Applicative)({
 			periodV: number_.validatePositiveInteger(period),
@@ -133,4 +139,5 @@ export const adx = (values: HighLowClose<number>, period = 14): E.Either<Error, 
 			mdi,
 			pdi,
 		})),
+		fromEither,
 	);
