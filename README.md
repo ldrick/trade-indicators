@@ -27,7 +27,9 @@
 
 `npm install @ldrick/trade-indicators fp-ts` \
 or \
-`yarn add @ldrick/trade-indicators fp-ts`
+`pnpm add @ldrick/trade-indicators fp-ts`
+
+`fp-ts` is a peer dependency, so your project and `trade-indicators` share the same `Either`.
 
 ## Usage
 
@@ -53,3 +55,14 @@ toPromise(ema(prices, period)).then(
 	(error) => console.log(error),
 );
 ```
+
+## Errors
+
+No function throws. Invalid input is returned as `E.left` with one of the error classes from
+`@ldrick/trade-indicators/errors/*.js` (e.g. `NotEnoughDataError`, `NotFiniteNumberError`),
+so errors can be distinguished with `instanceof`.
+
+## Documentation
+
+See [ldrick.github.io/trade-indicators](https://ldrick.github.io/trade-indicators/) for every
+indicator's signature, output length and an example.

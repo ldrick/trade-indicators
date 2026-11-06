@@ -11,13 +11,17 @@ The Exponential Moving Average (EMA) takes newer values weighted into account an
 ## Signature
 
 ```typescript
-import { either as E } from 'fp-ts';
+import { either as E, readonlyNonEmptyArray as RNEA } from 'fp-ts';
 
 export declare const ema: (
-	values: ReadonlyArray<number>,
+	values: readonly number[],
 	period?: number, // default: 20
-) => E.Either<Error, ReadonlyArray<number>>;
+) => E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>>;
 ```
+
+## Output
+
+Requires at least `period` values. Returns `values.length - period + 1` values; the first result belongs to the value at index `values.length - result.length`.
 
 ## Example
 
@@ -25,7 +29,7 @@ export declare const ema: (
 import { either as E, function as F } from 'fp-ts';
 import { ema } from '@ldrick/trade-indicators/averages/ema.js';
 
-const result = F.pipe(
+F.pipe(
 	ema([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5], 3),
 	E.fold(
 		(error) => console.log(error),

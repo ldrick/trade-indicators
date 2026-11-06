@@ -1,6 +1,6 @@
 ---
 title: tema.ts
-nav_order: 8
+nav_order: 9
 parent: Modules
 ---
 
@@ -11,13 +11,17 @@ The Triple Exponential Moving Average (TEMA) uses three Exponential Moving Avera
 ## Signature
 
 ```typescript
-import { either as E } from 'fp-ts';
+import { either as E, readonlyNonEmptyArray as RNEA } from 'fp-ts';
 
 export declare const tema: (
-  values: ReadonlyArray<number>,
-  period?: number, // default: 20
-) => E.Either<Error, ReadonlyArray<number>;
+	values: readonly number[],
+	period?: number, // default: 20
+) => E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>>;
 ```
+
+## Output
+
+Requires at least `3 * period - 2` values. Returns `values.length - 3 * period + 3` values; the first result belongs to the value at index `values.length - result.length`.
 
 ## Example
 
@@ -25,7 +29,7 @@ export declare const tema: (
 import { either as E, function as F } from 'fp-ts';
 import { tema } from '@ldrick/trade-indicators/averages/tema.js';
 
-const result = F.pipe(
+F.pipe(
 	tema([3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5], 3),
 	E.fold(
 		(error) => console.log(error),
