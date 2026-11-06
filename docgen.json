@@ -1,0 +1,37 @@
+{
+	"$schema": "node_modules/@effect/docgen/schema.json",
+	"projectHomepage": "https://github.com/ldrick/trade-indicators",
+	"srcDir": "src",
+	"outDir": "docs",
+	"theme": "pmarsceill/just-the-docs",
+	"enableSearch": true,
+	"enforceDescriptions": true,
+	"enforceExamples": false,
+	"enforceVersion": true,
+	"runExamples": true,
+	"exclude": [
+		"src/averages/amean.ts",
+		"src/averages/dma.ts",
+		"src/averages/ma.ts",
+		"src/averages/wamean.ts",
+		"src/utils/array.ts",
+		"src/utils/number.ts",
+		"src/utils/record.ts",
+		"src/utils/result.ts"
+	],
+	"examplesCompilerOptions": {
+		"noEmit": true,
+		"strict": true,
+		"skipLibCheck": true,
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"target": "ES2022",
+		"lib": ["ES2022"],
+		"types": ["node"],
+		"paths": {
+			"@ldrick/trade-indicators/toPromise.js": ["../../src/utils/toPromise.ts"],
+			"@ldrick/trade-indicators/toEffectResult.js": ["../../src/utils/toEffectResult.ts"],
+			"@ldrick/trade-indicators/*": ["../../src/*"]
+		}
+	}
+}

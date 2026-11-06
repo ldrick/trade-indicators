@@ -56,10 +56,23 @@ export const atrC = (
 	);
 
 /**
- * The Average True Range (ATR) a period of the True Range Indicator,
+ * The Average True Range (ATR) is the smoothed average of the True Range,
  * being the greatest out of current high minus the current low,
  * the absolute value of current high minus previous close
  * and the absolute value of the current low minus the previous close.
+ *
+ * `high`, `low` and `close` must have the same length (otherwise `UnequalArraySizesError`)
+ * of at least `period + 1`. Returns `values.length - period` values.
+ * @example
+ * ```ts
+ * import assert from 'node:assert';
+ * import { atr } from '@ldrick/trade-indicators/movements/atr.js';
+ *
+ * const values = { close: [2, 3, 4, 5], high: [3, 4, 5, 6], low: [1, 2, 3, 4] };
+ * assert.deepStrictEqual(atr(values, 2), { ok: true, value: [2, 2] });
+ * ```
+ * @category indicators
+ * @since 0.2.0
  * @public
  */
 export const atr = (values: HighLowClose<number>, period = 14): Result<NonEmptyArray<number>> =>

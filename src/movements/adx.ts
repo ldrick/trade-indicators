@@ -19,6 +19,8 @@ import { atrC } from './atr.js';
 
 /**
  * Result of `adx`. `adx` is left-padded with `null` to the length of `pdi` and `mdi`.
+ * @category models
+ * @since 0.9.0
  * @public
  */
 export interface ADXReturn {
@@ -108,6 +110,33 @@ const calculation = (
  * It also delivers Plus Directional Movement Indicator (PDI)
  * and Minus Directional Movement Indicator (MDI).
  * Crossings of these three values can be used to determine trend changes.
+ *
+ * `high`, `low` and `close` must have the same length (otherwise `UnequalArraySizesError`)
+ * of at least `2 * period`. `pdi` and `mdi` contain `values.length - period` values
+ * within 0 and 100; `adx` has the same length and is left-padded with `null`
+ * for the first `period - 1` entries.
+ * @example
+ * ```ts
+ * import assert from 'node:assert';
+ * import { adx } from '@ldrick/trade-indicators/movements/adx.js';
+ *
+ * const result = adx(
+ * 	{
+ * 		close: [9, 11, 10, 13, 12, 15],
+ * 		high: [10, 12, 11, 14, 13, 16],
+ * 		low: [8, 9, 9, 11, 10, 13],
+ * 	},
+ * 	2,
+ * );
+ * assert.ok(result.ok);
+ *
+ * const round = (values: readonly (null | number)[]) => values.map((v) => v?.toFixed(2) ?? null);
+ * assert.deepStrictEqual(round(result.value.pdi), ['40.00', '61.54', '32.00', '56.14']);
+ * assert.deepStrictEqual(round(result.value.mdi), ['0.00', '0.00', '16.00', '7.02']);
+ * assert.deepStrictEqual(round(result.value.adx), [null, '100.00', '66.67', '72.22']);
+ * ```
+ * @category indicators
+ * @since 0.2.0
  * @public
  */
 export const adx = (values: HighLowClose<number>, period = 14): Result<ADXReturn> =>

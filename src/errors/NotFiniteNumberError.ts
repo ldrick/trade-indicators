@@ -1,5 +1,7 @@
 /**
  * Error for any `Number` being `NaN`, `Infinity` or `-Infinity`.
+ * @category errors
+ * @since 0.9.0
  * @public
  */
 export class NotFiniteNumberError extends Error {

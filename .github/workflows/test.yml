@@ -44,6 +44,11 @@ jobs:
               run: pnpm build
             - name: Package Check
               run: pnpm package:check
+            - name: Docs Up To Date
+              run: |
+                  pnpm docgen
+                  git diff --exit-code -- docs
+                  test -z "$(git status --porcelain -- docs)"
             - name: Codecov
               if: github.actor != 'dependabot[bot]'
               uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1

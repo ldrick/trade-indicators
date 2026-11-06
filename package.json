@@ -117,6 +117,7 @@
 	],
 	"scripts": {
 		"build": "rimraf dist && tsc --project tsconfig.build.json",
+		"docgen": "docgen && node scripts/fixDocgenSourceLinks.ts",
 		"format": "oxfmt",
 		"format:check": "oxfmt --check",
 		"knip": "knip",
@@ -136,6 +137,7 @@
 	},
 	"devDependencies": {
 		"@arethetypeswrong/cli": "^0.18.5",
+		"@effect/docgen": "^4.1.2",
 		"@eslint-community/eslint-plugin-eslint-comments": "^4.8.1",
 		"@eslint/js": "^10.0.1",
 		"@eslint/json": "^2.1.0",

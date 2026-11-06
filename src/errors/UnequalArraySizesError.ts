@@ -1,5 +1,7 @@
 /**
  * Error if two `Array` do not have the same length.
+ * @category errors
+ * @since 0.9.0
  * @public
  */
 export class UnequalArraySizesError extends Error {

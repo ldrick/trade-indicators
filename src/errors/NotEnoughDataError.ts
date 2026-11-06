@@ -1,5 +1,7 @@
 /**
  * Error for `Array.length` not at least as required.
+ * @category errors
+ * @since 0.9.0
  * @public
  */
 export class NotEnoughDataError extends Error {

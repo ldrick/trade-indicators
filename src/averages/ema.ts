@@ -22,6 +22,18 @@ export const emaC = (
  * and reacts closer to the prices compared to the Simple Moving Average (SMA).
  * It can be used to identify support and resistance levels.
  * Also prices above the EMA can indicate uptrends, prices below can indicate downtrends.
+ *
+ * Requires at least `period` values and returns `values.length - period + 1` values.
+ * The first value is the SMA of the first `period` values.
+ * @example
+ * ```ts
+ * import assert from 'node:assert';
+ * import { ema } from '@ldrick/trade-indicators/averages/ema.js';
+ *
+ * assert.deepStrictEqual(ema([1, 2, 3, 5, 9], 3), { ok: true, value: [2, 3.5, 6.25] });
+ * ```
+ * @category indicators
+ * @since 0.1.1
  * @public
  */
 export const ema = (values: readonly number[], period = 20): Result<NonEmptyArray<number>> =>

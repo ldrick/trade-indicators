@@ -34,6 +34,17 @@ const calculate = (
  * to reduce noise and still get close to latest prices.
  * It can be used to identify support and resistance levels.
  * Also prices above the TEMA can indicate uptrends, prices below can indicate downtrends.
+ *
+ * Requires at least `3 * period - 2` values and returns `values.length - 3 * period + 3` values.
+ * @example
+ * ```ts
+ * import assert from 'node:assert';
+ * import { tema } from '@ldrick/trade-indicators/averages/tema.js';
+ *
+ * assert.deepStrictEqual(tema([1, 2, 3, 4, 5, 6], 2), { ok: true, value: [4, 5, 6] });
+ * ```
+ * @category indicators
+ * @since 0.1.1
  * @public
  */
 export const tema = (values: readonly number[], period = 20): Result<NonEmptyArray<number>> =>

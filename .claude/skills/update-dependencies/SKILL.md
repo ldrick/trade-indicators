@@ -38,6 +38,7 @@ Run in this order:
 - **E.** `pnpm lint:claude`
 - **F.** `pnpm test`
 - **G.** `pnpm build && pnpm package:check`
+- **H.** `pnpm docgen`, then `git status --porcelain -- docs` must be empty
 
 Self-healing rule when a check fails:
 
@@ -48,9 +49,10 @@ Self-healing rule when a check fails:
 - **E fails** → a `claude-code-lint` update likely tightened its rules — fix the reported `.claude/` files (`pnpm lint:claude:fix` handles formatting issues), then re-run **A**–**D**, then **E** again.
 - **F fails** → try to fix the failing tests, then re-run **A**–**E**, then **F** again.
 - **G fails** → a TypeScript or packaging change broke the published package shape (build output, `exports` map, typings) — fix the cause, then re-run **A**–**F**, then **G** again.
+- **H fails** → if docgen errors, an `effect`/`@effect/docgen`/TypeScript update broke an `@example` or the docgen config — fix it. If it succeeds but `docs/` changed (e.g. a new docgen version renders differently), the regenerated docs are part of the update: keep them, then re-run **A**–**G**, then **H** again.
 
 In general: whenever a check fails and you make a fix, restart from **A** and work forward through the failed check again before moving on. Only proceed past a check once it passes. If a check keeps failing after a reasonable fix attempt, stop and report instead of looping indefinitely.
 
 ## 4. Done
 
-Once A–G all pass, summarize which dependencies were updated (`git diff package.json`) and remind the user to review the changes (including the regenerated `pnpm-lock.yaml`) before committing.
+Once A–H all pass, summarize which dependencies were updated (`git diff package.json`) and remind the user to review the changes (including the regenerated `pnpm-lock.yaml`) before committing.
