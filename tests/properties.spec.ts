@@ -144,7 +144,7 @@ describe('macd properties', () => {
 		.tuple(fc.integer({ max: 20, min: 1 }), fc.integer({ max: 20, min: 1 }), period)
 		.map(([fast, delta, signal]) => ({ fast, signal, slow: fast + delta }));
 
-	it('returns macd and signal of length values.length - slowPeriod + 1', () => {
+	it('returns macd, signal and histogram (macd - signal) of length values.length - slowPeriod + 1', () => {
 		fc.assert(
 			fc.property(
 				periods.chain((ps) =>
@@ -161,6 +161,13 @@ describe('macd properties', () => {
 					expect(result.macd).toHaveLength(v.length - ps.slow + 1);
 					expect(result.signal).toHaveLength(result.macd.length);
 					expect(result.signal.filter((s) => s === null)).toHaveLength(ps.signal - 1);
+					for (const [index, histogram] of result.histogram.entries()) {
+						const signal = result.signal[index] ?? null;
+						const macdValue = result.macd[index] ?? NaN;
+						expect(histogram).toStrictEqual(
+							signal === null ? null : macdValue - signal,
+						);
+					}
 				},
 			),
 		);
@@ -171,7 +178,7 @@ describe('macd properties', () => {
 			fc.property(price, periods, (c, ps) => {
 				const v = constantSeries(c, ps.slow + ps.signal + 10);
 				const result = getRight(macd(v, ps.fast, ps.slow, ps.signal));
-				for (const value of [...result.macd, ...result.signal]) {
+				for (const value of [...result.macd, ...result.signal, ...result.histogram]) {
 					expect(Math.abs(value ?? 0)).toBeLessThanOrEqual(tolerance(c));
 				}
 			}),

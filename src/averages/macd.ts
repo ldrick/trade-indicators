@@ -13,10 +13,12 @@ import * as number_ from '../utils/number.js';
 import { emaC } from './ema.js';
 
 /**
- * Result of `macd`. `signal` is left-padded with `null` to the length of `macd`.
+ * Result of `macd`. `signal` and `histogram` (`macd - signal`) are left-padded
+ * with `null` to the length of `macd`.
  * @public
  */
 export interface MACDReturn {
+	histogram: RNEA.ReadonlyNonEmptyArray<null | number>;
 	macd: RNEA.ReadonlyNonEmptyArray<number>;
 	signal: RNEA.ReadonlyNonEmptyArray<null | number>;
 }
@@ -70,8 +72,14 @@ export const macd = (
 		E.let('emaFast', ({ fastPeriodV, valuesF }) => emaC(valuesF, fastPeriodV)),
 		E.bind('macdResult', ({ emaFast, emaSlow }) => calculate(emaFast, emaSlow)),
 		E.let('signal', ({ macdResult, signalPeriodV }) => emaC(macdResult, signalPeriodV)),
-		E.map(({ macdResult, signal }) => ({
+		E.let('signalPadded', ({ macdResult, signal }) =>
+			F.pipe(signal, array.fillLeftW(macdResult.length, null)),
+		),
+		E.map(({ macdResult, signalPadded }) => ({
+			histogram: RNEA.zipWith(macdResult, signalPadded, (macdValue, signalValue) =>
+				signalValue === null ? null : macdValue - signalValue,
+			),
 			macd: macdResult,
-			signal: F.pipe(signal, array.fillLeftW(macdResult.length, null)),
+			signal: signalPadded,
 		})),
 	);

@@ -8,6 +8,14 @@ import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerErro
 import { PeriodSizeMismatchError } from '../../src/errors/PeriodSizeMismatchError.js';
 import * as prices from '../prices.json' with { type: 'json' };
 
+// histogram is derived from the macd and signal fixtures: macd - signal
+const expected = {
+	histogram: prices.default.macd.signal.map((signal, index) =>
+		signal === null ? null : (prices.default.macd.macd[index] ?? NaN) - signal,
+	),
+	...prices.default.macd,
+};
+
 describe('macd', () => {
 	it.each([
 		{ p: [NaN] },
@@ -50,12 +58,26 @@ describe('macd', () => {
 	);
 
 	it('calculates the Moving Average Convergence / Divergence with default period', () => {
-		expect(macd(prices.default.close)).eitherRightToEqualFixedPrecision(prices.default.macd);
+		expect(macd(prices.default.close)).eitherRightToEqualFixedPrecision(expected);
 	});
 
 	it.each([
-		{ p: [3, 4, 2], r: { macd: [0, 0], signal: [null, 0] }, v: [0, 0, 0, 0, 0] },
-		{ p: [12, 26, 9], r: prices.default.macd, v: prices.default.close },
+		{
+			p: [3, 4, 2],
+			r: { histogram: [null, 0], macd: [0, 0], signal: [null, 0] },
+			v: [0, 0, 0, 0, 0],
+		},
+		{ p: [12, 26, 9], r: expected, v: prices.default.close },
+		{
+			// fast EMA(1) = values, slow EMA(2) = [1.5, 19/6, 115/18], signal EMA(2) of macd
+			p: [1, 2, 2],
+			r: {
+				histogram: [null, 1 / 6, 17 / 54],
+				macd: [1 / 2, 5 / 6, 29 / 18],
+				signal: [null, 2 / 3, 35 / 27],
+			},
+			v: [1, 2, 4, 8],
+		},
 	])(
 		'calculates the Moving Average Convergence / Divergence on prices in test $#',
 		({ p, r, v }) => {
