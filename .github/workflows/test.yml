@@ -56,4 +56,6 @@ jobs:
                   token: ${{ secrets.CODECOV_TOKEN }}
                   directory: ./coverage
                   flags: unittests
-                  fail_ci_if_error: true
+                  # an unavailable Codecov must not fail the required build checks;
+                  # the 100% coverage threshold is enforced by `pnpm test` itself
+                  fail_ci_if_error: false
