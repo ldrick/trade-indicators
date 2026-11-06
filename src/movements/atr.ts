@@ -66,7 +66,7 @@ export const atrC = (
  * @example
  * ```ts
  * import assert from 'node:assert';
- * import { atr } from '@ldrick/trade-indicators/movements/atr.js';
+ * import { atr } from '@ldrick/trade-indicators';
  *
  * const values = { close: [2, 3, 4, 5], high: [3, 4, 5, 6], low: [1, 2, 3, 4] };
  * assert.deepStrictEqual(atr(values, 2), { ok: true, value: [null, null, 2, 2] });

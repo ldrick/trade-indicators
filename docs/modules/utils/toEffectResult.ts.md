@@ -27,8 +27,7 @@ Transform a `Result` into an Effect `Result` (effect v4) for use in Effect pipel
 import assert from "node:assert"
 import { pipe } from "effect/Function"
 import * as R from "effect/Result"
-import { sma } from "@ldrick/trade-indicators/averages/sma.js"
-import { toEffectResult } from "@ldrick/trade-indicators/toEffectResult.js"
+import { sma, toEffectResult } from "@ldrick/trade-indicators"
 
 const last = pipe(
   toEffectResult(sma([1, 2, 3, 4], 2)),
@@ -43,6 +42,6 @@ assert.deepStrictEqual(last, R.succeed(3.5))
 declare const toEffectResult: <A, E extends Error>(result: Result<A, E>) => R.Result<A, E>
 ```
 
-[Source](https://github.com/ldrick/trade-indicators/blob/main/src/utils/toEffectResult.ts#L25)
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/utils/toEffectResult.ts#L24)
 
 Since v0.9.0

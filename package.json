@@ -34,83 +34,11 @@
 	"sideEffects": false,
 	"type": "module",
 	"exports": {
-		"./averages/dema.js": {
-			"types": "./dist/averages/dema.d.ts",
-			"import": "./dist/averages/dema.js"
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
 		},
-		"./averages/ema.js": {
-			"types": "./dist/averages/ema.d.ts",
-			"import": "./dist/averages/ema.js"
-		},
-		"./averages/macd.js": {
-			"types": "./dist/averages/macd.d.ts",
-			"import": "./dist/averages/macd.js"
-		},
-		"./averages/sma.js": {
-			"types": "./dist/averages/sma.d.ts",
-			"import": "./dist/averages/sma.js"
-		},
-		"./averages/smma.js": {
-			"types": "./dist/averages/smma.d.ts",
-			"import": "./dist/averages/smma.js"
-		},
-		"./averages/tema.js": {
-			"types": "./dist/averages/tema.d.ts",
-			"import": "./dist/averages/tema.js"
-		},
-		"./averages/wma.js": {
-			"types": "./dist/averages/wma.d.ts",
-			"import": "./dist/averages/wma.js"
-		},
-		"./errors/EmptyArrayError.js": {
-			"types": "./dist/errors/EmptyArrayError.d.ts",
-			"import": "./dist/errors/EmptyArrayError.js"
-		},
-		"./errors/NotEnoughDataError.js": {
-			"types": "./dist/errors/NotEnoughDataError.d.ts",
-			"import": "./dist/errors/NotEnoughDataError.js"
-		},
-		"./errors/NotFiniteNumberError.js": {
-			"types": "./dist/errors/NotFiniteNumberError.d.ts",
-			"import": "./dist/errors/NotFiniteNumberError.js"
-		},
-		"./errors/NotPositiveIntegerError.js": {
-			"types": "./dist/errors/NotPositiveIntegerError.d.ts",
-			"import": "./dist/errors/NotPositiveIntegerError.js"
-		},
-		"./errors/PeriodSizeMismatchError.js": {
-			"types": "./dist/errors/PeriodSizeMismatchError.d.ts",
-			"import": "./dist/errors/PeriodSizeMismatchError.js"
-		},
-		"./errors/UnequalArraySizesError.js": {
-			"types": "./dist/errors/UnequalArraySizesError.d.ts",
-			"import": "./dist/errors/UnequalArraySizesError.js"
-		},
-		"./movements/adx.js": {
-			"types": "./dist/movements/adx.d.ts",
-			"import": "./dist/movements/adx.js"
-		},
-		"./movements/atr.js": {
-			"types": "./dist/movements/atr.d.ts",
-			"import": "./dist/movements/atr.js"
-		},
-		"./oscillators/rsi.js": {
-			"types": "./dist/oscillators/rsi.d.ts",
-			"import": "./dist/oscillators/rsi.js"
-		},
-		"./package.json": "./package.json",
-		"./toEffectResult.js": {
-			"types": "./dist/utils/toEffectResult.d.ts",
-			"import": "./dist/utils/toEffectResult.js"
-		},
-		"./toPromise.js": {
-			"types": "./dist/utils/toPromise.d.ts",
-			"import": "./dist/utils/toPromise.js"
-		},
-		"./types.js": {
-			"types": "./dist/types.d.ts",
-			"import": "./dist/types.js"
-		}
+		"./package.json": "./package.json"
 	},
 	"files": [
 		"dist"

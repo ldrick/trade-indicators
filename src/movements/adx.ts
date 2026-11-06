@@ -117,7 +117,7 @@ const calculation = (
  * @example
  * ```ts
  * import assert from 'node:assert';
- * import { adx } from '@ldrick/trade-indicators/movements/adx.js';
+ * import { adx } from '@ldrick/trade-indicators';
  *
  * const result = adx(
  * 	{

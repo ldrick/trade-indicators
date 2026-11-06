@@ -30,7 +30,7 @@ Requires at least `period + 1` values. Returns one value per input value; the fi
 
 ```ts
 import assert from "node:assert"
-import { rsi } from "@ldrick/trade-indicators/oscillators/rsi.js"
+import { rsi } from "@ldrick/trade-indicators"
 
 const result = rsi([1, 2, 1, 3, 1], 2)
 assert.ok(result.ok)

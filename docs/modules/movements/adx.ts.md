@@ -34,7 +34,7 @@ the first `period` values of `pdi` and `mdi` and the first `2 * period - 1` valu
 
 ```ts
 import assert from "node:assert"
-import { adx } from "@ldrick/trade-indicators/movements/adx.js"
+import { adx } from "@ldrick/trade-indicators"
 
 const result = adx(
   {

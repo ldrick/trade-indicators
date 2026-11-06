@@ -30,7 +30,7 @@ Requires at least `3 * period - 2` values. Returns one value per input value; th
 
 ```ts
 import assert from "node:assert"
-import { tema } from "@ldrick/trade-indicators/averages/tema.js"
+import { tema } from "@ldrick/trade-indicators"
 
 assert.deepStrictEqual(tema([1, 2, 3, 4, 5, 6], 2), { ok: true, value: [null, null, null, 4, 5, 6] })
 ```

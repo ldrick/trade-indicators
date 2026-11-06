@@ -35,9 +35,7 @@ or \
 In TypeScript:
 
 ```typescript
-import { ema } from '@ldrick/trade-indicators/averages/ema.js';
-import { toEffectResult } from '@ldrick/trade-indicators/toEffectResult.js';
-import { toPromise } from '@ldrick/trade-indicators/toPromise.js';
+import { ema, toEffectResult, toPromise } from '@ldrick/trade-indicators';
 
 const prices = [3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5];
 const period = 3;
@@ -62,8 +60,8 @@ const effectResult = toEffectResult(ema(prices, period));
 
 ## Errors
 
-No function throws. Invalid input is returned as `{ ok: false, error }` with one of the error classes from
-`@ldrick/trade-indicators/errors/*.js` (e.g. `NotEnoughDataError`, `NotFiniteNumberError`),
+No function throws. Invalid input is returned as `{ ok: false, error }` with one of the error classes
+exported by the package (e.g. `NotEnoughDataError`, `NotFiniteNumberError`),
 so errors can be distinguished with `instanceof`.
 
 ## Documentation

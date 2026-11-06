@@ -9,8 +9,7 @@ import { type Result } from '../types.js';
  * import assert from 'node:assert';
  * import { pipe } from 'effect/Function';
  * import * as R from 'effect/Result';
- * import { sma } from '@ldrick/trade-indicators/averages/sma.js';
- * import { toEffectResult } from '@ldrick/trade-indicators/toEffectResult.js';
+ * import { sma, toEffectResult } from '@ldrick/trade-indicators';
  *
  * const last = pipe(
  * 	toEffectResult(sma([1, 2, 3, 4], 2)),

@@ -17,7 +17,7 @@ import { wamean } from './wamean.js';
  * @example
  * ```ts
  * import assert from 'node:assert';
- * import { wma } from '@ldrick/trade-indicators/averages/wma.js';
+ * import { wma } from '@ldrick/trade-indicators';
  *
  * // weights 1, 2, 3: (3 * 1 + 3 * 2 + 6 * 3) / 6 = 4.5
  * assert.deepStrictEqual(wma([3, 3, 6, 6], 3), { ok: true, value: [null, null, 4.5, 5.5] });

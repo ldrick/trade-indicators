@@ -30,8 +30,7 @@ export interface HighLowClose<A> {
  * @example
  * ```ts
  * import assert from 'node:assert';
- * import { ema } from '@ldrick/trade-indicators/averages/ema.js';
- * import { NotEnoughDataError } from '@ldrick/trade-indicators/errors/NotEnoughDataError.js';
+ * import { ema, NotEnoughDataError } from '@ldrick/trade-indicators';
  *
  * const result = ema([1, 2], 3);
  * assert.ok(!result.ok && result.error instanceof NotEnoughDataError);
@@ -70,7 +69,7 @@ export type NonEmptyHighLowClose<A> = {
  * (`value[i]` belongs to `values[i]`); entries before the first calculable one are `null`.
  * @example
  * ```ts
- * import { sma } from '@ldrick/trade-indicators/averages/sma.js';
+ * import { sma } from '@ldrick/trade-indicators';
  *
  * const result = sma([1, 2, 3], 2);
  * if (result.ok) {

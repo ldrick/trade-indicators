@@ -16,7 +16,7 @@ import { ma } from './ma.js';
  * @example
  * ```ts
  * import assert from 'node:assert';
- * import { sma } from '@ldrick/trade-indicators/averages/sma.js';
+ * import { sma } from '@ldrick/trade-indicators';
  *
  * assert.deepStrictEqual(sma([1, 2, 3, 4, 5], 3), { ok: true, value: [null, null, 2, 3, 4] });
  * ```

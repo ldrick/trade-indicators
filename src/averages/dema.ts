@@ -35,7 +35,7 @@ const calculate = (
  * @example
  * ```ts
  * import assert from 'node:assert';
- * import { dema } from '@ldrick/trade-indicators/averages/dema.js';
+ * import { dema } from '@ldrick/trade-indicators';
  *
  * assert.deepStrictEqual(dema([1, 2, 3, 4, 5], 2), { ok: true, value: [null, null, 3, 4, 5] });
  * ```

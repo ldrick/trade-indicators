@@ -54,8 +54,7 @@ Any error an indicator can return. Each one is a class from
 
 ```ts
 import assert from "node:assert"
-import { ema } from "@ldrick/trade-indicators/averages/ema.js"
-import { NotEnoughDataError } from "@ldrick/trade-indicators/errors/NotEnoughDataError.js"
+import { ema, NotEnoughDataError } from "@ldrick/trade-indicators"
 
 const result = ema([1, 2], 3)
 assert.ok(!result.ok && result.error instanceof NotEnoughDataError)
@@ -73,7 +72,7 @@ type IndicatorError =
   | UnequalArraySizesError
 ```
 
-[Source](https://github.com/ldrick/trade-indicators/blob/main/src/types.ts#L43)
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/types.ts#L42)
 
 Since v0.9.0
 
@@ -87,7 +86,7 @@ Readonly array with at least one element.
 type NonEmptyArray<A> = readonly [A, ...A[]]
 ```
 
-[Source](https://github.com/ldrick/trade-indicators/blob/main/src/types.ts#L57)
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/types.ts#L56)
 
 Since v0.9.0
 
@@ -100,7 +99,7 @@ Indicators never throw. Every series in `value` has one entry per input value
 **Example**
 
 ```ts
-import { sma } from "@ldrick/trade-indicators/averages/sma.js"
+import { sma } from "@ldrick/trade-indicators"
 
 const result = sma([1, 2, 3], 2)
 if (result.ok) {
@@ -117,6 +116,6 @@ type Result<A, E extends Error = IndicatorError> =
   { readonly error: E; readonly ok: false } | { readonly ok: true; readonly value: A }
 ```
 
-[Source](https://github.com/ldrick/trade-indicators/blob/main/src/types.ts#L86)
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/types.ts#L85)
 
 Since v0.9.0

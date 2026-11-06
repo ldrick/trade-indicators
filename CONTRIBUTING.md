@@ -27,6 +27,7 @@ pnpm docgen          # regenerates docs/modules; commit the result
 ## Conventions
 
 - Every public function returns `Result<A>` and never throws. Invalid input is an error class from `src/errors/`.
+- The package has one entry point, `src/index.ts`. New public exports are added there and to `tests/index.spec.ts`.
 - Public exports need JSDoc with a description, `@category`, `@since` and `@public`.
   Indicators also need an `@example` with `node:assert` checks, which `pnpm docgen` type-checks and runs.
 - `docs/modules/` is generated: change the JSDoc and run `pnpm docgen`, never edit it by hand.

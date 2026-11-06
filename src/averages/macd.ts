@@ -57,7 +57,7 @@ const calculate = (
  * @example
  * ```ts
  * import assert from 'node:assert';
- * import { macd } from '@ldrick/trade-indicators/averages/macd.js';
+ * import { macd } from '@ldrick/trade-indicators';
  *
  * const result = macd([1, 2, 4, 8, 16], 1, 2, 2);
  * assert.ok(result.ok);

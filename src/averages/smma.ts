@@ -26,7 +26,7 @@ export const smmaC = (
  * @example
  * ```ts
  * import assert from 'node:assert';
- * import { smma } from '@ldrick/trade-indicators/averages/smma.js';
+ * import { smma } from '@ldrick/trade-indicators';
  *
  * assert.deepStrictEqual(smma([1, 2, 3, 4, 5], 2), { ok: true, value: [null, 1.5, 2.25, 3.125, 4.0625] });
  * ```

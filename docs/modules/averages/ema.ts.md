@@ -31,7 +31,7 @@ The first calculated value is the SMA of the first `period` values.
 
 ```ts
 import assert from "node:assert"
-import { ema } from "@ldrick/trade-indicators/averages/ema.js"
+import { ema } from "@ldrick/trade-indicators"
 
 assert.deepStrictEqual(ema([1, 2, 3, 5, 9], 3), { ok: true, value: [null, null, 2, 3.5, 6.25] })
 ```

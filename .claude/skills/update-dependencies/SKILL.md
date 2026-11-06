@@ -42,7 +42,7 @@ Run in this order:
 
 Self-healing rule when a check fails:
 
-- **A fails** → an updated dependency likely introduced (or removed the last usage of) a devDependency, or the `knip.config.ts` entry list is stale — fix the actual cause (remove the unused devDependency, or update `knip.config.ts` if a source file legitimately moved), then re-run **A**.
+- **A fails** → an updated dependency likely introduced (or removed the last usage of) a devDependency, or an export became unused — fix the actual cause (remove the unused devDependency, or the unused export), then re-run **A**.
 - **B fails** → run `pnpm format` (auto-fixes formatting), then re-run **A**, then **B** again.
 - **C fails** → try to fix the type errors, then re-run **A**, **B**, then **C** again.
 - **D fails** → try to fix the lint errors, then re-run **A**, **B**, **C**, then **D** again.
