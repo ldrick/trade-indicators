@@ -1,10 +1,3 @@
-import {
-	either as E,
-	function as F,
-	option as O,
-	readonlyArray as RA,
-	readonlyRecord as RR,
-} from 'fp-ts';
 import { expect } from 'vitest';
 
 import { type Result } from '../../src/types.js';
@@ -19,15 +12,14 @@ import {
 const formatArray =
 	(dec: number) =>
 	(array: TestResultArray): FormattedArray =>
-		F.pipe(
-			array,
-			RA.map((element) => (element === null ? String(element) : element.toFixed(dec))),
-		);
+		array.map((element) => (element === null ? String(element) : element.toFixed(dec)));
 
 const formatRecord =
 	(dec: number) =>
 	(rec: TestResultRecord): FormattedRecord =>
-		F.pipe(rec, RR.map(formatArray(dec)));
+		Object.fromEntries(
+			Object.entries(rec).map(([key, value]) => [key, formatArray(dec)(value)]),
+		);
 
 const format =
 	(dec: number) =>
@@ -64,15 +56,10 @@ const areResultRecordsEqual = (
 	decimals: number,
 ): boolean =>
 	areArraysEqual(Object.keys(exp), Object.keys(rec)) &&
-	Object.keys(exp).every((k) =>
-		F.pipe(
-			O.bindTo('expValue')(RR.lookup(k)(exp)),
-			O.bind('recValue', () => RR.lookup(k)(rec)),
-			O.exists(({ expValue, recValue }) =>
-				areResultArraysEqual(expValue, recValue, decimals),
-			),
-		),
-	);
+	Object.entries(exp).every(([key, expValue]) => {
+		const recValue = rec[key];
+		return recValue !== undefined && areResultArraysEqual(expValue, recValue, decimals);
+	});
 
 expect.extend({
 	// vitest's `expect.extend` matcher API binds `this` to the matcher context
@@ -82,74 +69,48 @@ expect.extend({
 		expected: TestResult,
 		decimalsOption?: number,
 	) {
-		const decimals = decimalsOption ?? DEFAULT_DECIMALS;
+		if (!received.ok) {
+			return {
+				message: () => `Result expected to be ok, but failed with ${received.error.name}.`,
+				pass: false,
+			};
+		}
+
 		const { isNot, promise } = this;
-		const either: E.Either<Error, TestResult> = received.ok
-			? E.right(received.value)
-			: E.left(received.error);
-
 		const options = { isNot, promise };
-
-		const isPass: boolean = F.pipe(
-			either,
-			E.fold(
-				() => false,
-				(right) =>
-					Array.isArray(expected) && Array.isArray(right)
-						? areResultArraysEqual(expected, right, decimals)
-						: areResultRecordsEqual(
-								expected as TestResultRecord,
-								right as TestResultRecord,
-								decimals,
-							),
-			),
+		const hint = this.utils.matcherHint(
+			'okToEqualFixedPrecision',
+			undefined,
+			undefined,
+			options,
 		);
+		const decimals = decimalsOption ?? DEFAULT_DECIMALS;
+		const actual = received.value;
+		const isPass =
+			Array.isArray(expected) && Array.isArray(actual)
+				? areResultArraysEqual(expected, actual, decimals)
+				: areResultRecordsEqual(
+						expected as TestResultRecord,
+						actual as TestResultRecord,
+						decimals,
+					);
+		const formattedR = format(decimals)(actual);
+		const formattedE = format(decimals)(expected);
 
 		const message = isPass
 			? (): string =>
-					F.pipe(
-						either,
-						E.fold(
-							(error) => `Result expected to be ok, but failed with ${error.name}.`,
-							(rec) => {
-								const formattedR = format(decimals)(rec);
-								const formattedE = format(decimals)(expected);
-								return (
-									`${this.utils.matcherHint(
-										'okToEqualFixedPrecision',
-										undefined,
-										undefined,
-										options,
-									)}\n\n` +
-									`Expected: not ${this.utils.printExpected(formattedE)}\n` +
-									`Received: ${this.utils.printReceived(formattedR)}`
-								);
-							},
-						),
-					)
-			: (): string =>
-					F.pipe(
-						either,
-						E.fold(
-							(error) => `Result expected to be ok, but failed with ${error.name}.`,
-							(rec) => {
-								const formattedR = format(decimals)(rec);
-								const formattedE = format(decimals)(expected);
-								const diffString = this.utils.diff(formattedE, formattedR);
-								return `${this.utils.matcherHint(
-									'okToEqualFixedPrecision',
-									undefined,
-									undefined,
-									options,
-								)}\n\n${
-									diffString?.includes('- Expect')
-										? `Difference:\n\n${diffString}`
-										: `Expected: ${this.utils.printExpected(formattedE)}\n` +
-											`Received: ${this.utils.printReceived(formattedR)}`
-								}`;
-							},
-						),
-					);
+					`${hint}\n\n` +
+					`Expected: not ${this.utils.printExpected(formattedE)}\n` +
+					`Received: ${this.utils.printReceived(formattedR)}`
+			: (): string => {
+					const diffString = this.utils.diff(formattedE, formattedR);
+					return `${hint}\n\n${
+						diffString?.includes('- Expect')
+							? `Difference:\n\n${diffString}`
+							: `Expected: ${this.utils.printExpected(formattedE)}\n` +
+								`Received: ${this.utils.printReceived(formattedR)}`
+					}`;
+				};
 
 		return { message, pass: isPass };
 	},

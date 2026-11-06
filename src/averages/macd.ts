@@ -1,17 +1,13 @@
-import {
-	apply as AP,
-	either as E,
-	function as F,
-	readonlyArray as RA,
-	readonlyNonEmptyArray as RNEA,
-} from 'fp-ts';
+import * as Arr from 'effect/Array';
+import { pipe } from 'effect/Function';
+import * as R from 'effect/Result';
 
 import { PeriodSizeMismatchError } from '../errors/PeriodSizeMismatchError.js';
 import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
 import { type NonEmptyArray, type Result } from '../types.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
-import { fromEither } from '../utils/result.js';
+import { fromResult } from '../utils/result.js';
 import { emaC } from './ema.js';
 
 /**
@@ -25,23 +21,23 @@ export interface MACDReturn {
 	signal: NonEmptyArray<null | number>;
 }
 
-const validatePeriodSizes = (slowPeriod: number, fastPeriod: number): E.Either<Error, boolean> =>
+const validatePeriodSizes = (slowPeriod: number, fastPeriod: number): R.Result<boolean, Error> =>
 	slowPeriod > fastPeriod
-		? E.right(true)
-		: E.left(new PeriodSizeMismatchError('slowPeriod', 'fastPeriod'));
+		? R.succeed(true)
+		: R.fail(new PeriodSizeMismatchError('slowPeriod', 'fastPeriod'));
 
 const calculate = (
-	fast: RNEA.ReadonlyNonEmptyArray<number>,
-	slow: RNEA.ReadonlyNonEmptyArray<number>,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
-	F.pipe(
+	fast: Arr.NonEmptyReadonlyArray<number>,
+	slow: Arr.NonEmptyReadonlyArray<number>,
+): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
+	pipe(
 		slow,
-		E.traverseReadonlyNonEmptyArrayWithIndex((index, value) =>
-			F.pipe(
-				RA.lookup(fast.length - slow.length + index)(fast),
+		array.traverseWithIndex((index, value) =>
+			pipe(
+				Arr.get(fast, fast.length - slow.length + index),
 				// v8 ignore next -- `fast` is always at least as long as `slow`, guaranteed by validatePeriodSizes
-				E.fromOption(() => new UnequalArraySizesError()),
-				E.map((fastValue) => fastValue - value),
+				R.fromOption(() => new UnequalArraySizesError()),
+				R.map((fastValue) => fastValue - value),
 			),
 		),
 	);
@@ -59,8 +55,8 @@ export const macd = (
 	slowPeriod = 26,
 	signalPeriod = 9,
 ): Result<MACDReturn> =>
-	F.pipe(
-		AP.sequenceS(E.Applicative)({
+	pipe(
+		R.all({
 			fastPeriodV: number_.validatePositiveInteger(fastPeriod),
 			slowPeriodV: number_.validatePositiveInteger(slowPeriod),
 			// eslint-disable-next-line perfectionist/sort-objects
@@ -69,20 +65,20 @@ export const macd = (
 			periodSizes: validatePeriodSizes(slowPeriod, fastPeriod),
 			valuesV: array.validateRequiredSize(slowPeriod + signalPeriod - 1)(values),
 		}),
-		E.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
-		E.let('emaSlow', ({ slowPeriodV, valuesF }) => emaC(valuesF, slowPeriodV)),
-		E.let('emaFast', ({ fastPeriodV, valuesF }) => emaC(valuesF, fastPeriodV)),
-		E.bind('macdResult', ({ emaFast, emaSlow }) => calculate(emaFast, emaSlow)),
-		E.let('signal', ({ macdResult, signalPeriodV }) => emaC(macdResult, signalPeriodV)),
-		E.let('signalPadded', ({ macdResult, signal }) =>
-			F.pipe(signal, array.fillLeftW(macdResult.length, null)),
+		R.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
+		R.let('emaSlow', ({ slowPeriodV, valuesF }) => emaC(valuesF, slowPeriodV)),
+		R.let('emaFast', ({ fastPeriodV, valuesF }) => emaC(valuesF, fastPeriodV)),
+		R.bind('macdResult', ({ emaFast, emaSlow }) => calculate(emaFast, emaSlow)),
+		R.let('signal', ({ macdResult, signalPeriodV }) => emaC(macdResult, signalPeriodV)),
+		R.let('signalPadded', ({ macdResult, signal }) =>
+			pipe(signal, array.fillLeftW(macdResult.length, null)),
 		),
-		E.map(({ macdResult, signalPadded }) => ({
-			histogram: RNEA.zipWith(macdResult, signalPadded, (macdValue, signalValue) =>
+		R.map(({ macdResult, signalPadded }) => ({
+			histogram: Arr.zipWith(macdResult, signalPadded, (macdValue, signalValue) =>
 				signalValue === null ? null : macdValue - signalValue,
 			),
 			macd: macdResult,
 			signal: signalPadded,
 		})),
-		fromEither,
+		fromResult,
 	);

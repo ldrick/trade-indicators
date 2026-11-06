@@ -1,11 +1,7 @@
-import {
-	apply as AP,
-	either as E,
-	function as F,
-	option as O,
-	readonlyArray as RA,
-	readonlyNonEmptyArray as RNEA,
-} from 'fp-ts';
+import * as Arr from 'effect/Array';
+import { pipe } from 'effect/Function';
+import * as O from 'effect/Option';
+import * as R from 'effect/Result';
 
 import { smmaC } from '../averages/smma.js';
 import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
@@ -18,19 +14,19 @@ import {
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
 import * as rec from '../utils/record.js';
-import { fromEither } from '../utils/result.js';
+import { fromResult } from '../utils/result.js';
 
 const trueRange = (
 	values: NonEmptyHighLowClose<number>,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
-	F.pipe(
+): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
+	pipe(
 		values.high,
 		array.tail,
-		E.chain(
-			E.traverseReadonlyNonEmptyArrayWithIndex((index, high) =>
-				F.pipe(
-					O.bindTo('previousClose')(RA.lookup(index)(values.close)),
-					O.bind('currentLow', () => RA.lookup(index + 1)(values.low)),
+		R.flatMap(
+			array.traverseWithIndex((index, high) =>
+				pipe(
+					O.bindTo(Arr.get(values.close, index), 'previousClose'),
+					O.bind('currentLow', () => Arr.get(values.low, index + 1)),
 					O.map(({ currentLow, previousClose }) =>
 						Math.max(
 							high - currentLow,
@@ -39,7 +35,7 @@ const trueRange = (
 						),
 					),
 					// v8 ignore next -- all series are validated to have equal length, so every lookup succeeds
-					E.fromOption(() => new UnequalArraySizesError()),
+					R.fromOption(() => new UnequalArraySizesError()),
 				),
 			),
 		),
@@ -52,11 +48,11 @@ const trueRange = (
 export const atrC = (
 	values: NonEmptyHighLowClose<number>,
 	period: number,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
-	F.pipe(
+): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
+	pipe(
 		values,
 		trueRange,
-		E.map((tr) => smmaC(tr, period)),
+		R.map((tr) => smmaC(tr, period)),
 	);
 
 /**
@@ -67,13 +63,13 @@ export const atrC = (
  * @public
  */
 export const atr = (values: HighLowClose<number>, period = 14): Result<NonEmptyArray<number>> =>
-	F.pipe(
-		AP.sequenceS(E.Applicative)({
+	pipe(
+		R.all({
 			periodV: number_.validatePositiveInteger(period),
 			sizesV: rec.validateEqualSizes(values),
 			valuesV: rec.validateRequiredSize(period + 1)(values),
 		}),
-		E.bind('valuesF', ({ valuesV }) => rec.validateFinite(valuesV)),
-		E.chain(({ periodV, valuesF }) => atrC(valuesF, periodV)),
-		fromEither,
+		R.bind('valuesF', ({ valuesV }) => rec.validateFinite(valuesV)),
+		R.flatMap(({ periodV, valuesF }) => atrC(valuesF, periodV)),
+		fromResult,
 	);

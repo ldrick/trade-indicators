@@ -159,6 +159,15 @@ export default defineConfig(
 			immutability: {
 				overrides: [
 					{
+						// Effect's Result (Success | Failure) is an immutable data type.
+						to: 'Immutable',
+						type: {
+							from: 'package',
+							package: 'effect',
+							pattern: /Result/,
+						},
+					},
+					{
 						// Always treat TypeScript's ReadonlyArrays as Immutable.
 						to: 'Immutable',
 						type: { from: 'lib', name: 'ReadonlyArray' },

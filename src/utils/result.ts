@@ -1,11 +1,13 @@
-import { either as E } from 'fp-ts';
+import * as R from 'effect/Result';
 
 import { type Result } from '../types.js';
 
 /**
- * Convert the internal `Either` into the public `Result`.
- * All errors created in `src/` are `IndicatorError`s.
+ * Convert the internal Effect `Result` into the public `Result`.
+ * All errors created in `src/` are `IndicatorError`s, which are structurally plain `Error`s.
  * @internal
  */
-export const fromEither = <A>(either: E.Either<Error, A>): Result<A> =>
-	E.isLeft(either) ? { error: either.left, ok: false } : { ok: true, value: either.right };
+export const fromResult = <A>(result: R.Result<A, Error>): Result<A> =>
+	R.isFailure(result)
+		? { error: result.failure, ok: false }
+		: { ok: true, value: result.success };

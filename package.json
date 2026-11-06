@@ -7,6 +7,7 @@
 		"atr",
 		"average",
 		"dema",
+		"effect",
 		"ema",
 		"indicators",
 		"macd",
@@ -98,9 +99,9 @@
 			"import": "./dist/oscillators/rsi.js"
 		},
 		"./package.json": "./package.json",
-		"./toEither.js": {
-			"types": "./dist/utils/toEither.d.ts",
-			"import": "./dist/utils/toEither.js"
+		"./toEffectResult.js": {
+			"types": "./dist/utils/toEffectResult.d.ts",
+			"import": "./dist/utils/toEffectResult.js"
 		},
 		"./toPromise.js": {
 			"types": "./dist/utils/toPromise.d.ts",
@@ -131,7 +132,7 @@
 		"*": "oxfmt --no-error-on-unmatched-pattern"
 	},
 	"dependencies": {
-		"fp-ts": "^2.16.11"
+		"effect": "^4.1.2"
 	},
 	"devDependencies": {
 		"@arethetypeswrong/cli": "^0.18.5",

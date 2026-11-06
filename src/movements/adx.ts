@@ -1,11 +1,7 @@
-import {
-	apply as AP,
-	either as E,
-	function as F,
-	option as O,
-	readonlyArray as RA,
-	readonlyNonEmptyArray as RNEA,
-} from 'fp-ts';
+import * as Arr from 'effect/Array';
+import { pipe } from 'effect/Function';
+import * as O from 'effect/Option';
+import * as R from 'effect/Result';
 
 import { smmaC } from '../averages/smma.js';
 import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
@@ -18,7 +14,7 @@ import {
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
 import * as rec from '../utils/record.js';
-import { fromEither } from '../utils/result.js';
+import { fromResult } from '../utils/result.js';
 import { atrC } from './atr.js';
 
 /**
@@ -42,23 +38,23 @@ const movement = (up: number, down: number, move: Movement): number =>
 const directionalMovement = (
 	values: NonEmptyHighLowClose<number>,
 	move: Movement,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
-	F.pipe(
+): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
+	pipe(
 		values.low,
 		array.tail,
-		E.chain(
-			E.traverseReadonlyNonEmptyArrayWithIndex((index, low) =>
-				F.pipe(
-					O.bindTo('currentHigh')(RA.lookup(index + 1)(values.high)),
-					O.bind('previousHigh', () => RA.lookup(index)(values.high)),
-					O.bind('previousLow', () => RA.lookup(index)(values.low)),
+		R.flatMap(
+			array.traverseWithIndex((index, low) =>
+				pipe(
+					O.bindTo(Arr.get(values.high, index + 1), 'currentHigh'),
+					O.bind('previousHigh', () => Arr.get(values.high, index)),
+					O.bind('previousLow', () => Arr.get(values.low, index)),
 					O.map(({ currentHigh, previousHigh, previousLow }) => {
 						const up = currentHigh - previousHigh;
 						const down = previousLow - low;
 						return movement(up, down, move);
 					}),
 					// v8 ignore next -- all series are validated to have equal length, so every lookup succeeds
-					E.fromOption(() => new UnequalArraySizesError()),
+					R.fromOption(() => new UnequalArraySizesError()),
 				),
 			),
 		),
@@ -68,20 +64,20 @@ const directionalIndex = (
 	values: NonEmptyHighLowClose<number>,
 	period: number,
 	move: Movement,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
-	F.pipe(
-		E.bindTo('dm')(directionalMovement(values, move)),
-		E.let('dividends', ({ dm }) => smmaC(dm, period)),
-		E.bind('divisors', () => atrC(values, period)),
-		E.chain(({ dividends, divisors }) =>
-			F.pipe(
+): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
+	pipe(
+		R.bindTo(directionalMovement(values, move), 'dm'),
+		R.let('dividends', ({ dm }) => smmaC(dm, period)),
+		R.bind('divisors', () => atrC(values, period)),
+		R.flatMap(({ dividends, divisors }) =>
+			pipe(
 				dividends,
-				E.traverseReadonlyNonEmptyArrayWithIndex((index, dividend) =>
-					F.pipe(
-						RA.lookup(index)(divisors),
+				array.traverseWithIndex((index, dividend) =>
+					pipe(
+						Arr.get(divisors, index),
 						// v8 ignore next -- reaching this requires directionalMovement to have already succeeded, which guarantees divisors is at least as long as dividends
-						E.fromOption(() => new UnequalArraySizesError()),
-						E.map((divisor) => (divisor === 0 ? 0 : (dividend * 100) / divisor)),
+						R.fromOption(() => new UnequalArraySizesError()),
+						R.map((divisor) => (divisor === 0 ? 0 : (dividend * 100) / divisor)),
 					),
 				),
 			),
@@ -89,17 +85,17 @@ const directionalIndex = (
 	);
 
 const calculation = (
-	pdi: RNEA.ReadonlyNonEmptyArray<number>,
-	mdi: RNEA.ReadonlyNonEmptyArray<number>,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
-	F.pipe(
+	pdi: Arr.NonEmptyReadonlyArray<number>,
+	mdi: Arr.NonEmptyReadonlyArray<number>,
+): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
+	pipe(
 		pdi,
-		E.traverseReadonlyNonEmptyArrayWithIndex((index, plus) =>
-			F.pipe(
-				RA.lookup(index)(mdi),
+		array.traverseWithIndex((index, plus) =>
+			pipe(
+				Arr.get(mdi, index),
 				// v8 ignore next -- pdi and mdi come from the same directionalIndex call shape, so their lengths always match
-				E.fromOption(() => new UnequalArraySizesError()),
-				E.map((minus) => {
+				R.fromOption(() => new UnequalArraySizesError()),
+				R.map((minus) => {
 					const sum = plus + minus;
 					return sum === 0 ? 0 : Math.abs(plus - minus) / sum;
 				}),
@@ -115,29 +111,29 @@ const calculation = (
  * @public
  */
 export const adx = (values: HighLowClose<number>, period = 14): Result<ADXReturn> =>
-	F.pipe(
-		AP.sequenceS(E.Applicative)({
+	pipe(
+		R.all({
 			periodV: number_.validatePositiveInteger(period),
 			sizesV: rec.validateEqualSizes(values),
 			valuesV: rec.validateRequiredSize(2 * period)(values),
 		}),
-		E.bind('valuesF', ({ valuesV }) => rec.validateFinite(valuesV)),
-		E.bind('pdi', ({ periodV, valuesF }) => directionalIndex(valuesF, periodV, 'up')),
-		E.bind('mdi', ({ periodV, valuesF }) => directionalIndex(valuesF, periodV, 'down')),
-		E.bind('smoothed', ({ mdi, pdi, periodV }) =>
-			F.pipe(
+		R.bind('valuesF', ({ valuesV }) => rec.validateFinite(valuesV)),
+		R.bind('pdi', ({ periodV, valuesF }) => directionalIndex(valuesF, periodV, 'up')),
+		R.bind('mdi', ({ periodV, valuesF }) => directionalIndex(valuesF, periodV, 'down')),
+		R.bind('smoothed', ({ mdi, pdi, periodV }) =>
+			pipe(
 				calculation(pdi, mdi),
-				E.map((calculated) => smmaC(calculated, periodV)),
+				R.map((calculated) => smmaC(calculated, periodV)),
 			),
 		),
-		E.map(({ mdi, pdi, smoothed }) => ({
-			adx: F.pipe(
+		R.map(({ mdi, pdi, smoothed }) => ({
+			adx: pipe(
 				smoothed,
-				RNEA.map((value) => value * 100),
+				Arr.map((value) => value * 100),
 				array.fillLeftW(mdi.length, null),
 			),
 			mdi,
 			pdi,
 		})),
-		fromEither,
+		fromResult,
 	);

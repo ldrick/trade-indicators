@@ -29,10 +29,9 @@ export type IndicatorError =
 
 /**
  * Readonly array with at least one element.
- * Structurally identical to fp-ts' `ReadonlyNonEmptyArray`.
  * @public
  */
-export type NonEmptyArray<A> = readonly A[] & { readonly 0: A };
+export type NonEmptyArray<A> = readonly [A, ...A[]];
 
 /**
  * `HighLowClose` with non-empty arrays.

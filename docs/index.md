@@ -11,16 +11,16 @@ has_toc: false
 > Trade Indicators written in pure functional TypeScript. \
 > No function throws: every indicator returns a `Result`, \
 > either `{ ok: true, value }` or `{ ok: false, error }`. \
-> The public API exposes no third-party types; adapters for Promises and fp-ts are included.
+> The public API exposes no third-party types; adapters for Promises and [Effect](https://effect.website) are included.
 
 ## Ideas
 
 Calculation of common indicators used for stock market trading, commodity trading and many more. \
 `trade-indicators` shall fail early and never throw Errors. Instead every indicator returns a `Result`,
 which is either `{ ok: true, value }` or `{ ok: false, error }`. \
-Internally it is built with a functional library, but none of its types are part of the public API. \
+Internally it is built with [Effect](https://effect.website), but none of its types are part of the indicators' API. \
 For convenience, `toPromise` unwraps a `Result` to a Promise (still enforcing error handling)
-and `toEither` converts it to an fp-ts compatible `Either`.
+and `toEffectResult` converts it to an Effect `Result`.
 
 Calculations use plain JavaScript `Number` (IEEE 754 double precision). \
 Inputs are already `Number`s, so arbitrary-precision decimals would not add meaningful accuracy, but cost a lot of performance.

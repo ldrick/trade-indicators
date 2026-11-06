@@ -9,7 +9,7 @@
 > Trade Indicators written in pure functional TypeScript. \
 > No function throws: every indicator returns a `Result`, \
 > either `{ ok: true, value }` or `{ ok: false, error }`. \
-> The public API exposes no third-party types; adapters for Promises and fp-ts are included.
+> The public API exposes no third-party types; adapters for Promises and [Effect](https://effect.website) are included.
 >
 > - Average Directional Index (adx)
 > - Average True Range (atr)
@@ -34,7 +34,7 @@ In TypeScript:
 
 ```typescript
 import { ema } from '@ldrick/trade-indicators/averages/ema.js';
-import { toEither } from '@ldrick/trade-indicators/toEither.js';
+import { toEffectResult } from '@ldrick/trade-indicators/toEffectResult.js';
 import { toPromise } from '@ldrick/trade-indicators/toPromise.js';
 
 const prices = [3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5];
@@ -54,8 +54,8 @@ toPromise(ema(prices, period)).then(
 	(error) => console.log(error),
 );
 
-// or to an fp-ts compatible Either
-const either = toEither(ema(prices, period));
+// or to an Effect Result
+const effectResult = toEffectResult(ema(prices, period));
 ```
 
 ## Errors

@@ -1,19 +1,26 @@
-import {
-	either as E,
-	function as F,
-	readonlyArray as RA,
-	readonlyNonEmptyArray as RNEA,
-} from 'fp-ts';
+import * as Arr from 'effect/Array';
+import { pipe } from 'effect/Function';
+import * as R from 'effect/Result';
 
 import { EmptyArrayError } from '../errors/EmptyArrayError.js';
 import { NotEnoughDataError } from '../errors/NotEnoughDataError.js';
 import * as number_ from './number.js';
 
 /**
+ * Map every element with its index to a `Result` and collect all successes,
+ * failing with the first failure. Linear in the array length.
+ * @internal
+ */
+export const traverseWithIndex =
+	<A, B, E>(f: (index: number, a: A) => R.Result<B, E>) =>
+	(values: Arr.NonEmptyReadonlyArray<A>): R.Result<Arr.NonEmptyReadonlyArray<B>, E> =>
+		R.all(Arr.map(values, (value, index) => f(index, value)));
+
+/**
  * Validates if every value of an Array is a finite Number.
  * @internal
  */
-export const validateFinite = E.traverseReadonlyNonEmptyArrayWithIndex((_index, value: number) =>
+export const validateFinite = traverseWithIndex((_index, value: number) =>
 	number_.validateFinite(value),
 );
 
@@ -23,22 +30,18 @@ export const validateFinite = E.traverseReadonlyNonEmptyArrayWithIndex((_index, 
  */
 export const fillLeftW =
 	<A>(size: number, value: A) =>
-	<B>(tail: RNEA.ReadonlyNonEmptyArray<B>): RNEA.ReadonlyNonEmptyArray<A | B> =>
-		F.pipe(
-			size > tail.length ? size - tail.length : 0,
-			(times) => RA.replicate(times, value),
-			RNEA.concatW(tail),
-		);
+	<B>(tail: Arr.NonEmptyReadonlyArray<B>): Arr.NonEmptyReadonlyArray<A | B> =>
+		size > tail.length ? Arr.appendAll(Arr.replicate(value, size - tail.length), tail) : tail;
 
 /**
- * Get all but the first of an `ReadonlyNonEmptyArray` as `ReadonlyNonEmptyArray`
+ * Get all but the first of an `NonEmptyReadonlyArray` as `NonEmptyReadonlyArray`
  * @internal
  */
 export const tail = <A>(
-	array: RNEA.ReadonlyNonEmptyArray<A>,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<A>> =>
-	F.pipe(array, RNEA.tail, (rest) =>
-		RA.isNonEmpty(rest) ? E.right(rest) : E.left(new EmptyArrayError()),
+	array: Arr.NonEmptyReadonlyArray<A>,
+): R.Result<Arr.NonEmptyReadonlyArray<A>, Error> =>
+	pipe(array, Arr.tailNonEmpty, (rest) =>
+		Arr.isReadonlyArrayNonEmpty(rest) ? R.succeed(rest) : R.fail(new EmptyArrayError()),
 	);
 
 /**
@@ -47,7 +50,7 @@ export const tail = <A>(
  */
 export const validateRequiredSize =
 	(required: number) =>
-	<A>(array: readonly A[]): E.Either<Error, RNEA.ReadonlyNonEmptyArray<A>> =>
-		RA.isNonEmpty(array) && array.length >= required
-			? E.right(array)
-			: E.left(new NotEnoughDataError(array.length, required));
+	<A>(array: readonly A[]): R.Result<Arr.NonEmptyReadonlyArray<A>, Error> =>
+		Arr.isReadonlyArrayNonEmpty(array) && array.length >= required
+			? R.succeed(array)
+			: R.fail(new NotEnoughDataError(array.length, required));

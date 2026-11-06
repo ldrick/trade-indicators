@@ -1,5 +1,5 @@
 import { type NonEmptyArray, type Result } from '../types.js';
-import { fromEither } from '../utils/result.js';
+import { fromResult } from '../utils/result.js';
 import { ma } from './ma.js';
 import { wamean } from './wamean.js';
 
@@ -11,4 +11,4 @@ import { wamean } from './wamean.js';
  * @public
  */
 export const wma = (values: readonly number[], period = 20): Result<NonEmptyArray<number>> =>
-	fromEither(ma(values, period, wamean));
+	fromResult(ma(values, period, wamean));

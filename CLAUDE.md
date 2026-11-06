@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-`@ldrick/trade-indicators` — trading indicators (SMA, EMA, DEMA, TEMA, WMA, MACD, ATR, ADX, RSI) written in pure functional TypeScript with `fp-ts` internally, using plain `number` math (big.js was dropped for performance: unrounded decimal growth made EMA-based indicators quadratic/OOM). Every public function returns the library's own `Result<A>` (`{ ok: true, value } | { ok: false, error }`, `src/types.ts`) instead of throwing; no fp-ts type may appear in a public signature.
+`@ldrick/trade-indicators` — trading indicators (SMA, EMA, DEMA, TEMA, WMA, MACD, ATR, ADX, RSI) written in pure functional TypeScript with [Effect](https://effect.website) (`effect` v4: `effect/Result`, `effect/Array`, `effect/Option`, `effect/Function`) internally, using plain `number` math (big.js was dropped for performance: unrounded decimal growth made EMA-based indicators quadratic/OOM). Every public function returns the library's own `Result<A>` (`{ ok: true, value } | { ok: false, error }`, `src/types.ts`) instead of throwing; no Effect type may appear in an indicator's signature (only the `toEffectResult` adapter exposes one). Import Effect via subpaths (`import * as R from 'effect/Result'`), not the `effect` barrel.
 
 ## Commands
 
@@ -33,7 +33,7 @@ These checks mirror the `build` job in `.github/workflows/test.yml`, run in this
 
 ## Architecture
 
-**Calculation pipeline.** Every public indicator (`src/averages/*.ts`, `src/movements/*.ts`, `src/oscillators/*.ts`) follows the same shape: validate inputs with `fp-ts` `Either` (via `AP.sequenceS`), then check all values are finite (`validateFinite` in `src/utils/array.ts` / `src/utils/record.ts`, failing with `NotFiniteNumberError`), then run the calculation, and convert the internal `Either` to the public `Result` as the last pipe step with `fromEither` (`src/utils/result.ts`). Validation failures short-circuit as one of the `Error` subclasses in `src/errors/` (`NotEnoughDataError`, `NotPositiveIntegerError`, `UnequalArraySizesError`, `EmptyArrayError`, `PeriodSizeMismatchError`, `NotFiniteNumberError`) — never a thrown exception.
+**Calculation pipeline.** Every public indicator (`src/averages/*.ts`, `src/movements/*.ts`, `src/oscillators/*.ts`) follows the same shape: validate inputs with Effect `Result` (via `R.all({...})`, which short-circuits on the first failure in key order), then check all values are finite (`validateFinite` in `src/utils/array.ts` / `src/utils/record.ts`, failing with `NotFiniteNumberError`), then run the calculation, and convert the internal Effect `Result` to the public `Result` as the last pipe step with `fromResult` (`src/utils/result.ts`). Validation failures short-circuit as one of the `Error` subclasses in `src/errors/` (`NotEnoughDataError`, `NotPositiveIntegerError`, `UnequalArraySizesError`, `EmptyArrayError`, `PeriodSizeMismatchError`, `NotFiniteNumberError`) — never a thrown exception.
 
 **Composition over duplication.** Indicators are built from smaller internal primitives, not implemented independently:
 
@@ -41,7 +41,7 @@ These checks mirror the `build` job in `.github/workflows/test.yml`, run in this
 - `src/averages/dma.ts` (generic exponential smoothing given a factor) is the base for both `ema` and `smma` (different `factor`).
 - `src/averages/ema.ts` exports an unchecked `emaC` (no validation) alongside the public, validated `ema`. `dema`, `tema`, `macd` all chain `emaC` internally (e.g. `dema` = 2×EMA − EMA(EMA)) rather than duplicating validation/conversion.
 - `src/movements/atr.ts` exports `atrC` (unchecked True Range + `smmaC`) the same way; `src/movements/adx.ts` builds PDI/MDI/ADX on top of `atrC` and `smmaC`; `src/oscillators/rsi.ts` smooths gains and losses with `smmaC` (Wilder).
-- Map over arrays with `E.traverseReadonlyNonEmptyArrayWithIndex`, never the generic `RNEA.traverse(E.Applicative)`/`RNEA.traverseWithIndex(E.Applicative)`: the generic ones are O(n²) in fp-ts.
+- Map over arrays with `array.traverseWithIndex` (`src/utils/array.ts`, linear via `R.all`). Never build arrays with repeated append/concat inside a reduce: that was O(n²) before.
 
 This `xC` (checked-core) naming convention — public validated wrapper + internal `*C` function taking already-validated values — is how new EMA/SMMA-derived indicators should be added.
 
@@ -49,7 +49,7 @@ This `xC` (checked-core) naming convention — public validated wrapper + intern
 
 **HighLowClose shape.** Indicators needing more than a single price series (`atr`, `adx`) take a `HighLowClose<number>` record (`src/types.ts`); `src/utils/record.ts` validates it the same way `src/utils/array.ts` does for plain arrays.
 
-**Adapters.** `src/utils/toPromise.ts` and `src/utils/toEither.ts` convert a `Result`; `toEither` returns a type structurally identical to fp-ts' `Either` without importing fp-ts.
+**Adapters.** `src/utils/toPromise.ts` and `src/utils/toEffectResult.ts` convert a `Result` into a Promise or an Effect `Result`.
 
 **Testing.** Test files are `tests/**/*.spec.ts`, mirroring `src/` structure (not `*.test.ts`, despite both being allowed by `vitest.config.ts`). Coverage thresholds are set to 100% (`v8` provider) — genuinely unreachable branches need a `// v8 ignore next -- <reason>` comment explaining _why_ it's unreachable (see existing examples in `dema.ts`, `tema.ts`, `macd.ts`, `adx.ts`), not a blanket ignore. `tests/prices.json` holds shared fixture data. Indicator tests build expected failures with `failure()`/`success()` from `tests/result.ts`. The custom matcher `okToEqualFixedPrecision` compares with an absolute tolerance of `10^-decimals` (default 10 decimals; fixtures match up to 12).
 

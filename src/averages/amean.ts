@@ -1,12 +1,8 @@
-import { function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts';
+import * as Arr from 'effect/Array';
 
 /**
  * Arithmetic Mean.
  * @internal
  */
-export const amean = (values: RNEA.ReadonlyNonEmptyArray<number>): number =>
-	F.pipe(
-		values,
-		RNEA.reduce(0, (reduced, value) => reduced + value),
-		(dividend) => dividend / values.length,
-	);
+export const amean = (values: Arr.NonEmptyReadonlyArray<number>): number =>
+	Arr.reduce(values, 0, (reduced, value) => reduced + value) / values.length;

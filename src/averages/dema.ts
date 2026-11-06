@@ -1,31 +1,27 @@
-import {
-	apply as AP,
-	either as E,
-	function as F,
-	readonlyArray as RA,
-	readonlyNonEmptyArray as RNEA,
-} from 'fp-ts';
+import * as Arr from 'effect/Array';
+import { pipe } from 'effect/Function';
+import * as R from 'effect/Result';
 
 import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
 import { type NonEmptyArray, type Result } from '../types.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
-import { fromEither } from '../utils/result.js';
+import { fromResult } from '../utils/result.js';
 import { emaC } from './ema.js';
 
 const calculate = (
-	one: RNEA.ReadonlyNonEmptyArray<number>,
-	two: RNEA.ReadonlyNonEmptyArray<number>,
+	one: Arr.NonEmptyReadonlyArray<number>,
+	two: Arr.NonEmptyReadonlyArray<number>,
 	period: number,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
-	F.pipe(
+): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
+	pipe(
 		two,
-		E.traverseReadonlyNonEmptyArrayWithIndex((index, value) =>
-			F.pipe(
-				RA.lookup(index + period - 1)(one),
+		array.traverseWithIndex((index, value) =>
+			pipe(
+				Arr.get(one, index + period - 1),
 				// v8 ignore next -- `one` and `two` are both derived from the same EMA chain, so their lengths are always in sync
-				E.fromOption(() => new UnequalArraySizesError()),
-				E.map((oneValue) => 2 * oneValue - value),
+				R.fromOption(() => new UnequalArraySizesError()),
+				R.map((oneValue) => 2 * oneValue - value),
 			),
 		),
 	);
@@ -37,14 +33,14 @@ const calculate = (
  * @public
  */
 export const dema = (values: readonly number[], period = 20): Result<NonEmptyArray<number>> =>
-	F.pipe(
-		AP.sequenceS(E.Applicative)({
+	pipe(
+		R.all({
 			periodV: number_.validatePositiveInteger(period),
 			valuesV: array.validateRequiredSize(2 * period - 1)(values),
 		}),
-		E.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
-		E.let('emaOne', ({ periodV, valuesF }) => emaC(valuesF, periodV)),
-		E.let('emaTwo', ({ emaOne, periodV }) => emaC(emaOne, periodV)),
-		E.chain(({ emaOne, emaTwo, periodV }) => calculate(emaOne, emaTwo, periodV)),
-		fromEither,
+		R.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
+		R.let('emaOne', ({ periodV, valuesF }) => emaC(valuesF, periodV)),
+		R.let('emaTwo', ({ emaOne, periodV }) => emaC(emaOne, periodV)),
+		R.flatMap(({ emaOne, emaTwo, periodV }) => calculate(emaOne, emaTwo, periodV)),
+		fromResult,
 	);

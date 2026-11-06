@@ -1,34 +1,30 @@
-import {
-	apply as AP,
-	either as E,
-	function as F,
-	option as O,
-	readonlyArray as RA,
-	readonlyNonEmptyArray as RNEA,
-} from 'fp-ts';
+import * as Arr from 'effect/Array';
+import { pipe } from 'effect/Function';
+import * as O from 'effect/Option';
+import * as R from 'effect/Result';
 
 import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
 import { type NonEmptyArray, type Result } from '../types.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
-import { fromEither } from '../utils/result.js';
+import { fromResult } from '../utils/result.js';
 import { emaC } from './ema.js';
 
 const calculate = (
-	one: RNEA.ReadonlyNonEmptyArray<number>,
-	two: RNEA.ReadonlyNonEmptyArray<number>,
-	three: RNEA.ReadonlyNonEmptyArray<number>,
+	one: Arr.NonEmptyReadonlyArray<number>,
+	two: Arr.NonEmptyReadonlyArray<number>,
+	three: Arr.NonEmptyReadonlyArray<number>,
 	period: number,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
-	F.pipe(
+): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
+	pipe(
 		three,
-		E.traverseReadonlyNonEmptyArrayWithIndex((index, value) =>
-			F.pipe(
-				O.bindTo('oneValue')(RA.lookup(index + 2 * (period - 1))(one)),
-				O.bind('twoValue', () => RA.lookup(index + period - 1)(two)),
+		array.traverseWithIndex((index, value) =>
+			pipe(
+				O.bindTo(Arr.get(one, index + 2 * (period - 1)), 'oneValue'),
+				O.bind('twoValue', () => Arr.get(two, index + period - 1)),
 				O.map(({ oneValue, twoValue }) => 3 * oneValue - 3 * twoValue + value),
 				// v8 ignore next -- `one`, `two` and `three` are all derived from the same EMA chain, so their lengths are always in sync
-				E.fromOption(() => new UnequalArraySizesError()),
+				R.fromOption(() => new UnequalArraySizesError()),
 			),
 		),
 	);
@@ -41,17 +37,17 @@ const calculate = (
  * @public
  */
 export const tema = (values: readonly number[], period = 20): Result<NonEmptyArray<number>> =>
-	F.pipe(
-		AP.sequenceS(E.Applicative)({
+	pipe(
+		R.all({
 			periodV: number_.validatePositiveInteger(period),
 			valuesV: array.validateRequiredSize(3 * period - 2)(values),
 		}),
-		E.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
-		E.let('emaOne', ({ periodV, valuesF }) => emaC(valuesF, periodV)),
-		E.let('emaTwo', ({ emaOne, periodV }) => emaC(emaOne, periodV)),
-		E.let('emaThree', ({ emaTwo, periodV }) => emaC(emaTwo, periodV)),
-		E.chain(({ emaOne, emaThree, emaTwo, periodV }) =>
+		R.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
+		R.let('emaOne', ({ periodV, valuesF }) => emaC(valuesF, periodV)),
+		R.let('emaTwo', ({ emaOne, periodV }) => emaC(emaOne, periodV)),
+		R.let('emaThree', ({ emaTwo, periodV }) => emaC(emaTwo, periodV)),
+		R.flatMap(({ emaOne, emaThree, emaTwo, periodV }) =>
 			calculate(emaOne, emaTwo, emaThree, periodV),
 		),
-		fromEither,
+		fromResult,
 	);

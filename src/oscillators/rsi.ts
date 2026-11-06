@@ -1,34 +1,42 @@
-import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts';
+import * as Arr from 'effect/Array';
+import { pipe } from 'effect/Function';
+import * as R from 'effect/Result';
 
 import { smmaC } from '../averages/smma.js';
 import { type NonEmptyArray, type Result } from '../types.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
-import { fromEither } from '../utils/result.js';
+import { fromResult } from '../utils/result.js';
 
 const changes = (
-	values: RNEA.ReadonlyNonEmptyArray<number>,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
-	F.pipe(
+	values: Arr.NonEmptyReadonlyArray<number>,
+): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
+	pipe(
 		values,
 		array.tail,
-		E.map((rest) => RNEA.zipWith(rest, values, (current, previous) => current - previous)),
+		R.map((rest) => Arr.zipWith(rest, values, (current, previous) => current - previous)),
 	);
 
 const calculate = (
-	values: RNEA.ReadonlyNonEmptyArray<number>,
+	values: Arr.NonEmptyReadonlyArray<number>,
 	period: number,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
-	F.pipe(
-		E.bindTo('deltas')(changes(values)),
-		E.let('gains', ({ deltas }) =>
-			smmaC(RNEA.map((delta: number) => Math.max(delta, 0))(deltas), period),
+): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
+	pipe(
+		R.bindTo(changes(values), 'deltas'),
+		R.let('gains', ({ deltas }) =>
+			smmaC(
+				Arr.map(deltas, (delta) => Math.max(delta, 0)),
+				period,
+			),
 		),
-		E.let('losses', ({ deltas }) =>
-			smmaC(RNEA.map((delta: number) => Math.max(-delta, 0))(deltas), period),
+		R.let('losses', ({ deltas }) =>
+			smmaC(
+				Arr.map(deltas, (delta) => Math.max(-delta, 0)),
+				period,
+			),
 		),
-		E.map(({ gains, losses }) =>
-			RNEA.zipWith(gains, losses, (gain, loss) =>
+		R.map(({ gains, losses }) =>
+			Arr.zipWith(gains, losses, (gain, loss) =>
 				gain + loss === 0 ? 50 : (100 * gain) / (gain + loss),
 			),
 		),
@@ -42,12 +50,12 @@ const calculate = (
  * @public
  */
 export const rsi = (values: readonly number[], period = 14): Result<NonEmptyArray<number>> =>
-	F.pipe(
-		AP.sequenceS(E.Applicative)({
+	pipe(
+		R.all({
 			periodV: number_.validatePositiveInteger(period),
 			valuesV: array.validateRequiredSize(period + 1)(values),
 		}),
-		E.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
-		E.chain(({ periodV, valuesF }) => calculate(valuesF, periodV)),
-		fromEither,
+		R.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
+		R.flatMap(({ periodV, valuesF }) => calculate(valuesF, periodV)),
+		fromResult,
 	);

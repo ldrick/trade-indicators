@@ -1,4 +1,4 @@
-import { function as F, readonlyArray as RA, readonlyNonEmptyArray as RNEA } from 'fp-ts';
+import * as Arr from 'effect/Array';
 
 import { amean } from './amean.js';
 
@@ -8,13 +8,10 @@ import { amean } from './amean.js';
  * @internal
  */
 export const dma = (
-	values: RNEA.ReadonlyNonEmptyArray<number>,
+	values: Arr.NonEmptyReadonlyArray<number>,
 	period: number,
 	factor: number,
-): RNEA.ReadonlyNonEmptyArray<number> => {
-	const [init, rest] = RNEA.splitAt(period)(values);
-	return F.pipe(
-		rest,
-		RA.scanLeft(amean(init), (previous, value) => (value - previous) * factor + previous),
-	);
+): Arr.NonEmptyReadonlyArray<number> => {
+	const [init, rest] = Arr.splitAtNonEmpty(values, period);
+	return Arr.scan(rest, amean(init), (previous, value) => (value - previous) * factor + previous);
 };
