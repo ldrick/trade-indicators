@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.2](https://github.com/ldrick/trade-indicators/compare/0.9.1...0.9.2) (2026-11-06)
+
+
+### Documentation
+
+* add OpenSSF Best Practices badge ([7f13d14](https://github.com/ldrick/trade-indicators/commit/7f13d14d37c0e4f3bdefd1efb875a1a6f2251f42))
+
 ## [0.9.1](https://github.com/ldrick/trade-indicators/compare/0.9.0...0.9.1) (2026-11-06)
 
 
