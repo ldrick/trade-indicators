@@ -38,7 +38,7 @@ These checks mirror the `build` job in `.github/workflows/test.yml`, run in this
 
 ## Releases
 
-`.github/workflows/publish.yml` runs release-please (`release-please-config.json`, `.release-please-manifest.json`) on every push to `main`: it maintains a release pull request with the next version and `CHANGELOG.md`, derived from Conventional Commits (breaking changes bump the minor version below 1.0.0). Merging that pull request tags the release (without `v`, e.g. `0.9.0`), creates the GitHub release and, in the same workflow, runs the checks and publishes to npm (trusted publishing, bound to the file name `publish.yml`) and GitHub Packages. Never bump `version` in `package.json` by hand. `@since` tags of new exports use the version the release pull request will create.
+`.github/workflows/publish.yml` runs release-please (`release-please-config.json`, `.release-please-manifest.json`) on every push to `main`: it maintains a release pull request with the next version and `CHANGELOG.md`, derived from Conventional Commits (breaking changes bump the minor version below 1.0.0). Merging that pull request tags the release (without `v`, e.g. `0.9.0`), creates the GitHub release and, in the same workflow, runs the checks and publishes to npm (trusted publishing, bound to the file name `publish.yml`). Never bump `version` in `package.json` by hand. `@since` tags of new exports use the version the release pull request will create.
 
 ## Architecture
 
