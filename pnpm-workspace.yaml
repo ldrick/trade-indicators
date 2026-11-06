@@ -7,3 +7,7 @@ overrides:
     minimatch: ^11.0.1
     # GHSA: katex < 0.18.2 prototype pollution (micromark-extension-math still pins ^0.16)
     katex: ^0.18.2
+    # GHSA-ggr8-5vv4-36mx: deepmerge-ts < 8.0.0 stack exhaustion (eslint-plugin-functional still pins ^7)
+    eslint-plugin-functional>deepmerge-ts: ^8.0.0
+    # GHSA-3g3m-2fjr-6pw4: glob < 14.0.2 AbortSignal bypass (claude-code-lint still pins ^13)
+    claude-code-lint>glob: ^14.0.3
