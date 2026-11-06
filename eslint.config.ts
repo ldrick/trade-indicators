@@ -230,6 +230,8 @@ export default defineConfig(
 	{
 		extends: [markdownPlugin.configs.recommended],
 		files: EXTENSIONS_MINIMATCH.Markdown,
+		// GitHub renders all markdown in this repository (task lists, tables)
+		language: 'markdown/gfm',
 		plugins: {
 			['markdown']: markdownPlugin,
 		},
