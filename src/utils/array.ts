@@ -34,6 +34,16 @@ export const fillLeftW =
 		size > tail.length ? Arr.appendAll(Arr.replicate(value, size - tail.length), tail) : tail;
 
 /**
+ * Left-pad a series with `null` to the length of the input it was calculated from,
+ * so that `result[i]` belongs to `values[i]`.
+ * @internal
+ */
+export const alignTo =
+	(length: number) =>
+	<B>(series: Arr.NonEmptyReadonlyArray<B>): Arr.NonEmptyReadonlyArray<B | null> =>
+		fillLeftW(length, null)(series);
+
+/**
  * Get all but the first of an `NonEmptyReadonlyArray` as `NonEmptyReadonlyArray`
  * @internal
  */

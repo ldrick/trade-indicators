@@ -5,7 +5,7 @@ import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';
 import { NotFiniteNumberError } from '../../src/errors/NotFiniteNumberError.js';
 import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
 import * as prices from '../prices.json' with { type: 'json' };
-import { failure } from '../result.js';
+import { aligned, failure } from '../result.js';
 
 describe('wma', () => {
 	it.each([{ p: NaN }, { p: Infinity }, { p: -Infinity }, { p: -1 }, { p: 0 }, { p: 1.5 }])(
@@ -27,7 +27,9 @@ describe('wma', () => {
 	);
 
 	it('calculates the Weighted Moving Average with default period', () => {
-		expect(wma(prices.default.close)).okToEqualFixedPrecision(prices.default.wma.p20);
+		expect(wma(prices.default.close)).okToEqualFixedPrecision(
+			aligned(prices.default.wma.p20, prices.default.close.length),
+		);
 	});
 
 	it.each([
@@ -35,6 +37,6 @@ describe('wma', () => {
 		{ p: 10, r: prices.default.wma.p10, v: prices.default.close },
 		{ p: 20, r: prices.default.wma.p20, v: prices.default.close },
 	])('calculates the Weighted Moving Average with period $p', ({ p, r, v }) => {
-		expect(wma(v, p)).okToEqualFixedPrecision(r);
+		expect(wma(v, p)).okToEqualFixedPrecision(aligned(r, v.length));
 	});
 });

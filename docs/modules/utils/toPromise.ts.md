@@ -28,7 +28,7 @@ import assert from "node:assert"
 import { sma } from "@ldrick/trade-indicators/averages/sma.js"
 import { toPromise } from "@ldrick/trade-indicators/toPromise.js"
 
-assert.deepStrictEqual(await toPromise(sma([1, 2, 3], 2)), [1.5, 2.5])
+assert.deepStrictEqual(await toPromise(sma([1, 2, 3], 2)), [null, 1.5, 2.5])
 await assert.rejects(toPromise(sma([1], 2)), { name: "NotEnoughDataError" })
 ```
 

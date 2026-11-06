@@ -66,14 +66,15 @@ export type NonEmptyHighLowClose<A> = {
 
 /**
  * Result of every indicator: either `{ ok: true, value }` or `{ ok: false, error }`.
- * Indicators never throw.
+ * Indicators never throw. Every series in `value` has one entry per input value
+ * (`value[i]` belongs to `values[i]`); entries before the first calculable one are `null`.
  * @example
  * ```ts
  * import { sma } from '@ldrick/trade-indicators/averages/sma.js';
  *
  * const result = sma([1, 2, 3], 2);
  * if (result.ok) {
- * 	console.log(result.value); // [1.5, 2.5]
+ * 	console.log(result.value); // [null, 1.5, 2.5]
  * } else {
  * 	console.error(result.error);
  * }

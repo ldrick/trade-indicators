@@ -23,7 +23,7 @@ The Smoothed Moving Average (SMMA) is like the Exponential Moving Average (EMA),
 with just a “smoother” factor. It can be used to identify support and resistance levels.
 Also prices above the SMMA can indicate uptrends, prices below can indicate downtrends.
 
-Requires at least `period` values and returns `values.length - period + 1` values.
+Requires at least `period` values. Returns one value per input value; the first `period - 1` are `null`.
 
 **Example**
 
@@ -31,13 +31,13 @@ Requires at least `period` values and returns `values.length - period + 1` value
 import assert from "node:assert"
 import { smma } from "@ldrick/trade-indicators/averages/smma.js"
 
-assert.deepStrictEqual(smma([1, 2, 3, 4, 5], 2), { ok: true, value: [1.5, 2.25, 3.125, 4.0625] })
+assert.deepStrictEqual(smma([1, 2, 3, 4, 5], 2), { ok: true, value: [null, 1.5, 2.25, 3.125, 4.0625] })
 ```
 
 **Signature**
 
 ```ts
-declare const smma: (values: readonly number[], period?: number) => Result<NonEmptyArray<number>>
+declare const smma: (values: readonly number[], period?: number) => Result<NonEmptyArray<null | number>>
 ```
 
 [Source](https://github.com/ldrick/trade-indicators/blob/main/src/averages/smma.ts#L37)

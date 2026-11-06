@@ -24,7 +24,7 @@ to reduce noise and still get close to latest prices.
 It can be used to identify support and resistance levels.
 Also prices above the TEMA can indicate uptrends, prices below can indicate downtrends.
 
-Requires at least `3 * period - 2` values and returns `values.length - 3 * period + 3` values.
+Requires at least `3 * period - 2` values. Returns one value per input value; the first `3 * period - 3` are `null`.
 
 **Example**
 
@@ -32,13 +32,13 @@ Requires at least `3 * period - 2` values and returns `values.length - 3 * perio
 import assert from "node:assert"
 import { tema } from "@ldrick/trade-indicators/averages/tema.js"
 
-assert.deepStrictEqual(tema([1, 2, 3, 4, 5, 6], 2), { ok: true, value: [4, 5, 6] })
+assert.deepStrictEqual(tema([1, 2, 3, 4, 5, 6], 2), { ok: true, value: [null, null, null, 4, 5, 6] })
 ```
 
 **Signature**
 
 ```ts
-declare const tema: (values: readonly number[], period?: number) => Result<NonEmptyArray<number>>
+declare const tema: (values: readonly number[], period?: number) => Result<NonEmptyArray<null | number>>
 ```
 
 [Source](https://github.com/ldrick/trade-indicators/blob/main/src/averages/tema.ts#L50)

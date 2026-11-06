@@ -48,7 +48,7 @@ const calculate = (
  * Values above 70 are commonly seen as overbought, below 30 as oversold.
  * A series without any change yields the neutral value 50.
  *
- * Requires at least `period + 1` values and returns `values.length - period` values.
+ * Requires at least `period + 1` values. Returns one value per input value; the first `period` are `null`.
  * @example
  * ```ts
  * import assert from 'node:assert';
@@ -57,15 +57,15 @@ const calculate = (
  * const result = rsi([1, 2, 1, 3, 1], 2);
  * assert.ok(result.ok);
  * assert.deepStrictEqual(
- * 	result.value.map((v) => v.toFixed(2)),
- * 	['50.00', '83.33', '35.71'],
+ * 	result.value.map((v) => v?.toFixed(2) ?? null),
+ * 	[null, null, '50.00', '83.33', '35.71'],
  * );
  * ```
  * @category indicators
  * @since 0.9.0
  * @public
  */
-export const rsi = (values: readonly number[], period = 14): Result<NonEmptyArray<number>> =>
+export const rsi = (values: readonly number[], period = 14): Result<NonEmptyArray<null | number>> =>
 	pipe(
 		R.all({
 			periodV: number_.validatePositiveInteger(period),
@@ -73,5 +73,6 @@ export const rsi = (values: readonly number[], period = 14): Result<NonEmptyArra
 		}),
 		R.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
 		R.flatMap(({ periodV, valuesF }) => calculate(valuesF, periodV)),
+		R.map(array.alignTo(values.length)),
 		fromResult,
 	);

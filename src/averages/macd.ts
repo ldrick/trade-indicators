@@ -11,15 +11,15 @@ import { fromResult } from '../utils/result.js';
 import { emaC } from './ema.js';
 
 /**
- * Result of `macd`. `signal` and `histogram` (`macd - signal`) are left-padded
- * with `null` to the length of `macd`.
+ * Result of `macd`. All three series have the length of the input values;
+ * `histogram` is `macd - signal`.
  * @category models
  * @since 0.9.0
  * @public
  */
 export interface MACDReturn {
 	histogram: NonEmptyArray<null | number>;
-	macd: NonEmptyArray<number>;
+	macd: NonEmptyArray<null | number>;
 	signal: NonEmptyArray<null | number>;
 }
 
@@ -52,8 +52,8 @@ const calculate = (
  *
  * `slowPeriod` must be greater than `fastPeriod` (otherwise `PeriodSizeMismatchError`)
  * and at least `slowPeriod + signalPeriod - 1` values are required.
- * `macd` contains `values.length - slowPeriod + 1` values; `signal` and `histogram`
- * have the same length and are left-padded with `null` for the first `signalPeriod - 1` entries.
+ * All three series have one value per input value: the first `slowPeriod - 1` values
+ * of `macd` and the first `slowPeriod + signalPeriod - 2` values of `signal` and `histogram` are `null`.
  * @example
  * ```ts
  * import assert from 'node:assert';
@@ -63,9 +63,9 @@ const calculate = (
  * assert.ok(result.ok);
  *
  * const round = (values: readonly (null | number)[]) => values.map((v) => v?.toFixed(2) ?? null);
- * assert.deepStrictEqual(round(result.value.macd), ['0.50', '0.83', '1.61', '3.20']);
- * assert.deepStrictEqual(round(result.value.signal), [null, '0.67', '1.30', '2.57']);
- * assert.deepStrictEqual(round(result.value.histogram), [null, '0.17', '0.31', '0.64']);
+ * assert.deepStrictEqual(round(result.value.macd), [null, '0.50', '0.83', '1.61', '3.20']);
+ * assert.deepStrictEqual(round(result.value.signal), [null, null, '0.67', '1.30', '2.57']);
+ * assert.deepStrictEqual(round(result.value.histogram), [null, null, '0.17', '0.31', '0.64']);
  * ```
  * @category indicators
  * @since 0.3.0
@@ -95,12 +95,15 @@ export const macd = (
 		R.let('signalPadded', ({ macdResult, signal }) =>
 			pipe(signal, array.fillLeftW(macdResult.length, null)),
 		),
-		R.map(({ macdResult, signalPadded }) => ({
-			histogram: Arr.zipWith(macdResult, signalPadded, (macdValue, signalValue) =>
-				signalValue === null ? null : macdValue - signalValue,
+		R.map(({ macdResult, signalPadded, valuesF }) => ({
+			histogram: pipe(
+				Arr.zipWith(macdResult, signalPadded, (macdValue, signalValue) =>
+					signalValue === null ? null : macdValue - signalValue,
+				),
+				array.alignTo(valuesF.length),
 			),
-			macd: macdResult,
-			signal: signalPadded,
+			macd: array.alignTo(valuesF.length)(macdResult),
+			signal: array.alignTo(valuesF.length)(signalPadded),
 		})),
 		fromResult,
 	);

@@ -5,7 +5,7 @@ import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';
 import { NotFiniteNumberError } from '../../src/errors/NotFiniteNumberError.js';
 import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
 import * as prices from '../prices.json' with { type: 'json' };
-import { failure } from '../result.js';
+import { aligned, failure } from '../result.js';
 
 describe('tema', () => {
 	it.each([{ p: NaN }, { p: Infinity }, { p: -Infinity }, { p: -1 }, { p: 0 }, { p: 1.5 }])(
@@ -27,7 +27,9 @@ describe('tema', () => {
 	);
 
 	it('calculates the Triple Exponential Moving Average with default period', () => {
-		expect(tema(prices.default.close)).okToEqualFixedPrecision(prices.default.tema.p20);
+		expect(tema(prices.default.close)).okToEqualFixedPrecision(
+			aligned(prices.default.tema.p20, prices.default.close.length),
+		);
 	});
 
 	it.each([
@@ -35,6 +37,6 @@ describe('tema', () => {
 		{ p: 10, r: prices.default.tema.p10, v: prices.default.close },
 		{ p: 20, r: prices.default.tema.p20, v: prices.default.close },
 	])('calculates the Triple Exponential Moving Average with period %p', ({ p, r, v }) => {
-		expect(tema(v, p)).okToEqualFixedPrecision(r);
+		expect(tema(v, p)).okToEqualFixedPrecision(aligned(r, v.length));
 	});
 });

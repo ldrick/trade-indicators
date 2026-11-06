@@ -31,19 +31,22 @@ const calculate = (
  * to reduce noise. It can be used to identify support and resistance levels.
  * Also prices above the DEMA can indicate uptrends, prices below can indicate downtrends.
  *
- * Requires at least `2 * period - 1` values and returns `values.length - 2 * period + 2` values.
+ * Requires at least `2 * period - 1` values. Returns one value per input value; the first `2 * period - 2` are `null`.
  * @example
  * ```ts
  * import assert from 'node:assert';
  * import { dema } from '@ldrick/trade-indicators/averages/dema.js';
  *
- * assert.deepStrictEqual(dema([1, 2, 3, 4, 5], 2), { ok: true, value: [3, 4, 5] });
+ * assert.deepStrictEqual(dema([1, 2, 3, 4, 5], 2), { ok: true, value: [null, null, 3, 4, 5] });
  * ```
  * @category indicators
  * @since 0.1.1
  * @public
  */
-export const dema = (values: readonly number[], period = 20): Result<NonEmptyArray<number>> =>
+export const dema = (
+	values: readonly number[],
+	period = 20,
+): Result<NonEmptyArray<null | number>> =>
 	pipe(
 		R.all({
 			periodV: number_.validatePositiveInteger(period),
@@ -53,5 +56,6 @@ export const dema = (values: readonly number[], period = 20): Result<NonEmptyArr
 		R.let('emaOne', ({ periodV, valuesF }) => emaC(valuesF, periodV)),
 		R.let('emaTwo', ({ emaOne, periodV }) => emaC(emaOne, periodV)),
 		R.flatMap(({ emaOne, emaTwo, periodV }) => calculate(emaOne, emaTwo, periodV)),
+		R.map(array.alignTo(values.length)),
 		fromResult,
 	);

@@ -18,15 +18,15 @@ import { fromResult } from '../utils/result.js';
 import { atrC } from './atr.js';
 
 /**
- * Result of `adx`. `adx` is left-padded with `null` to the length of `pdi` and `mdi`.
+ * Result of `adx`. All three series have the length of the input values.
  * @category models
  * @since 0.9.0
  * @public
  */
 export interface ADXReturn {
 	adx: NonEmptyArray<null | number>;
-	mdi: NonEmptyArray<number>;
-	pdi: NonEmptyArray<number>;
+	mdi: NonEmptyArray<null | number>;
+	pdi: NonEmptyArray<null | number>;
 }
 
 type Movement = 'down' | 'up';
@@ -112,9 +112,8 @@ const calculation = (
  * Crossings of these three values can be used to determine trend changes.
  *
  * `high`, `low` and `close` must have the same length (otherwise `UnequalArraySizesError`)
- * of at least `2 * period`. `pdi` and `mdi` contain `values.length - period` values
- * within 0 and 100; `adx` has the same length and is left-padded with `null`
- * for the first `period - 1` entries.
+ * of at least `2 * period`. All three series have one value per input value within 0 and 100:
+ * the first `period` values of `pdi` and `mdi` and the first `2 * period - 1` values of `adx` are `null`.
  * @example
  * ```ts
  * import assert from 'node:assert';
@@ -131,9 +130,9 @@ const calculation = (
  * assert.ok(result.ok);
  *
  * const round = (values: readonly (null | number)[]) => values.map((v) => v?.toFixed(2) ?? null);
- * assert.deepStrictEqual(round(result.value.pdi), ['40.00', '61.54', '32.00', '56.14']);
- * assert.deepStrictEqual(round(result.value.mdi), ['0.00', '0.00', '16.00', '7.02']);
- * assert.deepStrictEqual(round(result.value.adx), [null, '100.00', '66.67', '72.22']);
+ * assert.deepStrictEqual(round(result.value.pdi), [null, null, '40.00', '61.54', '32.00', '56.14']);
+ * assert.deepStrictEqual(round(result.value.mdi), [null, null, '0.00', '0.00', '16.00', '7.02']);
+ * assert.deepStrictEqual(round(result.value.adx), [null, null, null, '100.00', '66.67', '72.22']);
  * ```
  * @category indicators
  * @since 0.2.0
@@ -155,14 +154,14 @@ export const adx = (values: HighLowClose<number>, period = 14): Result<ADXReturn
 				R.map((calculated) => smmaC(calculated, periodV)),
 			),
 		),
-		R.map(({ mdi, pdi, smoothed }) => ({
+		R.map(({ mdi, pdi, smoothed, valuesF }) => ({
 			adx: pipe(
 				smoothed,
 				Arr.map((value) => value * 100),
-				array.fillLeftW(mdi.length, null),
+				array.alignTo(valuesF.close.length),
 			),
-			mdi,
-			pdi,
+			mdi: array.alignTo(valuesF.close.length)(mdi),
+			pdi: array.alignTo(valuesF.close.length)(pdi),
 		})),
 		fromResult,
 	);

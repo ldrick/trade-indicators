@@ -94,7 +94,8 @@ Since v0.9.0
 ## Result (type alias)
 
 Result of every indicator: either `{ ok: true, value }` or `{ ok: false, error }`.
-Indicators never throw.
+Indicators never throw. Every series in `value` has one entry per input value
+(`value[i]` belongs to `values[i]`); entries before the first calculable one are `null`.
 
 **Example**
 
@@ -103,7 +104,7 @@ import { sma } from "@ldrick/trade-indicators/averages/sma.js"
 
 const result = sma([1, 2, 3], 2)
 if (result.ok) {
-  console.log(result.value) // [1.5, 2.5]
+  console.log(result.value) // [null, 1.5, 2.5]
 } else {
   console.error(result.error)
 }
@@ -116,6 +117,6 @@ type Result<A, E extends Error = IndicatorError> =
   { readonly error: E; readonly ok: false } | { readonly ok: true; readonly value: A }
 ```
 
-[Source](https://github.com/ldrick/trade-indicators/blob/main/src/types.ts#L85)
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/types.ts#L86)
 
 Since v0.9.0

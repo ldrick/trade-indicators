@@ -22,25 +22,28 @@ export const smmaC = (
  * with just a “smoother” factor. It can be used to identify support and resistance levels.
  * Also prices above the SMMA can indicate uptrends, prices below can indicate downtrends.
  *
- * Requires at least `period` values and returns `values.length - period + 1` values.
+ * Requires at least `period` values. Returns one value per input value; the first `period - 1` are `null`.
  * @example
  * ```ts
  * import assert from 'node:assert';
  * import { smma } from '@ldrick/trade-indicators/averages/smma.js';
  *
- * assert.deepStrictEqual(smma([1, 2, 3, 4, 5], 2), { ok: true, value: [1.5, 2.25, 3.125, 4.0625] });
+ * assert.deepStrictEqual(smma([1, 2, 3, 4, 5], 2), { ok: true, value: [null, 1.5, 2.25, 3.125, 4.0625] });
  * ```
  * @category indicators
  * @since 0.1.1
  * @public
  */
-export const smma = (values: readonly number[], period = 20): Result<NonEmptyArray<number>> =>
+export const smma = (
+	values: readonly number[],
+	period = 20,
+): Result<NonEmptyArray<null | number>> =>
 	pipe(
 		R.all({
 			periodV: number_.validatePositiveInteger(period),
 			valuesV: array.validateRequiredSize(period)(values),
 		}),
 		R.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
-		R.map(({ periodV, valuesF }) => smmaC(valuesF, periodV)),
+		R.map(({ periodV, valuesF }) => array.alignTo(valuesF.length)(smmaC(valuesF, periodV))),
 		fromResult,
 	);

@@ -35,19 +35,22 @@ const calculate = (
  * It can be used to identify support and resistance levels.
  * Also prices above the TEMA can indicate uptrends, prices below can indicate downtrends.
  *
- * Requires at least `3 * period - 2` values and returns `values.length - 3 * period + 3` values.
+ * Requires at least `3 * period - 2` values. Returns one value per input value; the first `3 * period - 3` are `null`.
  * @example
  * ```ts
  * import assert from 'node:assert';
  * import { tema } from '@ldrick/trade-indicators/averages/tema.js';
  *
- * assert.deepStrictEqual(tema([1, 2, 3, 4, 5, 6], 2), { ok: true, value: [4, 5, 6] });
+ * assert.deepStrictEqual(tema([1, 2, 3, 4, 5, 6], 2), { ok: true, value: [null, null, null, 4, 5, 6] });
  * ```
  * @category indicators
  * @since 0.1.1
  * @public
  */
-export const tema = (values: readonly number[], period = 20): Result<NonEmptyArray<number>> =>
+export const tema = (
+	values: readonly number[],
+	period = 20,
+): Result<NonEmptyArray<null | number>> =>
 	pipe(
 		R.all({
 			periodV: number_.validatePositiveInteger(period),
@@ -60,5 +63,6 @@ export const tema = (values: readonly number[], period = 20): Result<NonEmptyArr
 		R.flatMap(({ emaOne, emaThree, emaTwo, periodV }) =>
 			calculate(emaOne, emaTwo, emaThree, periodV),
 		),
+		R.map(array.alignTo(values.length)),
 		fromResult,
 	);

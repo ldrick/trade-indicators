@@ -6,7 +6,7 @@ import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerErro
 import { UnequalArraySizesError } from '../../src/errors/UnequalArraySizesError.js';
 import { atr } from '../../src/movements/atr.js';
 import * as prices from '../prices.json' with { type: 'json' };
-import { failure } from '../result.js';
+import { aligned, failure } from '../result.js';
 
 describe('atr', () => {
 	it.each([{ p: NaN }, { p: Infinity }, { p: -Infinity }, { p: -1 }, { p: 0 }, { p: 1.5 }])(
@@ -66,7 +66,7 @@ describe('atr', () => {
 				high: prices.default.high,
 				low: prices.default.low,
 			}),
-		).okToEqualFixedPrecision(prices.default.atr.p14);
+		).okToEqualFixedPrecision(aligned(prices.default.atr.p14, prices.default.close.length));
 	});
 
 	it.each([
@@ -77,6 +77,6 @@ describe('atr', () => {
 			v: { close: prices.default.close, high: prices.default.high, low: prices.default.low },
 		},
 	])('calculates the Average True Range on prices with period $p', ({ p, r, v }) => {
-		expect(atr(v, p)).okToEqualFixedPrecision(r);
+		expect(atr(v, p)).okToEqualFixedPrecision(aligned(r, v.close.length));
 	});
 });

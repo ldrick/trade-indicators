@@ -24,7 +24,7 @@ between 0 and 100, comparing the smoothed average gains with the smoothed averag
 Values above 70 are commonly seen as overbought, below 30 as oversold.
 A series without any change yields the neutral value 50.
 
-Requires at least `period + 1` values and returns `values.length - period` values.
+Requires at least `period + 1` values. Returns one value per input value; the first `period` are `null`.
 
 **Example**
 
@@ -35,15 +35,15 @@ import { rsi } from "@ldrick/trade-indicators/oscillators/rsi.js"
 const result = rsi([1, 2, 1, 3, 1], 2)
 assert.ok(result.ok)
 assert.deepStrictEqual(
-  result.value.map((v) => v.toFixed(2)),
-  ["50.00", "83.33", "35.71"]
+  result.value.map((v) => v?.toFixed(2) ?? null),
+  [null, null, "50.00", "83.33", "35.71"]
 )
 ```
 
 **Signature**
 
 ```ts
-declare const rsi: (values: readonly number[], period?: number) => Result<NonEmptyArray<number>>
+declare const rsi: (values: readonly number[], period?: number) => Result<NonEmptyArray<null | number>>
 ```
 
 [Source](https://github.com/ldrick/trade-indicators/blob/main/src/oscillators/rsi.ts#L68)

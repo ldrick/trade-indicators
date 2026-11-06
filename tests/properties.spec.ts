@@ -61,15 +61,26 @@ const getRight = <A>(result: Result<A, Error>): A => {
 const isBetween = (value: number, min: number, max: number) =>
 	value >= min - tolerance(min) && value <= max + tolerance(max);
 
+/**
+ * Asserts that `series` has the input `length`, starts with exactly `nulls` nulls
+ * and contains only numbers afterwards; returns these calculated numbers.
+ */
+const calculated = (series: readonly (null | number)[], length: number, nulls: number) => {
+	expect(series).toHaveLength(length);
+	expect(series.slice(0, nulls).every((value) => value === null)).toBe(true);
+	const rest = series.slice(nulls).filter((value) => value !== null);
+	expect(rest).toHaveLength(length - nulls);
+	return rest;
+};
+
 describe.each([
 	{ fn: sma, name: 'sma' },
 	{ fn: wma, name: 'wma' },
 ])('$name properties', ({ fn }) => {
-	it('returns values.length - period + 1 values, each within its window', () => {
+	it('aligns to the input with period - 1 leading nulls, each value within its window', () => {
 		fc.assert(
 			fc.property(pricesWithPeriod(atLeastPeriod), ({ p, v }) => {
-				const result = getRight(fn(v, p));
-				expect(result).toHaveLength(v.length - p + 1);
+				const result = calculated(getRight(fn(v, p)), v.length, p - 1);
 				for (const [index, value] of result.entries()) {
 					const window = v.slice(index, index + p);
 					expect(isBetween(value, Math.min(...window), Math.max(...window))).toBe(true);
@@ -80,30 +91,26 @@ describe.each([
 });
 
 describe.each([
-	{ fn: ema, length: (n: number, p: number) => n - p + 1, minLength: atLeastPeriod, name: 'ema' },
-	{
-		fn: smma,
-		length: (n: number, p: number) => n - p + 1,
-		minLength: atLeastPeriod,
-		name: 'smma',
-	},
+	{ fn: ema, minLength: atLeastPeriod, name: 'ema', nulls: (p: number) => p - 1 },
+	{ fn: smma, minLength: atLeastPeriod, name: 'smma', nulls: (p: number) => p - 1 },
 	{
 		fn: dema,
-		length: (n: number, p: number) => n - 2 * p + 2,
 		minLength: (p: number) => 2 * p - 1,
 		name: 'dema',
+		nulls: (p: number) => 2 * p - 2,
 	},
 	{
 		fn: tema,
-		length: (n: number, p: number) => n - 3 * p + 3,
 		minLength: (p: number) => 3 * p - 2,
 		name: 'tema',
+		nulls: (p: number) => 3 * p - 3,
 	},
-])('$name properties', ({ fn, length, minLength }) => {
-	it('returns the expected number of values', () => {
+])('$name properties', ({ fn, minLength, nulls }) => {
+	it('aligns to the input with the expected number of leading nulls', () => {
 		fc.assert(
 			fc.property(pricesWithPeriod(minLength), ({ p, v }) => {
-				expect(getRight(fn(v, p))).toHaveLength(length(v.length, p));
+				const result = calculated(getRight(fn(v, p)), v.length, nulls(p));
+				expect(result).toHaveLength(v.length - nulls(p));
 			}),
 		);
 	});
@@ -112,7 +119,7 @@ describe.each([
 		fc.assert(
 			fc.property(price, period, (c, p) => {
 				const values = constantSeries(c, minLength(p) + 10);
-				const result = getRight(fn(values, p));
+				const result = calculated(getRight(fn(values, p)), values.length, nulls(p));
 				for (const value of result) {
 					expect(Math.abs(value - c)).toBeLessThanOrEqual(tolerance(c));
 				}
@@ -130,7 +137,7 @@ describe.each([
 			fc.property(pricesWithPeriod(atLeastPeriod), ({ p, v }) => {
 				const min = Math.min(...v);
 				const max = Math.max(...v);
-				const result = getRight(fn(v, p));
+				const result = calculated(getRight(fn(v, p)), v.length, p - 1);
 				for (const value of result) {
 					expect(isBetween(value, min, max)).toBe(true);
 				}
@@ -144,7 +151,7 @@ describe('macd properties', () => {
 		.tuple(fc.integer({ max: 20, min: 1 }), fc.integer({ max: 20, min: 1 }), period)
 		.map(([fast, delta, signal]) => ({ fast, signal, slow: fast + delta }));
 
-	it('returns macd, signal and histogram (macd - signal) of length values.length - slowPeriod + 1', () => {
+	it('aligns macd, signal and histogram (macd - signal) to the input', () => {
 		fc.assert(
 			fc.property(
 				periods.chain((ps) =>
@@ -158,9 +165,10 @@ describe('macd properties', () => {
 				),
 				({ ps, v }) => {
 					const result = getRight(macd(v, ps.fast, ps.slow, ps.signal));
-					expect(result.macd).toHaveLength(v.length - ps.slow + 1);
-					expect(result.signal).toHaveLength(result.macd.length);
-					expect(result.signal.filter((s) => s === null)).toHaveLength(ps.signal - 1);
+					const signalNulls = ps.slow + ps.signal - 2;
+					calculated(result.macd, v.length, ps.slow - 1);
+					calculated(result.signal, v.length, signalNulls);
+					calculated(result.histogram, v.length, signalNulls);
 					for (const [index, histogram] of result.histogram.entries()) {
 						const signal = result.signal[index] ?? null;
 						const macdValue = result.macd[index] ?? NaN;
@@ -187,14 +195,13 @@ describe('macd properties', () => {
 });
 
 describe('atr properties', () => {
-	it('returns values.length - period non-negative values bounded by the largest range', () => {
+	it('aligns to the input with period leading nulls, non-negative and bounded by the largest range', () => {
 		fc.assert(
 			fc.property(
 				candlesWithPeriod((p) => p + 1),
 				({ p, v }) => {
-					const result = getRight(atr(v, p));
+					const result = calculated(getRight(atr(v, p)), v.close.length, p);
 					const maxRange = Math.max(...v.high) - Math.min(...v.low);
-					expect(result).toHaveLength(v.close.length - p);
 					for (const value of result) {
 						expect(isBetween(value, 0, maxRange)).toBe(true);
 					}
@@ -205,17 +212,19 @@ describe('atr properties', () => {
 });
 
 describe('adx properties', () => {
-	it('returns pdi, mdi and adx within 0 and 100', () => {
+	it('aligns pdi, mdi and adx to the input, all within 0 and 100', () => {
 		fc.assert(
 			fc.property(
 				candlesWithPeriod((p) => 2 * p),
 				({ p, v }) => {
 					const result = getRight(adx(v, p));
-					expect(result.pdi).toHaveLength(v.close.length - p);
-					expect(result.mdi).toHaveLength(result.pdi.length);
-					expect(result.adx).toHaveLength(result.pdi.length);
-					for (const value of [...result.pdi, ...result.mdi, ...result.adx]) {
-						expect(value === null || isBetween(value, 0, 100)).toBe(true);
+					const values = [
+						...calculated(result.pdi, v.close.length, p),
+						...calculated(result.mdi, v.close.length, p),
+						...calculated(result.adx, v.close.length, 2 * p - 1),
+					];
+					for (const value of values) {
+						expect(isBetween(value, 0, 100)).toBe(true);
 					}
 				},
 			),
@@ -224,13 +233,12 @@ describe('adx properties', () => {
 });
 
 describe('rsi properties', () => {
-	it('returns values.length - period values within 0 and 100', () => {
+	it('aligns to the input with period leading nulls, all within 0 and 100', () => {
 		fc.assert(
 			fc.property(
 				pricesWithPeriod((p) => p + 1),
 				({ p, v }) => {
-					const result = getRight(rsi(v, p));
-					expect(result).toHaveLength(v.length - p);
+					const result = calculated(getRight(rsi(v, p)), v.length, p);
 					for (const value of result) {
 						expect(isBetween(value, 0, 100)).toBe(true);
 					}

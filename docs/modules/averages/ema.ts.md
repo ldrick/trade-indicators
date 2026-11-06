@@ -24,8 +24,8 @@ and reacts closer to the prices compared to the Simple Moving Average (SMA).
 It can be used to identify support and resistance levels.
 Also prices above the EMA can indicate uptrends, prices below can indicate downtrends.
 
-Requires at least `period` values and returns `values.length - period + 1` values.
-The first value is the SMA of the first `period` values.
+Requires at least `period` values. Returns one value per input value; the first `period - 1` are `null`.
+The first calculated value is the SMA of the first `period` values.
 
 **Example**
 
@@ -33,13 +33,13 @@ The first value is the SMA of the first `period` values.
 import assert from "node:assert"
 import { ema } from "@ldrick/trade-indicators/averages/ema.js"
 
-assert.deepStrictEqual(ema([1, 2, 3, 5, 9], 3), { ok: true, value: [2, 3.5, 6.25] })
+assert.deepStrictEqual(ema([1, 2, 3, 5, 9], 3), { ok: true, value: [null, null, 2, 3.5, 6.25] })
 ```
 
 **Signature**
 
 ```ts
-declare const ema: (values: readonly number[], period?: number) => Result<NonEmptyArray<number>>
+declare const ema: (values: readonly number[], period?: number) => Result<NonEmptyArray<null | number>>
 ```
 
 [Source](https://github.com/ldrick/trade-indicators/blob/main/src/averages/ema.ts#L39)

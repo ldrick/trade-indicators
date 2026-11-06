@@ -5,7 +5,7 @@ import { NotFiniteNumberError } from '../../src/errors/NotFiniteNumberError.js';
 import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
 import { rsi } from '../../src/oscillators/rsi.js';
 import * as prices from '../prices.json' with { type: 'json' };
-import { failure } from '../result.js';
+import { aligned, failure } from '../result.js';
 
 // StockCharts' published RSI(14) example ("cs-rsi.xls")
 const stockCharts = {
@@ -36,7 +36,9 @@ describe('rsi', () => {
 	);
 
 	it('calculates the Relative Strength Index with default period', () => {
-		expect(rsi(prices.default.close)).okToEqualFixedPrecision(prices.default.rsi.p14);
+		expect(rsi(prices.default.close)).okToEqualFixedPrecision(
+			aligned(prices.default.rsi.p14, prices.default.close.length),
+		);
 	});
 
 	it.each([
@@ -46,10 +48,13 @@ describe('rsi', () => {
 		// deltas [1, -1, 2, -2]: avg gain/loss 1/2 & 1/2, then 5/4 & 1/4, then 5/8 & 9/8
 		{ d: 'smoothed gains and losses', p: 2, r: [50, 250 / 3, 250 / 7], v: [1, 2, 1, 3, 1] },
 	])('calculates $d', ({ p, r, v }) => {
-		expect(rsi(v, p)).okToEqualFixedPrecision(r);
+		expect(rsi(v, p)).okToEqualFixedPrecision(aligned(r, v.length));
 	});
 
 	it('matches the published StockCharts example', () => {
-		expect(rsi(stockCharts.v, 14)).okToEqualFixedPrecision(stockCharts.r, 2);
+		expect(rsi(stockCharts.v, 14)).okToEqualFixedPrecision(
+			aligned(stockCharts.r, stockCharts.v.length),
+			2,
+		);
 	});
 });

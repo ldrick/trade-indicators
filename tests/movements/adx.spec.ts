@@ -6,7 +6,7 @@ import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerErro
 import { UnequalArraySizesError } from '../../src/errors/UnequalArraySizesError.js';
 import { adx } from '../../src/movements/adx.js';
 import * as prices from '../prices.json' with { type: 'json' };
-import { failure } from '../result.js';
+import { aligned, failure } from '../result.js';
 
 describe('adx', () => {
 	it.each([{ p: NaN }, { p: Infinity }, { p: -Infinity }, { p: -1 }, { p: 0 }, { p: 1.5 }])(
@@ -72,7 +72,7 @@ describe('adx', () => {
 				high: prices.default.high,
 				low: prices.default.low,
 			}),
-		).okToEqualFixedPrecision(prices.default.adx.p14);
+		).okToEqualFixedPrecision(aligned(prices.default.adx.p14, prices.default.close.length));
 	});
 
 	it.each([
@@ -87,6 +87,6 @@ describe('adx', () => {
 			v: { close: prices.default.close, high: prices.default.high, low: prices.default.low },
 		},
 	])('calculates the Average Directional Index on prices with period $p', ({ p, r, v }) => {
-		expect(adx(v, p)).okToEqualFixedPrecision(r);
+		expect(adx(v, p)).okToEqualFixedPrecision(aligned(r, v.close.length));
 	});
 });

@@ -1,4 +1,8 @@
+import { pipe } from 'effect/Function';
+import * as R from 'effect/Result';
+
 import { type NonEmptyArray, type Result } from '../types.js';
+import * as array from '../utils/array.js';
 import { fromResult } from '../utils/result.js';
 import { amean } from './amean.js';
 import { ma } from './ma.js';
@@ -8,17 +12,17 @@ import { ma } from './ma.js';
  * It can be used to identify support and resistance levels.
  * Also prices above the SMA can indicate uptrends, prices below can indicate downtrends.
  *
- * Requires at least `period` values and returns `values.length - period + 1` values.
+ * Requires at least `period` values. Returns one value per input value; the first `period - 1` are `null`.
  * @example
  * ```ts
  * import assert from 'node:assert';
  * import { sma } from '@ldrick/trade-indicators/averages/sma.js';
  *
- * assert.deepStrictEqual(sma([1, 2, 3, 4, 5], 3), { ok: true, value: [2, 3, 4] });
+ * assert.deepStrictEqual(sma([1, 2, 3, 4, 5], 3), { ok: true, value: [null, null, 2, 3, 4] });
  * ```
  * @category indicators
  * @since 0.1.1
  * @public
  */
-export const sma = (values: readonly number[], period = 20): Result<NonEmptyArray<number>> =>
-	fromResult(ma(values, period, amean));
+export const sma = (values: readonly number[], period = 20): Result<NonEmptyArray<null | number>> =>
+	pipe(ma(values, period, amean), R.map(array.alignTo(values.length)), fromResult);

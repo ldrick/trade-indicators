@@ -27,9 +27,8 @@ and Minus Directional Movement Indicator (MDI).
 Crossings of these three values can be used to determine trend changes.
 
 `high`, `low` and `close` must have the same length (otherwise `UnequalArraySizesError`)
-of at least `2 * period`. `pdi` and `mdi` contain `values.length - period` values
-within 0 and 100; `adx` has the same length and is left-padded with `null`
-for the first `period - 1` entries.
+of at least `2 * period`. All three series have one value per input value within 0 and 100:
+the first `period` values of `pdi` and `mdi` and the first `2 * period - 1` values of `adx` are `null`.
 
 **Example**
 
@@ -48,9 +47,9 @@ const result = adx(
 assert.ok(result.ok)
 
 const round = (values: readonly (null | number)[]) => values.map((v) => v?.toFixed(2) ?? null)
-assert.deepStrictEqual(round(result.value.pdi), ["40.00", "61.54", "32.00", "56.14"])
-assert.deepStrictEqual(round(result.value.mdi), ["0.00", "0.00", "16.00", "7.02"])
-assert.deepStrictEqual(round(result.value.adx), [null, "100.00", "66.67", "72.22"])
+assert.deepStrictEqual(round(result.value.pdi), [null, null, "40.00", "61.54", "32.00", "56.14"])
+assert.deepStrictEqual(round(result.value.mdi), [null, null, "0.00", "0.00", "16.00", "7.02"])
+assert.deepStrictEqual(round(result.value.adx), [null, null, null, "100.00", "66.67", "72.22"])
 ```
 
 **Signature**
@@ -59,7 +58,7 @@ assert.deepStrictEqual(round(result.value.adx), [null, "100.00", "66.67", "72.22
 declare const adx: (values: HighLowClose<number>, period?: number) => Result<ADXReturn>
 ```
 
-[Source](https://github.com/ldrick/trade-indicators/blob/main/src/movements/adx.ts#L142)
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/movements/adx.ts#L141)
 
 Since v0.2.0
 
@@ -67,15 +66,15 @@ Since v0.2.0
 
 ## ADXReturn (interface)
 
-Result of `adx`. `adx` is left-padded with `null` to the length of `pdi` and `mdi`.
+Result of `adx`. All three series have the length of the input values.
 
 **Signature**
 
 ```ts
 export interface ADXReturn {
   adx: NonEmptyArray<null | number>
-  mdi: NonEmptyArray<number>
-  pdi: NonEmptyArray<number>
+  mdi: NonEmptyArray<null | number>
+  pdi: NonEmptyArray<null | number>
 }
 ```
 

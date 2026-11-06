@@ -6,7 +6,7 @@ import { NotFiniteNumberError } from '../../src/errors/NotFiniteNumberError.js';
 import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
 import { PeriodSizeMismatchError } from '../../src/errors/PeriodSizeMismatchError.js';
 import * as prices from '../prices.json' with { type: 'json' };
-import { failure } from '../result.js';
+import { aligned, failure } from '../result.js';
 
 // histogram is derived from the macd and signal fixtures: macd - signal
 const expected = {
@@ -58,7 +58,9 @@ describe('macd', () => {
 	);
 
 	it('calculates the Moving Average Convergence / Divergence with default period', () => {
-		expect(macd(prices.default.close)).okToEqualFixedPrecision(expected);
+		expect(macd(prices.default.close)).okToEqualFixedPrecision(
+			aligned(expected, prices.default.close.length),
+		);
 	});
 
 	it.each([
@@ -81,7 +83,7 @@ describe('macd', () => {
 	])(
 		'calculates the Moving Average Convergence / Divergence on prices in test $#',
 		({ p, r, v }) => {
-			expect(macd(v, ...p)).okToEqualFixedPrecision(r);
+			expect(macd(v, ...p)).okToEqualFixedPrecision(aligned(r, v.length));
 		},
 	);
 });

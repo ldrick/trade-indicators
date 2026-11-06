@@ -9,6 +9,8 @@
 > Trade Indicators written in pure functional TypeScript. \
 > No function throws: every indicator returns a `Result`, \
 > either `{ ok: true, value }` or `{ ok: false, error }`. \
+> Every result series has one entry per input value (`value[i]` belongs to `values[i]`), \
+> starting with `null` until enough values are available. \
 > Indicators expose no third-party types; adapters for Promises and [Effect](https://effect.website) are included.
 >
 > - Average Directional Index (adx)
