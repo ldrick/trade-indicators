@@ -31,6 +31,7 @@ pnpm docgen          # regenerates docs/modules; commit the result
 - Public exports need JSDoc with a description, `@category`, `@since` and `@public`.
   Indicators also need an `@example` with `node:assert` checks, which `pnpm docgen` type-checks and runs.
 - `docs/modules/` is generated: change the JSDoc and run `pnpm docgen`, never edit it by hand.
-- New indicators need tests against independent reference values (not values computed by this library).
+- Indicators are pure steppers (`src/steps/`) shared by a batch function and an `incremental...` function; see CLAUDE.md for the building blocks.
+- New indicators need tests against independent reference values (not values computed by this library). Add every new indicator to the batch/incremental equivalence test in `tests/incremental.spec.ts`.
 - Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/)
   (`feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `ci:`, `build:`, `chore:`; `!` marks breaking changes).

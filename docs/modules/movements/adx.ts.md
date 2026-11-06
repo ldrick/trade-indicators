@@ -1,6 +1,6 @@
 ---
 title: adx.ts
-nav_order: 14
+nav_order: 13
 parent: Modules
 ---
 
@@ -10,12 +10,61 @@ parent: Modules
 
 ## Exports Grouped by Category
 
+- [incremental](#incremental)
+  - [incrementalAdx](#incrementaladx)
 - [indicators](#indicators)
   - [adx](#adx)
 - [models](#models)
   - [ADXReturn (interface)](#adxreturn-interface)
+  - [ADXValue (interface)](#adxvalue-interface)
 
 ---
+
+# incremental
+
+## incrementalAdx
+
+Incremental Average Directional Index (ADX), see `adx`. Takes one candle per `push`.
+
+**Example**
+
+```ts
+import assert from "node:assert"
+import { incrementalAdx } from "@ldrick/trade-indicators"
+
+const created = incrementalAdx(2)
+assert.ok(created.ok)
+
+const candles = [
+  { close: 9, high: 10, low: 8 },
+  { close: 11, high: 12, low: 9 },
+  { close: 10, high: 11, low: 9 },
+  { close: 13, high: 14, low: 11 },
+  { close: 12, high: 13, low: 10 },
+  { close: 15, high: 16, low: 13 }
+]
+let indicator = created.value
+for (const candle of candles) {
+  const pushed = indicator.push(candle)
+  assert.ok(pushed.ok)
+  indicator = pushed.value
+}
+const { adx, mdi, pdi } = indicator.value
+assert.deepStrictEqual(
+  [pdi, mdi, adx].map((v) => v?.toFixed(2)),
+  ["56.14", "7.02", "72.22"]
+)
+```
+
+**Signature**
+
+```ts
+declare const incrementalAdx: (period?: number) => Result<Incremental<Candle, ADXValue>>
+```
+
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/movements/adx.ts#L193)
+
+Since v0.9.0
 
 # indicators
 
@@ -58,7 +107,7 @@ assert.deepStrictEqual(round(result.value.adx), [null, null, null, "100.00", "66
 declare const adx: (values: HighLowClose<number>, period?: number) => Result<ADXReturn>
 ```
 
-[Source](https://github.com/ldrick/trade-indicators/blob/main/src/movements/adx.ts#L141)
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/movements/adx.ts#L140)
 
 Since v0.2.0
 
@@ -78,6 +127,24 @@ export interface ADXReturn {
 }
 ```
 
-[Source](https://github.com/ldrick/trade-indicators/blob/main/src/movements/adx.ts#L26)
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/movements/adx.ts#L27)
+
+Since v0.9.0
+
+## ADXValue (interface)
+
+Output of `incrementalAdx` for one candle; each field is `null` as long as the batch `adx` returns `null` at that position.
+
+**Signature**
+
+```ts
+export interface ADXValue {
+  readonly adx: null | number
+  readonly mdi: null | number
+  readonly pdi: null | number
+}
+```
+
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/movements/adx.ts#L39)
 
 Since v0.9.0

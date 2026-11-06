@@ -3,12 +3,14 @@ import { pipe } from 'effect/Function';
 import * as R from 'effect/Result';
 
 import { PeriodSizeMismatchError } from '../errors/PeriodSizeMismatchError.js';
-import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
-import { type NonEmptyArray, type Result } from '../types.js';
+import { toIncremental } from '../steps/incremental.js';
+import { type SmootherState } from '../steps/smoother.js';
+import { run, skipNull, type Stepper } from '../steps/stepper.js';
+import { type Incremental, type NonEmptyArray, type Result } from '../types.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
 import { fromResult } from '../utils/result.js';
-import { emaC } from './ema.js';
+import { emaStepper } from './ema.js';
 
 /**
  * Result of `macd`. All three series have the length of the input values;
@@ -23,26 +25,73 @@ export interface MACDReturn {
 	signal: NonEmptyArray<null | number>;
 }
 
-const validatePeriodSizes = (slowPeriod: number, fastPeriod: number): R.Result<boolean, Error> =>
-	slowPeriod > fastPeriod
-		? R.succeed(true)
-		: R.fail(new PeriodSizeMismatchError('slowPeriod', 'fastPeriod'));
+/**
+ * Output of `incrementalMacd` for one value; each field is `null` as long as the batch `macd` returns `null` at that position.
+ * @category models
+ * @since 0.9.0
+ * @public
+ */
+export interface MACDValue {
+	readonly histogram: null | number;
+	readonly macd: null | number;
+	readonly signal: null | number;
+}
 
-const calculate = (
-	fast: Arr.NonEmptyReadonlyArray<number>,
-	slow: Arr.NonEmptyReadonlyArray<number>,
-): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
-	pipe(
-		slow,
-		array.traverseWithIndex((index, value) =>
-			pipe(
-				Arr.get(fast, fast.length - slow.length + index),
-				// v8 ignore next -- `fast` is always at least as long as `slow`, guaranteed by validatePeriodSizes
-				R.fromOption(() => new UnequalArraySizesError()),
-				R.map((fastValue) => fastValue - value),
-			),
-		),
-	);
+interface MacdState {
+	readonly fast: SmootherState;
+	readonly signal: SmootherState;
+	readonly slow: SmootherState;
+}
+
+const validatePeriods = (
+	fastPeriod: number,
+	slowPeriod: number,
+	signalPeriod: number,
+): R.Result<{ fastPeriodV: number; signalPeriodV: number; slowPeriodV: number }, Error> =>
+	R.all({
+		fastPeriodV: number_.validatePositiveInteger(fastPeriod),
+		slowPeriodV: number_.validatePositiveInteger(slowPeriod),
+		// eslint-disable-next-line perfectionist/sort-objects
+		signalPeriodV: number_.validatePositiveInteger(signalPeriod),
+		// eslint-disable-next-line perfectionist/sort-objects
+		periodSizes:
+			slowPeriod > fastPeriod
+				? R.succeed(true)
+				: R.fail(new PeriodSizeMismatchError('slowPeriod', 'fastPeriod')),
+	});
+
+/**
+ * MACD as stepper: `EMA(fast) - EMA(slow)`, its signal EMA and their difference.
+ * @internal
+ */
+const macdStepper = (
+	fastPeriod: number,
+	slowPeriod: number,
+	signalPeriod: number,
+): Stepper<MacdState, number, MACDValue> => {
+	const fastEma = emaStepper(fastPeriod);
+	const slowEma = emaStepper(slowPeriod);
+	const signalEma = skipNull(emaStepper(signalPeriod));
+	return {
+		initial: { fast: fastEma.initial, signal: signalEma.initial, slow: slowEma.initial },
+		step: (state, input) => {
+			const [fast, fastValue] = fastEma.step(state.fast, input);
+			const [slow, slowValue] = slowEma.step(state.slow, input);
+			const macdValue =
+				fastValue === null || slowValue === null ? null : fastValue - slowValue;
+			const [signal, signalValue] = signalEma.step(state.signal, macdValue);
+			return [
+				{ fast, signal, slow },
+				{
+					histogram:
+						macdValue === null || signalValue === null ? null : macdValue - signalValue,
+					macd: macdValue,
+					signal: signalValue,
+				},
+			];
+		},
+	};
+};
 
 /**
  * The Moving Average Convergence Divergence (MACD) is the relationship of
@@ -78,32 +127,59 @@ export const macd = (
 	signalPeriod = 9,
 ): Result<MACDReturn> =>
 	pipe(
-		R.all({
-			fastPeriodV: number_.validatePositiveInteger(fastPeriod),
-			slowPeriodV: number_.validatePositiveInteger(slowPeriod),
-			// eslint-disable-next-line perfectionist/sort-objects
-			signalPeriodV: number_.validatePositiveInteger(signalPeriod),
-			// eslint-disable-next-line perfectionist/sort-objects
-			periodSizes: validatePeriodSizes(slowPeriod, fastPeriod),
-			valuesV: array.validateRequiredSize(slowPeriod + signalPeriod - 1)(values),
-		}),
+		validatePeriods(fastPeriod, slowPeriod, signalPeriod),
+		R.bind('valuesV', () => array.validateRequiredSize(slowPeriod + signalPeriod - 1)(values)),
 		R.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
-		R.let('emaSlow', ({ slowPeriodV, valuesF }) => emaC(valuesF, slowPeriodV)),
-		R.let('emaFast', ({ fastPeriodV, valuesF }) => emaC(valuesF, fastPeriodV)),
-		R.bind('macdResult', ({ emaFast, emaSlow }) => calculate(emaFast, emaSlow)),
-		R.let('signal', ({ macdResult, signalPeriodV }) => emaC(macdResult, signalPeriodV)),
-		R.let('signalPadded', ({ macdResult, signal }) =>
-			pipe(signal, array.fillLeftW(macdResult.length, null)),
-		),
-		R.map(({ macdResult, signalPadded, valuesF }) => ({
-			histogram: pipe(
-				Arr.zipWith(macdResult, signalPadded, (macdValue, signalValue) =>
-					signalValue === null ? null : macdValue - signalValue,
-				),
-				array.alignTo(valuesF.length),
+		R.map(({ fastPeriodV, signalPeriodV, slowPeriodV, valuesF }) => {
+			const outputs = run(macdStepper(fastPeriodV, slowPeriodV, signalPeriodV))(valuesF);
+			return {
+				histogram: Arr.map(outputs, (output) => output.histogram),
+				macd: Arr.map(outputs, (output) => output.macd),
+				signal: Arr.map(outputs, (output) => output.signal),
+			};
+		}),
+		fromResult,
+	);
+
+/**
+ * Incremental Moving Average Convergence Divergence (MACD), see `macd`.
+ * @example
+ * ```ts
+ * import assert from 'node:assert';
+ * import { incrementalMacd } from '@ldrick/trade-indicators';
+ *
+ * const created = incrementalMacd(1, 2, 2);
+ * assert.ok(created.ok);
+ *
+ * let indicator = created.value;
+ * for (const input of [1, 2, 4, 8, 16]) {
+ * 	const pushed = indicator.push(input);
+ * 	assert.ok(pushed.ok);
+ * 	indicator = pushed.value;
+ * }
+ * const { histogram, macd, signal } = indicator.value;
+ * assert.deepStrictEqual(
+ * 	[macd, signal, histogram].map((v) => v?.toFixed(2)),
+ * 	['3.20', '2.57', '0.64'],
+ * );
+ * ```
+ * @category incremental
+ * @since 0.9.0
+ * @public
+ */
+export const incrementalMacd = (
+	fastPeriod = 12,
+	slowPeriod = 26,
+	signalPeriod = 9,
+): Result<Incremental<number, MACDValue>> =>
+	pipe(
+		validatePeriods(fastPeriod, slowPeriod, signalPeriod),
+		R.map(({ fastPeriodV, signalPeriodV, slowPeriodV }) =>
+			toIncremental(
+				macdStepper(fastPeriodV, slowPeriodV, signalPeriodV),
+				{ histogram: null, macd: null, signal: null },
+				number_.validateFinite,
 			),
-			macd: array.alignTo(valuesF.length)(macdResult),
-			signal: array.alignTo(valuesF.length)(signalPadded),
-		})),
+		),
 		fromResult,
 	);

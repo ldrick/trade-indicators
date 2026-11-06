@@ -1,46 +1,47 @@
-import * as Arr from 'effect/Array';
 import { pipe } from 'effect/Function';
 import * as R from 'effect/Result';
 
-import { smmaC } from '../averages/smma.js';
-import { type NonEmptyArray, type Result } from '../types.js';
+import { smmaStepper } from '../averages/smma.js';
+import { toIncremental } from '../steps/incremental.js';
+import { type SmootherState } from '../steps/smoother.js';
+import { run, type Stepper } from '../steps/stepper.js';
+import { type Incremental, type NonEmptyArray, type Result } from '../types.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
 import { fromResult } from '../utils/result.js';
 
-const changes = (
-	values: Arr.NonEmptyReadonlyArray<number>,
-): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
-	pipe(
-		values,
-		array.tail,
-		R.map((rest) => Arr.zipWith(rest, values, (current, previous) => current - previous)),
-	);
+interface RsiState {
+	readonly gains: SmootherState;
+	readonly losses: SmootherState;
+	readonly previous: null | number;
+}
 
-const calculate = (
-	values: Arr.NonEmptyReadonlyArray<number>,
-	period: number,
-): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
-	pipe(
-		R.bindTo(changes(values), 'deltas'),
-		R.let('gains', ({ deltas }) =>
-			smmaC(
-				Arr.map(deltas, (delta) => Math.max(delta, 0)),
-				period,
-			),
-		),
-		R.let('losses', ({ deltas }) =>
-			smmaC(
-				Arr.map(deltas, (delta) => Math.max(-delta, 0)),
-				period,
-			),
-		),
-		R.map(({ gains, losses }) =>
-			Arr.zipWith(gains, losses, (gain, loss) =>
-				gain + loss === 0 ? 50 : (100 * gain) / (gain + loss),
-			),
-		),
-	);
+const strength = (gain: number, loss: number): number =>
+	gain + loss === 0 ? 50 : (100 * gain) / (gain + loss);
+
+/**
+ * RSI as stepper: Wilder-smoothed gains and losses of the changes between values.
+ * @internal
+ */
+const rsiStepper = (period: number): Stepper<RsiState, number, null | number> => {
+	const smoothing = smmaStepper(period);
+	return {
+		initial: { gains: smoothing.initial, losses: smoothing.initial, previous: null },
+		step: (state, input) => {
+			if (state.previous === null) {
+				return [{ ...state, previous: input }, null];
+			}
+			const change = input - state.previous;
+			const [gains, gain] = smoothing.step(state.gains, Math.max(change, 0));
+			const [losses, loss] = smoothing.step(state.losses, Math.max(-change, 0));
+			return [
+				{ gains, losses, previous: input },
+				// v8 ignore next -- gains and losses are smoothed in lockstep, so they are null together
+				gain === null || loss === null ? null : strength(gain, loss),
+			];
+		},
+	};
+};
 
 /**
  * The Relative Strength Index (RSI) by J. Welles Wilder is a momentum oscillator
@@ -72,7 +73,37 @@ export const rsi = (values: readonly number[], period = 14): Result<NonEmptyArra
 			valuesV: array.validateRequiredSize(period + 1)(values),
 		}),
 		R.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
-		R.flatMap(({ periodV, valuesF }) => calculate(valuesF, periodV)),
-		R.map(array.alignTo(values.length)),
+		R.map(({ periodV, valuesF }) => run(rsiStepper(periodV))(valuesF)),
+		fromResult,
+	);
+
+/**
+ * Incremental Relative Strength Index (RSI), see `rsi`. `value` is `null` as long as `rsi` returns `null` for that position.
+ * @example
+ * ```ts
+ * import assert from 'node:assert';
+ * import { incrementalRsi } from '@ldrick/trade-indicators';
+ *
+ * const created = incrementalRsi(2);
+ * assert.ok(created.ok);
+ *
+ * let indicator = created.value;
+ * const outputs: (null | number)[] = [];
+ * for (const input of [1, 2, 1, 3, 1]) {
+ * 	const pushed = indicator.push(input);
+ * 	assert.ok(pushed.ok);
+ * 	indicator = pushed.value;
+ * 	outputs.push(indicator.value);
+ * }
+ * assert.deepStrictEqual(outputs, [null, null, 50, 250 / 3, 250 / 7]);
+ * ```
+ * @category incremental
+ * @since 0.9.0
+ * @public
+ */
+export const incrementalRsi = (period = 14): Result<Incremental<number, null | number>> =>
+	pipe(
+		number_.validatePositiveInteger(period),
+		R.map((periodV) => toIncremental(rsiStepper(periodV), null, number_.validateFinite)),
 		fromResult,
 	);

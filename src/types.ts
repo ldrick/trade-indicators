@@ -1,9 +1,20 @@
-import { type EmptyArrayError } from './errors/EmptyArrayError.js';
 import { type NotEnoughDataError } from './errors/NotEnoughDataError.js';
 import { type NotFiniteNumberError } from './errors/NotFiniteNumberError.js';
 import { type NotPositiveIntegerError } from './errors/NotPositiveIntegerError.js';
 import { type PeriodSizeMismatchError } from './errors/PeriodSizeMismatchError.js';
 import { type UnequalArraySizesError } from './errors/UnequalArraySizesError.js';
+
+/**
+ * One price candle with its high, low and close value.
+ * @category models
+ * @since 0.9.0
+ * @public
+ */
+export interface Candle {
+	readonly close: number;
+	readonly high: number;
+	readonly low: number;
+}
 
 /**
  * Price series of high, low and close values, all of the same length.
@@ -18,6 +29,36 @@ export interface HighLowClose<A> {
 }
 
 /**
+ * Indicator that is calculated value by value, e.g. for live prices.
+ * `push` validates the input and returns a new instance whose `value` is the output for that input;
+ * the instance it was called on never changes, so any instance can be kept and continued later.
+ * Pushing the values of a series one by one yields exactly the values of the batch function.
+ * @example
+ * ```ts
+ * import assert from 'node:assert';
+ * import { incrementalSma } from '@ldrick/trade-indicators';
+ *
+ * const created = incrementalSma(2);
+ * assert.ok(created.ok);
+ *
+ * const first = created.value.push(1);
+ * assert.ok(first.ok);
+ * assert.strictEqual(first.value.value, null);
+ *
+ * const second = first.value.push(3);
+ * assert.ok(second.ok);
+ * assert.strictEqual(second.value.value, 2);
+ * ```
+ * @category models
+ * @since 0.9.0
+ * @public
+ */
+export interface Incremental<I, O> {
+	readonly push: (input: I) => Result<Incremental<I, O>>;
+	readonly value: O;
+}
+
+/**
  * Any error an indicator can return. Each one is a class from
  * `@ldrick/trade-indicators/errors/<Name>.js` and can be distinguished with `instanceof`:
  *
@@ -26,7 +67,6 @@ export interface HighLowClose<A> {
  * - `NotFiniteNumberError`: a value is `NaN`, `Infinity` or `-Infinity`.
  * - `UnequalArraySizesError`: `high`, `low` and `close` do not have the same length.
  * - `PeriodSizeMismatchError`: `macd`'s `slowPeriod` is not greater than its `fastPeriod`.
- * - `EmptyArrayError`: an internal calculation step received an empty array.
  * @example
  * ```ts
  * import assert from 'node:assert';
@@ -40,7 +80,6 @@ export interface HighLowClose<A> {
  * @public
  */
 export type IndicatorError =
-	| EmptyArrayError
 	| NotEnoughDataError
 	| NotFiniteNumberError
 	| NotPositiveIntegerError

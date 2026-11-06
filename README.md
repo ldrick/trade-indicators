@@ -11,6 +11,8 @@
 > either `{ ok: true, value }` or `{ ok: false, error }`. \
 > Every result series has one entry per input value (`value[i]` belongs to `values[i]`), \
 > starting with `null` until enough values are available. \
+> Every indicator also exists as incremental function (e.g. `incrementalSma`) for live data: \
+> push one value at a time and get exactly the same values as from the batch function. \
 > Indicators expose no third-party types; adapters for Promises and [Effect](https://effect.website) are included.
 >
 > - Average Directional Index (adx)
@@ -56,6 +58,23 @@ toPromise(ema(prices, period)).then(
 
 // or to an Effect Result
 const effectResult = toEffectResult(ema(prices, period));
+```
+
+Incrementally, e.g. for live prices:
+
+```typescript
+import { incrementalEma } from '@ldrick/trade-indicators';
+
+const created = incrementalEma(3);
+if (created.ok) {
+	let ema = created.value;
+	for (const price of [3, 2.1, 3, 4, 5.3]) {
+		const pushed = ema.push(price);
+		if (!pushed.ok) throw pushed.error;
+		ema = pushed.value;
+		console.log(ema.value); // null, null, then ≈ 2.7, 3.35, 4.325
+	}
+}
 ```
 
 ## Errors

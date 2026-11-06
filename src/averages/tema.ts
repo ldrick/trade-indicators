@@ -1,33 +1,43 @@
-import * as Arr from 'effect/Array';
 import { pipe } from 'effect/Function';
-import * as O from 'effect/Option';
 import * as R from 'effect/Result';
 
-import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
-import { type NonEmptyArray, type Result } from '../types.js';
+import { toIncremental } from '../steps/incremental.js';
+import { type SmootherState } from '../steps/smoother.js';
+import { run, skipNull, type Stepper } from '../steps/stepper.js';
+import { type Incremental, type NonEmptyArray, type Result } from '../types.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
 import { fromResult } from '../utils/result.js';
-import { emaC } from './ema.js';
+import { emaStepper } from './ema.js';
 
-const calculate = (
-	one: Arr.NonEmptyReadonlyArray<number>,
-	two: Arr.NonEmptyReadonlyArray<number>,
-	three: Arr.NonEmptyReadonlyArray<number>,
-	period: number,
-): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
-	pipe(
-		three,
-		array.traverseWithIndex((index, value) =>
-			pipe(
-				O.bindTo(Arr.get(one, index + 2 * (period - 1)), 'oneValue'),
-				O.bind('twoValue', () => Arr.get(two, index + period - 1)),
-				O.map(({ oneValue, twoValue }) => 3 * oneValue - 3 * twoValue + value),
-				// v8 ignore next -- `one`, `two` and `three` are all derived from the same EMA chain, so their lengths are always in sync
-				R.fromOption(() => new UnequalArraySizesError()),
-			),
-		),
-	);
+interface TemaState {
+	readonly one: SmootherState;
+	readonly three: SmootherState;
+	readonly two: SmootherState;
+}
+
+/**
+ * TEMA as stepper: `3 * EMA - 3 * EMA(EMA) + EMA(EMA(EMA))`.
+ * @internal
+ */
+const temaStepper = (period: number): Stepper<TemaState, number, null | number> => {
+	const ema = emaStepper(period);
+	const emaOfEma = skipNull(ema);
+	return {
+		initial: { one: ema.initial, three: ema.initial, two: ema.initial },
+		step: (state, input) => {
+			const [one, emaOne] = ema.step(state.one, input);
+			const [two, emaTwo] = emaOfEma.step(state.two, emaOne);
+			const [three, emaThree] = emaOfEma.step(state.three, emaTwo);
+			return [
+				{ one, three, two },
+				emaOne === null || emaTwo === null || emaThree === null
+					? null
+					: 3 * emaOne - 3 * emaTwo + emaThree,
+			];
+		},
+	};
+};
 
 /**
  * The Triple Exponential Moving Average (TEMA) uses three Exponential Moving Average (EMA)
@@ -57,12 +67,37 @@ export const tema = (
 			valuesV: array.validateRequiredSize(3 * period - 2)(values),
 		}),
 		R.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
-		R.let('emaOne', ({ periodV, valuesF }) => emaC(valuesF, periodV)),
-		R.let('emaTwo', ({ emaOne, periodV }) => emaC(emaOne, periodV)),
-		R.let('emaThree', ({ emaTwo, periodV }) => emaC(emaTwo, periodV)),
-		R.flatMap(({ emaOne, emaThree, emaTwo, periodV }) =>
-			calculate(emaOne, emaTwo, emaThree, periodV),
-		),
-		R.map(array.alignTo(values.length)),
+		R.map(({ periodV, valuesF }) => run(temaStepper(periodV))(valuesF)),
+		fromResult,
+	);
+
+/**
+ * Incremental Triple Exponential Moving Average (TEMA), see `tema`. `value` is `null` as long as `tema` returns `null` for that position.
+ * @example
+ * ```ts
+ * import assert from 'node:assert';
+ * import { incrementalTema } from '@ldrick/trade-indicators';
+ *
+ * const created = incrementalTema(2);
+ * assert.ok(created.ok);
+ *
+ * let indicator = created.value;
+ * const outputs: (null | number)[] = [];
+ * for (const input of [1, 2, 3, 4, 5, 6]) {
+ * 	const pushed = indicator.push(input);
+ * 	assert.ok(pushed.ok);
+ * 	indicator = pushed.value;
+ * 	outputs.push(indicator.value);
+ * }
+ * assert.deepStrictEqual(outputs, [null, null, null, 4, 5, 6]);
+ * ```
+ * @category incremental
+ * @since 0.9.0
+ * @public
+ */
+export const incrementalTema = (period = 20): Result<Incremental<number, null | number>> =>
+	pipe(
+		number_.validatePositiveInteger(period),
+		R.map((periodV) => toIncremental(temaStepper(periodV), null, number_.validateFinite)),
 		fromResult,
 	);

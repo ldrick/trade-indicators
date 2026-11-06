@@ -1,6 +1,6 @@
 ---
 title: NotPositiveIntegerError.ts
-nav_order: 11
+nav_order: 10
 parent: Modules
 ---
 

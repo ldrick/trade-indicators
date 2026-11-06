@@ -1,8 +1,10 @@
+import * as Arr from 'effect/Array';
 import * as R from 'effect/Result';
 
 import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
-import { type HighLowClose, type NonEmptyHighLowClose } from '../types.js';
+import { type Candle, type HighLowClose, type NonEmptyHighLowClose } from '../types.js';
 import * as array from './array.js';
+import * as number_ from './number.js';
 
 /**
  * Validates if every value of every Array in Record is a finite Number.
@@ -38,3 +40,27 @@ export const validateRequiredSize =
 			high: array.validateRequiredSize(required)(record.high),
 			low: array.validateRequiredSize(required)(record.low),
 		});
+
+/**
+ * Validates that all values of a candle are finite Numbers.
+ * @internal
+ */
+export const validateCandle = (candle: Candle): R.Result<Candle, Error> =>
+	R.all({
+		close: number_.validateFinite(candle.close),
+		high: number_.validateFinite(candle.high),
+		low: number_.validateFinite(candle.low),
+	});
+
+/**
+ * Candles from validated series of equal length.
+ * @internal
+ */
+export const toCandles = (
+	record: NonEmptyHighLowClose<number>,
+): Arr.NonEmptyReadonlyArray<Candle> =>
+	Arr.zipWith(Arr.zip(record.high, record.low), record.close, ([high, low], close) => ({
+		close,
+		high,
+		low,
+	}));

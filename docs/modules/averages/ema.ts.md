@@ -10,10 +10,48 @@ parent: Modules
 
 ## Exports Grouped by Category
 
+- [incremental](#incremental)
+  - [incrementalEma](#incrementalema)
 - [indicators](#indicators)
   - [ema](#ema)
 
 ---
+
+# incremental
+
+## incrementalEma
+
+Incremental Exponential Moving Average (EMA), see `ema`. `value` is `null` as long as `ema` returns `null` for that position.
+
+**Example**
+
+```ts
+import assert from "node:assert"
+import { incrementalEma } from "@ldrick/trade-indicators"
+
+const created = incrementalEma(3)
+assert.ok(created.ok)
+
+let indicator = created.value
+const outputs: (null | number)[] = []
+for (const input of [1, 2, 3, 5, 9]) {
+  const pushed = indicator.push(input)
+  assert.ok(pushed.ok)
+  indicator = pushed.value
+  outputs.push(indicator.value)
+}
+assert.deepStrictEqual(outputs, [null, null, 2, 3.5, 6.25])
+```
+
+**Signature**
+
+```ts
+declare const incrementalEma: (period?: number) => Result<Incremental<number, null | number>>
+```
+
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/averages/ema.ts#L73)
+
+Since v0.9.0
 
 # indicators
 
@@ -42,6 +80,6 @@ assert.deepStrictEqual(ema([1, 2, 3, 5, 9], 3), { ok: true, value: [null, null, 
 declare const ema: (values: readonly number[], period?: number) => Result<NonEmptyArray<null | number>>
 ```
 
-[Source](https://github.com/ldrick/trade-indicators/blob/main/src/averages/ema.ts#L39)
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/averages/ema.ts#L38)
 
 Since v0.1.1

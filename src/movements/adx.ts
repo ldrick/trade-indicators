@@ -1,21 +1,22 @@
 import * as Arr from 'effect/Array';
 import { pipe } from 'effect/Function';
-import * as O from 'effect/Option';
 import * as R from 'effect/Result';
 
-import { smmaC } from '../averages/smma.js';
-import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
+import { smmaStepper } from '../averages/smma.js';
+import { toIncremental } from '../steps/incremental.js';
+import { type SmootherState } from '../steps/smoother.js';
+import { run, type Stepper } from '../steps/stepper.js';
 import {
+	type Candle,
 	type HighLowClose,
+	type Incremental,
 	type NonEmptyArray,
-	type NonEmptyHighLowClose,
 	type Result,
 } from '../types.js';
-import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
 import * as rec from '../utils/record.js';
 import { fromResult } from '../utils/result.js';
-import { atrC } from './atr.js';
+import { trueRange } from './atr.js';
 
 /**
  * Result of `adx`. All three series have the length of the input values.
@@ -29,81 +30,79 @@ export interface ADXReturn {
 	pdi: NonEmptyArray<null | number>;
 }
 
-type Movement = 'down' | 'up';
+/**
+ * Output of `incrementalAdx` for one candle; each field is `null` as long as the batch `adx` returns `null` at that position.
+ * @category models
+ * @since 0.9.0
+ * @public
+ */
+export interface ADXValue {
+	readonly adx: null | number;
+	readonly mdi: null | number;
+	readonly pdi: null | number;
+}
 
-const compareMovement = (base: number, comparison: number): number =>
+interface AdxState {
+	readonly adx: SmootherState;
+	readonly minus: SmootherState;
+	readonly plus: SmootherState;
+	readonly previous: Candle | null;
+	readonly trueRange: SmootherState;
+}
+
+const movement = (base: number, comparison: number): number =>
 	base > comparison && base > 0 ? base : 0;
 
-const movement = (up: number, down: number, move: Movement): number =>
-	move === 'up' ? compareMovement(up, down) : compareMovement(down, up);
+const directionalIndex = (movementValue: number, trueRangeValue: number): number =>
+	trueRangeValue === 0 ? 0 : (movementValue * 100) / trueRangeValue;
 
-const directionalMovement = (
-	values: NonEmptyHighLowClose<number>,
-	move: Movement,
-): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
-	pipe(
-		values.low,
-		array.tail,
-		R.flatMap(
-			array.traverseWithIndex((index, low) =>
-				pipe(
-					O.bindTo(Arr.get(values.high, index + 1), 'currentHigh'),
-					O.bind('previousHigh', () => Arr.get(values.high, index)),
-					O.bind('previousLow', () => Arr.get(values.low, index)),
-					O.map(({ currentHigh, previousHigh, previousLow }) => {
-						const up = currentHigh - previousHigh;
-						const down = previousLow - low;
-						return movement(up, down, move);
-					}),
-					// v8 ignore next -- all series are validated to have equal length, so every lookup succeeds
-					R.fromOption(() => new UnequalArraySizesError()),
-				),
-			),
-		),
-	);
+const directionalMovementIndex = (pdi: number, mdi: number): number =>
+	pdi + mdi === 0 ? 0 : Math.abs(pdi - mdi) / (pdi + mdi);
 
-const directionalIndex = (
-	values: NonEmptyHighLowClose<number>,
-	period: number,
-	move: Movement,
-): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
-	pipe(
-		R.bindTo(directionalMovement(values, move), 'dm'),
-		R.let('dividends', ({ dm }) => smmaC(dm, period)),
-		R.bind('divisors', () => atrC(values, period)),
-		R.flatMap(({ dividends, divisors }) =>
-			pipe(
-				dividends,
-				array.traverseWithIndex((index, dividend) =>
-					pipe(
-						Arr.get(divisors, index),
-						// v8 ignore next -- reaching this requires directionalMovement to have already succeeded, which guarantees divisors is at least as long as dividends
-						R.fromOption(() => new UnequalArraySizesError()),
-						R.map((divisor) => (divisor === 0 ? 0 : (dividend * 100) / divisor)),
-					),
-				),
-			),
-		),
-	);
+const empty: ADXValue = { adx: null, mdi: null, pdi: null };
 
-const calculation = (
-	pdi: Arr.NonEmptyReadonlyArray<number>,
-	mdi: Arr.NonEmptyReadonlyArray<number>,
-): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
-	pipe(
-		pdi,
-		array.traverseWithIndex((index, plus) =>
-			pipe(
-				Arr.get(mdi, index),
-				// v8 ignore next -- pdi and mdi come from the same directionalIndex call shape, so their lengths always match
-				R.fromOption(() => new UnequalArraySizesError()),
-				R.map((minus) => {
-					const sum = plus + minus;
-					return sum === 0 ? 0 : Math.abs(plus - minus) / sum;
-				}),
-			),
-		),
-	);
+/**
+ * ADX as stepper: Wilder-smoothed directional movements and True Range give PDI and MDI,
+ * the smoothed directional movement index of both gives ADX.
+ * @internal
+ */
+const adxStepper = (period: number): Stepper<AdxState, Candle, ADXValue> => {
+	const smoothing = smmaStepper(period);
+	return {
+		initial: {
+			adx: smoothing.initial,
+			minus: smoothing.initial,
+			plus: smoothing.initial,
+			previous: null,
+			trueRange: smoothing.initial,
+		},
+		step: (state, candle) => {
+			if (state.previous === null) {
+				return [{ ...state, previous: candle }, empty];
+			}
+			const up = candle.high - state.previous.high;
+			const down = state.previous.low - candle.low;
+			const [plus, plusValue] = smoothing.step(state.plus, movement(up, down));
+			const [minus, minusValue] = smoothing.step(state.minus, movement(down, up));
+			const [range, rangeValue] = smoothing.step(
+				state.trueRange,
+				trueRange(candle, state.previous.close),
+			);
+			const next = { ...state, minus, plus, previous: candle, trueRange: range };
+			// v8 ignore next -- the three smoothers run in lockstep, so they are null together
+			if (plusValue === null || minusValue === null || rangeValue === null) {
+				return [next, empty];
+			}
+			const pdi = directionalIndex(plusValue, rangeValue);
+			const mdi = directionalIndex(minusValue, rangeValue);
+			const [adx, adxValue] = smoothing.step(state.adx, directionalMovementIndex(pdi, mdi));
+			return [
+				{ ...next, adx },
+				{ adx: adxValue === null ? null : adxValue * 100, mdi, pdi },
+			];
+		},
+	};
+};
 
 /**
  * The Average Directional Index (ADX) determines trend strength.
@@ -146,22 +145,54 @@ export const adx = (values: HighLowClose<number>, period = 14): Result<ADXReturn
 			valuesV: rec.validateRequiredSize(2 * period)(values),
 		}),
 		R.bind('valuesF', ({ valuesV }) => rec.validateFinite(valuesV)),
-		R.bind('pdi', ({ periodV, valuesF }) => directionalIndex(valuesF, periodV, 'up')),
-		R.bind('mdi', ({ periodV, valuesF }) => directionalIndex(valuesF, periodV, 'down')),
-		R.bind('smoothed', ({ mdi, pdi, periodV }) =>
-			pipe(
-				calculation(pdi, mdi),
-				R.map((calculated) => smmaC(calculated, periodV)),
-			),
-		),
-		R.map(({ mdi, pdi, smoothed, valuesF }) => ({
-			adx: pipe(
-				smoothed,
-				Arr.map((value) => value * 100),
-				array.alignTo(valuesF.close.length),
-			),
-			mdi: array.alignTo(valuesF.close.length)(mdi),
-			pdi: array.alignTo(valuesF.close.length)(pdi),
-		})),
+		R.map(({ periodV, valuesF }) => {
+			const outputs = run(adxStepper(periodV))(rec.toCandles(valuesF));
+			return {
+				adx: Arr.map(outputs, (output) => output.adx),
+				mdi: Arr.map(outputs, (output) => output.mdi),
+				pdi: Arr.map(outputs, (output) => output.pdi),
+			};
+		}),
+		fromResult,
+	);
+
+/**
+ * Incremental Average Directional Index (ADX), see `adx`. Takes one candle per `push`.
+ * @example
+ * ```ts
+ * import assert from 'node:assert';
+ * import { incrementalAdx } from '@ldrick/trade-indicators';
+ *
+ * const created = incrementalAdx(2);
+ * assert.ok(created.ok);
+ *
+ * const candles = [
+ * 	{ close: 9, high: 10, low: 8 },
+ * 	{ close: 11, high: 12, low: 9 },
+ * 	{ close: 10, high: 11, low: 9 },
+ * 	{ close: 13, high: 14, low: 11 },
+ * 	{ close: 12, high: 13, low: 10 },
+ * 	{ close: 15, high: 16, low: 13 },
+ * ];
+ * let indicator = created.value;
+ * for (const candle of candles) {
+ * 	const pushed = indicator.push(candle);
+ * 	assert.ok(pushed.ok);
+ * 	indicator = pushed.value;
+ * }
+ * const { adx, mdi, pdi } = indicator.value;
+ * assert.deepStrictEqual(
+ * 	[pdi, mdi, adx].map((v) => v?.toFixed(2)),
+ * 	['56.14', '7.02', '72.22'],
+ * );
+ * ```
+ * @category incremental
+ * @since 0.9.0
+ * @public
+ */
+export const incrementalAdx = (period = 14): Result<Incremental<Candle, ADXValue>> =>
+	pipe(
+		number_.validatePositiveInteger(period),
+		R.map((periodV) => toIncremental(adxStepper(periodV), empty, rec.validateCandle)),
 		fromResult,
 	);

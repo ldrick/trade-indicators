@@ -1,21 +1,20 @@
-import * as Arr from 'effect/Array';
 import { pipe } from 'effect/Function';
 import * as R from 'effect/Result';
 
-import { type NonEmptyArray, type Result } from '../types.js';
+import { toIncremental } from '../steps/incremental.js';
+import { smoother, type SmootherState } from '../steps/smoother.js';
+import { run, type Stepper } from '../steps/stepper.js';
+import { type Incremental, type NonEmptyArray, type Result } from '../types.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
 import { fromResult } from '../utils/result.js';
-import { dma } from './dma.js';
 
 /**
- * EMA without checks.
+ * EMA as stepper.
  * @internal
  */
-export const emaC = (
-	values: Arr.NonEmptyReadonlyArray<number>,
-	period: number,
-): Arr.NonEmptyReadonlyArray<number> => dma(values, period, 2 / (period + 1));
+export const emaStepper = (period: number): Stepper<SmootherState, number, null | number> =>
+	smoother(period, 2 / (period + 1));
 
 /**
  * The Exponential Moving Average (EMA) takes newer values weighted into account
@@ -43,6 +42,37 @@ export const ema = (values: readonly number[], period = 20): Result<NonEmptyArra
 			valuesV: array.validateRequiredSize(period)(values),
 		}),
 		R.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
-		R.map(({ periodV, valuesF }) => array.alignTo(valuesF.length)(emaC(valuesF, periodV))),
+		R.map(({ periodV, valuesF }) => run(emaStepper(periodV))(valuesF)),
+		fromResult,
+	);
+
+/**
+ * Incremental Exponential Moving Average (EMA), see `ema`. `value` is `null` as long as `ema` returns `null` for that position.
+ * @example
+ * ```ts
+ * import assert from 'node:assert';
+ * import { incrementalEma } from '@ldrick/trade-indicators';
+ *
+ * const created = incrementalEma(3);
+ * assert.ok(created.ok);
+ *
+ * let indicator = created.value;
+ * const outputs: (null | number)[] = [];
+ * for (const input of [1, 2, 3, 5, 9]) {
+ * 	const pushed = indicator.push(input);
+ * 	assert.ok(pushed.ok);
+ * 	indicator = pushed.value;
+ * 	outputs.push(indicator.value);
+ * }
+ * assert.deepStrictEqual(outputs, [null, null, 2, 3.5, 6.25]);
+ * ```
+ * @category incremental
+ * @since 0.9.0
+ * @public
+ */
+export const incrementalEma = (period = 20): Result<Incremental<number, null | number>> =>
+	pipe(
+		number_.validatePositiveInteger(period),
+		R.map((periodV) => toIncremental(emaStepper(periodV), null, number_.validateFinite)),
 		fromResult,
 	);

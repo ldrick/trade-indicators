@@ -10,11 +10,8 @@
 	"enforceVersion": true,
 	"runExamples": true,
 	"exclude": [
-		"src/averages/amean.ts",
-		"src/averages/dma.ts",
-		"src/averages/ma.ts",
-		"src/averages/wamean.ts",
 		"src/index.ts",
+		"src/steps/*.ts",
 		"src/utils/array.ts",
 		"src/utils/number.ts",
 		"src/utils/record.ts",

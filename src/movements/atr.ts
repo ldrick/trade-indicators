@@ -1,59 +1,57 @@
-import * as Arr from 'effect/Array';
 import { pipe } from 'effect/Function';
-import * as O from 'effect/Option';
 import * as R from 'effect/Result';
 
-import { smmaC } from '../averages/smma.js';
-import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
+import { smmaStepper } from '../averages/smma.js';
+import { toIncremental } from '../steps/incremental.js';
+import { type SmootherState } from '../steps/smoother.js';
+import { run, type Stepper } from '../steps/stepper.js';
 import {
+	type Candle,
 	type HighLowClose,
+	type Incremental,
 	type NonEmptyArray,
-	type NonEmptyHighLowClose,
 	type Result,
 } from '../types.js';
-import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
 import * as rec from '../utils/record.js';
 import { fromResult } from '../utils/result.js';
 
-const trueRange = (
-	values: NonEmptyHighLowClose<number>,
-): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
-	pipe(
-		values.high,
-		array.tail,
-		R.flatMap(
-			array.traverseWithIndex((index, high) =>
-				pipe(
-					O.bindTo(Arr.get(values.close, index), 'previousClose'),
-					O.bind('currentLow', () => Arr.get(values.low, index + 1)),
-					O.map(({ currentLow, previousClose }) =>
-						Math.max(
-							high - currentLow,
-							Math.abs(high - previousClose),
-							Math.abs(currentLow - previousClose),
-						),
-					),
-					// v8 ignore next -- all series are validated to have equal length, so every lookup succeeds
-					R.fromOption(() => new UnequalArraySizesError()),
-				),
-			),
-		),
+interface AtrState {
+	readonly previousClose: null | number;
+	readonly trueRange: SmootherState;
+}
+
+/**
+ * True Range of a candle given the previous close.
+ * @internal
+ */
+export const trueRange = (candle: Candle, previousClose: number): number =>
+	Math.max(
+		candle.high - candle.low,
+		Math.abs(candle.high - previousClose),
+		Math.abs(candle.low - previousClose),
 	);
 
 /**
- * ATR without checks.
+ * ATR as stepper: the Wilder-smoothed True Range, starting with the second candle.
  * @internal
  */
-export const atrC = (
-	values: NonEmptyHighLowClose<number>,
-	period: number,
-): R.Result<Arr.NonEmptyReadonlyArray<number>, Error> =>
-	pipe(
-		values,
-		trueRange,
-		R.map((tr) => smmaC(tr, period)),
-	);
+const atrStepper = (period: number): Stepper<AtrState, Candle, null | number> => {
+	const smoothing = smmaStepper(period);
+	return {
+		initial: { previousClose: null, trueRange: smoothing.initial },
+		step: (state, candle) => {
+			if (state.previousClose === null) {
+				return [{ ...state, previousClose: candle.close }, null];
+			}
+			const [smoothed, value] = smoothing.step(
+				state.trueRange,
+				trueRange(candle, state.previousClose),
+			);
+			return [{ previousClose: candle.close, trueRange: smoothed }, value];
+		},
+	};
+};
 
 /**
  * The Average True Range (ATR) is the smoothed average of the True Range,
@@ -86,7 +84,37 @@ export const atr = (
 			valuesV: rec.validateRequiredSize(period + 1)(values),
 		}),
 		R.bind('valuesF', ({ valuesV }) => rec.validateFinite(valuesV)),
-		R.flatMap(({ periodV, valuesF }) => atrC(valuesF, periodV)),
-		R.map(array.alignTo(values.close.length)),
+		R.map(({ periodV, valuesF }) => run(atrStepper(periodV))(rec.toCandles(valuesF))),
+		fromResult,
+	);
+
+/**
+ * Incremental Average True Range (ATR), see `atr`. Takes one candle per `push`.
+ * @example
+ * ```ts
+ * import assert from 'node:assert';
+ * import { incrementalAtr } from '@ldrick/trade-indicators';
+ *
+ * const created = incrementalAtr(2);
+ * assert.ok(created.ok);
+ *
+ * let indicator = created.value;
+ * const outputs: (null | number)[] = [];
+ * for (const [high, low, close] of [[3, 1, 2], [4, 2, 3], [5, 3, 4], [6, 4, 5]]) {
+ * 	const pushed = indicator.push({ close, high, low });
+ * 	assert.ok(pushed.ok);
+ * 	indicator = pushed.value;
+ * 	outputs.push(indicator.value);
+ * }
+ * assert.deepStrictEqual(outputs, [null, null, 2, 2]);
+ * ```
+ * @category incremental
+ * @since 0.9.0
+ * @public
+ */
+export const incrementalAtr = (period = 14): Result<Incremental<Candle, null | number>> =>
+	pipe(
+		number_.validatePositiveInteger(period),
+		R.map((periodV) => toIncremental(atrStepper(periodV), null, rec.validateCandle)),
 		fromResult,
 	);

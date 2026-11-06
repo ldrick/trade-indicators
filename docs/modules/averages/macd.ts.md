@@ -10,12 +10,57 @@ parent: Modules
 
 ## Exports Grouped by Category
 
+- [incremental](#incremental)
+  - [incrementalMacd](#incrementalmacd)
 - [indicators](#indicators)
   - [macd](#macd)
 - [models](#models)
   - [MACDReturn (interface)](#macdreturn-interface)
+  - [MACDValue (interface)](#macdvalue-interface)
 
 ---
+
+# incremental
+
+## incrementalMacd
+
+Incremental Moving Average Convergence Divergence (MACD), see `macd`.
+
+**Example**
+
+```ts
+import assert from "node:assert"
+import { incrementalMacd } from "@ldrick/trade-indicators"
+
+const created = incrementalMacd(1, 2, 2)
+assert.ok(created.ok)
+
+let indicator = created.value
+for (const input of [1, 2, 4, 8, 16]) {
+  const pushed = indicator.push(input)
+  assert.ok(pushed.ok)
+  indicator = pushed.value
+}
+const { histogram, macd, signal } = indicator.value
+assert.deepStrictEqual(
+  [macd, signal, histogram].map((v) => v?.toFixed(2)),
+  ["3.20", "2.57", "0.64"]
+)
+```
+
+**Signature**
+
+```ts
+declare const incrementalMacd: (
+  fastPeriod?: number,
+  slowPeriod?: number,
+  signalPeriod?: number
+) => Result<Incremental<number, MACDValue>>
+```
+
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/averages/macd.ts#L170)
+
+Since v0.9.0
 
 # indicators
 
@@ -57,7 +102,7 @@ declare const macd: (
 ) => Result<MACDReturn>
 ```
 
-[Source](https://github.com/ldrick/trade-indicators/blob/main/src/averages/macd.ts#L74)
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/averages/macd.ts#L123)
 
 Since v0.3.0
 
@@ -78,6 +123,24 @@ export interface MACDReturn {
 }
 ```
 
-[Source](https://github.com/ldrick/trade-indicators/blob/main/src/averages/macd.ts#L20)
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/averages/macd.ts#L22)
+
+Since v0.9.0
+
+## MACDValue (interface)
+
+Output of `incrementalMacd` for one value; each field is `null` as long as the batch `macd` returns `null` at that position.
+
+**Signature**
+
+```ts
+export interface MACDValue {
+  readonly histogram: null | number
+  readonly macd: null | number
+  readonly signal: null | number
+}
+```
+
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/averages/macd.ts#L34)
 
 Since v0.9.0

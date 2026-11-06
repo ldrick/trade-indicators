@@ -13,6 +13,8 @@ has_toc: false
 > either `{ ok: true, value }` or `{ ok: false, error }`. \
 > Every result series has one entry per input value (`value[i]` belongs to `values[i]`), \
 > starting with `null` until enough values are available. \
+> Every indicator also exists as incremental function (e.g. `incrementalSma`) for live data: \
+> push one value at a time and get exactly the same values as from the batch function. \
 > Indicators expose no third-party types; adapters for Promises and [Effect](https://effect.website) are included.
 
 ## Ideas

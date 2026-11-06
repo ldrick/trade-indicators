@@ -10,10 +10,48 @@ parent: Modules
 
 ## Exports Grouped by Category
 
+- [incremental](#incremental)
+  - [incrementalWma](#incrementalwma)
 - [indicators](#indicators)
   - [wma](#wma)
 
 ---
+
+# incremental
+
+## incrementalWma
+
+Incremental Weighted Moving Average (WMA), see `wma`. `value` is `null` as long as `wma` returns `null` for that position.
+
+**Example**
+
+```ts
+import assert from "node:assert"
+import { incrementalWma } from "@ldrick/trade-indicators"
+
+const created = incrementalWma(3)
+assert.ok(created.ok)
+
+let indicator = created.value
+const outputs: (null | number)[] = []
+for (const input of [3, 3, 6, 6]) {
+  const pushed = indicator.push(input)
+  assert.ok(pushed.ok)
+  indicator = pushed.value
+  outputs.push(indicator.value)
+}
+assert.deepStrictEqual(outputs, [null, null, 4.5, 5.5])
+```
+
+**Signature**
+
+```ts
+declare const incrementalWma: (period?: number) => Result<Incremental<number, null | number>>
+```
+
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/averages/wma.ts#L95)
+
+Since v0.9.0
 
 # indicators
 
@@ -42,6 +80,6 @@ assert.deepStrictEqual(wma([3, 3, 6, 6], 3), { ok: true, value: [null, null, 4.5
 declare const wma: (values: readonly number[], period?: number) => Result<NonEmptyArray<null | number>>
 ```
 
-[Source](https://github.com/ldrick/trade-indicators/blob/main/src/averages/wma.ts#L29)
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/averages/wma.ts#L60)
 
 Since v0.1.1

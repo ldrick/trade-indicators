@@ -1,6 +1,6 @@
 ---
 title: types.ts
-nav_order: 17
+nav_order: 16
 parent: Modules
 ---
 
@@ -11,7 +11,9 @@ parent: Modules
 ## Exports Grouped by Category
 
 - [models](#models)
+  - [Candle (interface)](#candle-interface)
   - [HighLowClose (interface)](#highlowclose-interface)
+  - [Incremental (interface)](#incremental-interface)
   - [IndicatorError (type alias)](#indicatorerror-type-alias)
   - [NonEmptyArray (type alias)](#nonemptyarray-type-alias)
   - [Result (type alias)](#result-type-alias)
@@ -19,6 +21,24 @@ parent: Modules
 ---
 
 # models
+
+## Candle (interface)
+
+One price candle with its high, low and close value.
+
+**Signature**
+
+```ts
+export interface Candle {
+  readonly close: number
+  readonly high: number
+  readonly low: number
+}
+```
+
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/types.ts#L13)
+
+Since v0.9.0
 
 ## HighLowClose (interface)
 
@@ -34,7 +54,45 @@ export interface HighLowClose<A> {
 }
 ```
 
-[Source](https://github.com/ldrick/trade-indicators/blob/main/src/types.ts#L14)
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/types.ts#L25)
+
+Since v0.9.0
+
+## Incremental (interface)
+
+Indicator that is calculated value by value, e.g. for live prices.
+`push` validates the input and returns a new instance whose `value` is the output for that input;
+the instance it was called on never changes, so any instance can be kept and continued later.
+Pushing the values of a series one by one yields exactly the values of the batch function.
+
+**Example**
+
+```ts
+import assert from "node:assert"
+import { incrementalSma } from "@ldrick/trade-indicators"
+
+const created = incrementalSma(2)
+assert.ok(created.ok)
+
+const first = created.value.push(1)
+assert.ok(first.ok)
+assert.strictEqual(first.value.value, null)
+
+const second = first.value.push(3)
+assert.ok(second.ok)
+assert.strictEqual(second.value.value, 2)
+```
+
+**Signature**
+
+```ts
+export interface Incremental<I, O> {
+  readonly push: (input: I) => Result<Incremental<I, O>>
+  readonly value: O
+}
+```
+
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/types.ts#L56)
 
 Since v0.9.0
 
@@ -48,7 +106,6 @@ Any error an indicator can return. Each one is a class from
 - `NotFiniteNumberError`: a value is `NaN`, `Infinity` or `-Infinity`.
 - `UnequalArraySizesError`: `high`, `low` and `close` do not have the same length.
 - `PeriodSizeMismatchError`: `macd`'s `slowPeriod` is not greater than its `fastPeriod`.
-- `EmptyArrayError`: an internal calculation step received an empty array.
 
 **Example**
 
@@ -64,15 +121,10 @@ assert.ok(!result.ok && result.error instanceof NotEnoughDataError)
 
 ```ts
 type IndicatorError =
-  | EmptyArrayError
-  | NotEnoughDataError
-  | NotFiniteNumberError
-  | NotPositiveIntegerError
-  | PeriodSizeMismatchError
-  | UnequalArraySizesError
+  NotEnoughDataError | NotFiniteNumberError | NotPositiveIntegerError | PeriodSizeMismatchError | UnequalArraySizesError
 ```
 
-[Source](https://github.com/ldrick/trade-indicators/blob/main/src/types.ts#L42)
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/types.ts#L82)
 
 Since v0.9.0
 
@@ -86,7 +138,7 @@ Readonly array with at least one element.
 type NonEmptyArray<A> = readonly [A, ...A[]]
 ```
 
-[Source](https://github.com/ldrick/trade-indicators/blob/main/src/types.ts#L56)
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/types.ts#L95)
 
 Since v0.9.0
 
@@ -116,6 +168,6 @@ type Result<A, E extends Error = IndicatorError> =
   { readonly error: E; readonly ok: false } | { readonly ok: true; readonly value: A }
 ```
 
-[Source](https://github.com/ldrick/trade-indicators/blob/main/src/types.ts#L85)
+[Source](https://github.com/ldrick/trade-indicators/blob/main/src/types.ts#L124)
 
 Since v0.9.0
