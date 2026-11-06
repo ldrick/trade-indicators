@@ -1,0 +1,38 @@
+name: Commitlint
+on:
+    pull_request:
+        branches: [main]
+        types: [opened, edited, reopened, synchronize]
+permissions:
+    contents: read
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+jobs:
+    commitlint:
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        steps:
+            - name: Checkout
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 0
+            - name: Install pnpm
+              uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+            - name: Use Node.js
+              uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+              with:
+                  node-version: '26.x'
+                  cache: 'pnpm'
+            - name: Install Dependencies
+              run: pnpm i --frozen-lockfile
+            # squash merges use the pull request title as commit message
+            - name: Pull Request Title
+              env:
+                  TITLE: ${{ github.event.pull_request.title }}
+              run: printf '%s\n' "$TITLE" | pnpm exec commitlint
+            - name: Commits
+              env:
+                  BASE: ${{ github.event.pull_request.base.sha }}
+                  HEAD: ${{ github.event.pull_request.head.sha }}
+              run: pnpm exec commitlint --from "$BASE" --to "$HEAD"

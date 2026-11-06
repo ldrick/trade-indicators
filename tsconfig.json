@@ -10,6 +10,7 @@
 		"vitest.config.ts",
 		"eslint.config.ts",
 		"oxfmt.config.ts",
-		"knip.config.ts"
+		"knip.config.ts",
+		"commitlint.config.ts"
 	]
 }

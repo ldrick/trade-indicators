@@ -23,6 +23,10 @@ pnpm lint:claude:fix      # claudelint format --fix
 pnpm knip                 # unused files/deps/exports check
 ```
 
+TypeScript runs side by side as described for TypeScript 7.0: `tsc` is TypeScript 7 (devDependency alias `@typescript/native`), used by `build`, `types:check` and docgen's example check; `typescript` resolves to `@typescript/typescript6`, which provides the 6.0 API for typescript-eslint and docgen and the `tsc6` binary.
+
+Commit messages and pull request titles must follow Conventional Commits: commitlint (`commitlint.config.ts`) checks them in the husky `commit-msg` hook and in `.github/workflows/commitlint.yml`, because releases and the changelog are derived from them.
+
 Run a single test file or case with vitest directly:
 
 ```bash
