@@ -5,7 +5,7 @@ import { macd } from '../../src/averages/macd.js';
 import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';
 import { NotFiniteNumberError } from '../../src/errors/NotFiniteNumberError.js';
 import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
-import { PeriodSizeMissmatchError } from '../../src/errors/PeriodSizeMissmatchError.js';
+import { PeriodSizeMismatchError } from '../../src/errors/PeriodSizeMismatchError.js';
 import * as prices from '../prices.json' with { type: 'json' };
 
 describe('macd', () => {
@@ -34,7 +34,7 @@ describe('macd', () => {
 
 	it('fails if slowPeriod is lower or equal fastPeriod', () => {
 		expect(macd([], 3, 1)).toStrictEqual(
-			E.left(new PeriodSizeMissmatchError('slowPeriod', 'fastPeriod')),
+			E.left(new PeriodSizeMismatchError('slowPeriod', 'fastPeriod')),
 		);
 	});
 

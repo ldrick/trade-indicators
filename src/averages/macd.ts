@@ -6,7 +6,7 @@ import {
 	readonlyNonEmptyArray as RNEA,
 } from 'fp-ts';
 
-import { PeriodSizeMissmatchError } from '../errors/PeriodSizeMissmatchError.js';
+import { PeriodSizeMismatchError } from '../errors/PeriodSizeMismatchError.js';
 import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
@@ -24,7 +24,7 @@ export interface MACDReturn {
 const validatePeriodSizes = (slowPeriod: number, fastPeriod: number): E.Either<Error, boolean> =>
 	slowPeriod > fastPeriod
 		? E.right(true)
-		: E.left(new PeriodSizeMissmatchError('slowPeriod', 'fastPeriod'));
+		: E.left(new PeriodSizeMismatchError('slowPeriod', 'fastPeriod'));
 
 const calculate = (
 	fast: RNEA.ReadonlyNonEmptyArray<number>,

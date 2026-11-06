@@ -33,7 +33,7 @@ These checks mirror the `build` job in `.github/workflows/test.yml`, run in this
 
 ## Architecture
 
-**Calculation pipeline.** Every public indicator (`src/averages/*.ts`, `src/movements/*.ts`) follows the same shape: validate inputs with `fp-ts` `Either` (via `AP.sequenceS`), then check all values are finite (`validateFinite` in `src/utils/array.ts` / `src/utils/record.ts`, failing with `NotFiniteNumberError`), then run the calculation. Validation failures short-circuit as one of the `Error` subclasses in `src/errors/` (`NotEnoughDataError`, `NotPositiveIntegerError`, `UnequalArraySizesError`, `EmptyArrayError`, `PeriodSizeMissmatchError`, `NotFiniteNumberError`) — never a thrown exception.
+**Calculation pipeline.** Every public indicator (`src/averages/*.ts`, `src/movements/*.ts`) follows the same shape: validate inputs with `fp-ts` `Either` (via `AP.sequenceS`), then check all values are finite (`validateFinite` in `src/utils/array.ts` / `src/utils/record.ts`, failing with `NotFiniteNumberError`), then run the calculation. Validation failures short-circuit as one of the `Error` subclasses in `src/errors/` (`NotEnoughDataError`, `NotPositiveIntegerError`, `UnequalArraySizesError`, `EmptyArrayError`, `PeriodSizeMismatchError`, `NotFiniteNumberError`) — never a thrown exception.
 
 **Composition over duplication.** Indicators are built from smaller internal primitives, not implemented independently:
 

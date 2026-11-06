@@ -72,9 +72,9 @@
 			"types": "./dist/errors/NotPositiveIntegerError.d.ts",
 			"import": "./dist/errors/NotPositiveIntegerError.js"
 		},
-		"./errors/PeriodSizeMissmatchError.js": {
-			"types": "./dist/errors/PeriodSizeMissmatchError.d.ts",
-			"import": "./dist/errors/PeriodSizeMissmatchError.js"
+		"./errors/PeriodSizeMismatchError.js": {
+			"types": "./dist/errors/PeriodSizeMismatchError.d.ts",
+			"import": "./dist/errors/PeriodSizeMismatchError.js"
 		},
 		"./errors/UnequalArraySizesError.js": {
 			"types": "./dist/errors/UnequalArraySizesError.d.ts",
