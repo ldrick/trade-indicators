@@ -6,18 +6,21 @@
 [![npm license](https://img.shields.io/npm/l/@ldrick/trade-indicators)](https://www.npmjs.com/package/@ldrick/trade-indicators)
 [![made with](https://img.shields.io/github/languages/top/ldrick/trade-indicators)](https://www.typescriptlang.org/)
 
-> Trade Indicators written in pure functional Typescript. \
-> Results will be \
-> `Either<Error, ReadonlyArray<number> | Readonly<Record<string, ReadonlyArray<number>>>>` \
-> depending on what is returned using these amazing libraries: \
-> 🚀 [fp-ts](https://github.com/gcanti/fp-ts) \
-> 🌟 [big.js](https://github.com/MikeMcl/big.js/)
+> Trade Indicators written in pure functional TypeScript. \
+> No function throws: every indicator returns a `Result`, \
+> either `{ ok: true, value }` or `{ ok: false, error }`. \
+> Every result series has one entry per input value (`value[i]` belongs to `values[i]`), \
+> starting with `null` until enough values are available. \
+> Every indicator also exists as incremental function (e.g. `incrementalSma`) for live data: \
+> push one value at a time and get exactly the same values as from the batch function. \
+> Indicators expose no third-party types; adapters for Promises and [Effect](https://effect.website) are included.
 >
 > - Average Directional Index (adx)
 > - Average True Range (atr)
 > - Double Exponential Moving Average (dema)
 > - Exponential Moving Average (ema)
 > - Moving Average Convergence / Divergence (macd)
+> - Relative Strength Index (rsi)
 > - Simple Moving Average (sma)
 > - Smoothed Moving Average (smma)
 > - Triple Exponential Moving Average (tema)
@@ -25,31 +28,62 @@
 
 ## Install
 
-`npm install @ldrick/trade-indicators fp-ts big.js` \
+`npm install @ldrick/trade-indicators` \
 or \
-`yarn add @ldrick/trade-indicators fp-ts big.js`
+`pnpm add @ldrick/trade-indicators`
 
 ## Usage
 
 In TypeScript:
 
 ```typescript
-import { either as E, function as F } from 'fp-ts';
-import { ema } from '@ldrick/trade-indicators/averages/ema.js';
-import { toPromise } from '@ldrick/trade-indicators/toPromise.js';
+import { ema, toEffectResult, toPromise } from '@ldrick/trade-indicators';
 
 const prices = [3, 2.1, 3, 4, 5.3, 5, 4.8, 6, 7, 5];
 const period = 3;
 
-// possible usage to pipe the Result E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>>
-const expMovingAverage = F.pipe(
-	ema(prices, period),
-	E.getOrElse(() => <ReadonlyArray<number>>[]),
-);
+// check the Result directly
+const result = ema(prices, period);
+if (result.ok) {
+	console.log(result.value);
+} else {
+	console.log(result.error);
+}
 
-// or convert the Result to Promise<RNEA.ReadonlyNonEmptyArray<number>>
+// or convert the Result to a Promise
 toPromise(ema(prices, period)).then(
-	(result) => console.log(result),
+	(values) => console.log(values),
 	(error) => console.log(error),
 );
+
+// or to an Effect Result
+const effectResult = toEffectResult(ema(prices, period));
 ```
+
+Incrementally, e.g. for live prices:
+
+```typescript
+import { incrementalEma } from '@ldrick/trade-indicators';
+
+const created = incrementalEma(3);
+if (created.ok) {
+	let ema = created.value;
+	for (const price of [3, 2.1, 3, 4, 5.3]) {
+		const pushed = ema.push(price);
+		if (!pushed.ok) throw pushed.error;
+		ema = pushed.value;
+		console.log(ema.value); // null, null, then ≈ 2.7, 3.35, 4.325
+	}
+}
+```
+
+## Errors
+
+No function throws. Invalid input is returned as `{ ok: false, error }` with one of the error classes
+exported by the package (e.g. `NotEnoughDataError`, `NotFiniteNumberError`),
+so errors can be distinguished with `instanceof`.
+
+## Documentation
+
+See [ldrick.github.io/trade-indicators](https://ldrick.github.io/trade-indicators/) for every
+indicator's signature, output length and an example.

@@ -105,3 +105,6 @@ dist
 
 # local documentation
 *.local.md
+
+# local scratch notes
+scratch/

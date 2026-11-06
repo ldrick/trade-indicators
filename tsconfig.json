@@ -6,6 +6,7 @@
 	"include": [
 		"src",
 		"tests",
+		"scripts",
 		"vitest.config.ts",
 		"eslint.config.ts",
 		"oxfmt.config.ts",

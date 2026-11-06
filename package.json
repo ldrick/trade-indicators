@@ -3,11 +3,17 @@
 	"version": "0.8.0",
 	"description": "Trade Indicators",
 	"keywords": [
+		"adx",
+		"atr",
 		"average",
 		"dema",
+		"effect",
 		"ema",
 		"indicators",
+		"macd",
 		"moving",
+		"oscillator",
+		"rsi",
 		"signals",
 		"sma",
 		"smma",
@@ -28,66 +34,25 @@
 	"sideEffects": false,
 	"type": "module",
 	"exports": {
-		"./averages/dema.js": {
-			"types": "./dist/averages/dema.d.ts",
-			"import": "./dist/averages/dema.js"
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
 		},
-		"./averages/dma.js": {
-			"types": "./dist/averages/dma.d.ts",
-			"import": "./dist/averages/dma.js"
-		},
-		"./averages/ema.js": {
-			"types": "./dist/averages/ema.d.ts",
-			"import": "./dist/averages/ema.js"
-		},
-		"./averages/ma.js": {
-			"types": "./dist/averages/ma.d.ts",
-			"import": "./dist/averages/ma.js"
-		},
-		"./averages/macd.js": {
-			"types": "./dist/averages/macd.d.ts",
-			"import": "./dist/averages/macd.js"
-		},
-		"./averages/sma.js": {
-			"types": "./dist/averages/sma.d.ts",
-			"import": "./dist/averages/sma.js"
-		},
-		"./averages/smma.js": {
-			"types": "./dist/averages/smma.d.ts",
-			"import": "./dist/averages/smma.js"
-		},
-		"./averages/tema.js": {
-			"types": "./dist/averages/tema.d.ts",
-			"import": "./dist/averages/tema.js"
-		},
-		"./averages/wma.js": {
-			"types": "./dist/averages/wma.d.ts",
-			"import": "./dist/averages/wma.js"
-		},
-		"./movements/adx.js": {
-			"types": "./dist/movements/adx.d.ts",
-			"import": "./dist/movements/adx.js"
-		},
-		"./movements/atr.js": {
-			"types": "./dist/movements/atr.d.ts",
-			"import": "./dist/movements/atr.js"
-		},
-		"./toPromise.js": {
-			"types": "./dist/utils/toPromise.d.ts",
-			"import": "./dist/utils/toPromise.js"
-		}
+		"./package.json": "./package.json"
 	},
 	"files": [
 		"dist"
 	],
 	"scripts": {
 		"build": "rimraf dist && tsc --project tsconfig.build.json",
+		"docgen": "docgen && node scripts/fixDocgenSourceLinks.ts",
 		"format": "oxfmt",
 		"format:check": "oxfmt --check",
 		"knip": "knip",
 		"lint": "eslint --max-warnings 0 .",
 		"lint:claude": "claudelint check-all --strict",
 		"lint:claude:fix": "claudelint format --fix",
+		"package:check": "publint --strict && attw --pack . --profile esm-only",
 		"prepare": "husky",
 		"test": "vitest run --coverage",
 		"types:check": "tsc --noEmit"
@@ -96,10 +61,11 @@
 		"*": "oxfmt --no-error-on-unmatched-pattern"
 	},
 	"dependencies": {
-		"big.js": "^7.0.1",
-		"fp-ts": "^2.16.11"
+		"effect": "^4.1.2"
 	},
 	"devDependencies": {
+		"@arethetypeswrong/cli": "^0.18.5",
+		"@effect/docgen": "^4.1.2",
 		"@eslint-community/eslint-plugin-eslint-comments": "^4.8.1",
 		"@eslint/js": "^10.0.1",
 		"@eslint/json": "^2.1.0",
@@ -108,7 +74,6 @@
 		"@tsconfig/node-ts": "^23.6.4",
 		"@tsconfig/recommended": "^1.0.13",
 		"@tsconfig/strictest": "^2.0.8",
-		"@types/big.js": "^7.0.0",
 		"@types/node": "^26.6.2",
 		"@vitest/coverage-v8": "^5.0.1",
 		"@vitest/eslint-plugin": "^1.6.27",
@@ -122,11 +87,13 @@
 		"eslint-plugin-package-json": "^1.9.0",
 		"eslint-plugin-perfectionist": "^5.12.0",
 		"eslint-plugin-unicorn": "^79.0.0",
+		"fast-check": "^4.10.2",
 		"globals": "^17.12.0",
 		"husky": "^9.1.7",
 		"knip": "^6.37.0",
 		"lint-staged": "^17.5.1",
 		"oxfmt": "^0.75.0",
+		"publint": "^0.3.25",
 		"rimraf": "^6.1.3",
 		"typescript": "npm:@typescript/typescript6@^6.0.2",
 		"typescript-7": "npm:typescript@^7.0.2",

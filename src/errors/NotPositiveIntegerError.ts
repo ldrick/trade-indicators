@@ -1,6 +1,8 @@
 /**
  * Error for any `Number` lower 1 or not an Integer
- * @internal
+ * @category errors
+ * @since 0.9.0
+ * @public
  */
 export class NotPositiveIntegerError extends Error {
 	constructor() {

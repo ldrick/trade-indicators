@@ -35,18 +35,24 @@ Run in this order:
 - **B.** `pnpm format:check`
 - **C.** `pnpm types:check`
 - **D.** `pnpm lint`
-- **E.** `pnpm test`
+- **E.** `pnpm lint:claude`
+- **F.** `pnpm test`
+- **G.** `pnpm build && pnpm package:check`
+- **H.** `pnpm docgen`, then `git status --porcelain -- docs` must be empty
 
 Self-healing rule when a check fails:
 
-- **A fails** → an updated dependency likely introduced (or removed the last usage of) a devDependency, or the `knip.config.ts` entry list is stale — fix the actual cause (remove the unused devDependency, or update `knip.config.ts` if a source file legitimately moved), then re-run **A**.
+- **A fails** → an updated dependency likely introduced (or removed the last usage of) a devDependency, or an export became unused — fix the actual cause (remove the unused devDependency, or the unused export), then re-run **A**.
 - **B fails** → run `pnpm format` (auto-fixes formatting), then re-run **A**, then **B** again.
 - **C fails** → try to fix the type errors, then re-run **A**, **B**, then **C** again.
 - **D fails** → try to fix the lint errors, then re-run **A**, **B**, **C**, then **D** again.
-- **E fails** → try to fix the failing tests, then re-run **A**, **B**, **C**, **D**, then **E** again.
+- **E fails** → a `claude-code-lint` update likely tightened its rules — fix the reported `.claude/` files (`pnpm lint:claude:fix` handles formatting issues), then re-run **A**–**D**, then **E** again.
+- **F fails** → try to fix the failing tests, then re-run **A**–**E**, then **F** again.
+- **G fails** → a TypeScript or packaging change broke the published package shape (build output, `exports` map, typings) — fix the cause, then re-run **A**–**F**, then **G** again.
+- **H fails** → if docgen errors, an `effect`/`@effect/docgen`/TypeScript update broke an `@example` or the docgen config — fix it. If it succeeds but `docs/` changed (e.g. a new docgen version renders differently), the regenerated docs are part of the update: keep them, then re-run **A**–**G**, then **H** again.
 
 In general: whenever a check fails and you make a fix, restart from **A** and work forward through the failed check again before moving on. Only proceed past a check once it passes. If a check keeps failing after a reasonable fix attempt, stop and report instead of looping indefinitely.
 
 ## 4. Done
 
-Once A–D all pass, summarize which dependencies were updated (`git diff package.json`) and remind the user to review the changes (including the regenerated `pnpm-lock.yaml`) before committing.
+Once A–H all pass, summarize which dependencies were updated (`git diff package.json`) and remind the user to review the changes (including the regenerated `pnpm-lock.yaml`) before committing.
