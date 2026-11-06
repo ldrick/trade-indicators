@@ -46,8 +46,8 @@ in `.github/workflows/publish.yml`:
    `package.json` and `.release-please-manifest.json` and adds the changes to `CHANGELOG.md`,
    both derived from the Conventional Commits since the last release.
    While the version is below 1.0.0, breaking changes raise the minor version.
-2. Merging the release pull request creates the Git tag (e.g. `0.9.0`) and the GitHub release,
-   runs all checks and publishes the package to npm (trusted publishing). The published tarball and its signed build provenance are attached to the GitHub release.
+2. Merging the release pull request creates the Git tag (e.g. `0.9.0`) and a draft GitHub release,
+   runs all checks and publishes the package to npm (trusted publishing). The published tarball and its signed build provenance are attached to the draft, which is then published as an immutable release.
 
 Merge pull requests with a merge commit, not squashed, when their individual commits should
 appear in the changelog.
