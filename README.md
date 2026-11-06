@@ -26,6 +26,11 @@
 > - Triple Exponential Moving Average (tema)
 > - Weighted Moving Average (wma)
 
+## Requirements
+
+- Node.js 22.12 or newer (or any bundler)
+- The package is ESM-only. CommonJS projects can `require()` it on Node.js 22.12 and newer.
+
 ## Install
 
 `npm install @ldrick/trade-indicators` \
