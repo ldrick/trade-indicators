@@ -5,6 +5,7 @@
 [![npm version](https://img.shields.io/npm/v/@ldrick/trade-indicators?color=blue)](https://www.npmjs.com/package/@ldrick/trade-indicators)
 [![npm license](https://img.shields.io/npm/l/@ldrick/trade-indicators)](https://www.npmjs.com/package/@ldrick/trade-indicators)
 [![made with](https://img.shields.io/github/languages/top/ldrick/trade-indicators)](https://www.typescriptlang.org/)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/ldrick/trade-indicators/badge)](https://scorecard.dev/viewer/?uri=github.com/ldrick/trade-indicators)
 
 > Trade Indicators written in pure functional TypeScript. \
 > No function throws: every indicator returns a `Result`, \
@@ -25,6 +26,11 @@
 > - Smoothed Moving Average (smma)
 > - Triple Exponential Moving Average (tema)
 > - Weighted Moving Average (wma)
+
+## Requirements
+
+- Node.js 22.12 or newer (or any bundler)
+- The package is ESM-only. CommonJS projects can `require()` it on Node.js 22.12 and newer.
 
 ## Install
 

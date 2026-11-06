@@ -3,7 +3,7 @@
 	"projectHomepage": "https://github.com/ldrick/trade-indicators",
 	"srcDir": "src",
 	"outDir": "docs",
-	"theme": "pmarsceill/just-the-docs",
+	"theme": "just-the-docs/just-the-docs@v0.12.0",
 	"enableSearch": true,
 	"enforceDescriptions": true,
 	"enforceExamples": false,
