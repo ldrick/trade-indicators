@@ -1,0 +1,23 @@
+{
+	"$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+	"packages": {
+		".": {
+			"release-type": "node",
+			"package-name": "@ldrick/trade-indicators",
+			"include-v-in-tag": false,
+			"bump-minor-pre-major": true,
+			"changelog-sections": [
+				{ "type": "feat", "section": "Features" },
+				{ "type": "fix", "section": "Bug Fixes" },
+				{ "type": "perf", "section": "Performance" },
+				{ "type": "refactor", "section": "Refactoring" },
+				{ "type": "build", "section": "Build" },
+				{ "type": "docs", "section": "Documentation" },
+				{ "type": "revert", "section": "Reverts" },
+				{ "type": "test", "section": "Tests", "hidden": true },
+				{ "type": "ci", "section": "CI", "hidden": true },
+				{ "type": "chore", "section": "Miscellaneous", "hidden": true }
+			]
+		}
+	}
+}
