@@ -1,6 +1,6 @@
 {
 	"name": "@ldrick/trade-indicators",
-	"version": "0.9.1",
+	"version": "0.9.2",
 	"description": "Technical analysis indicators (SMA, EMA, WMA, SMMA, DEMA, TEMA, MACD, RSI, ATR, ADX) in purely functional TypeScript: batch functions and incremental variants for live data, returning results instead of throwing",
 	"keywords": [
 		"adx",
