@@ -20,14 +20,22 @@ jobs:
                   cache: 'pnpm'
             - name: Install Dependencies
               run: pnpm i --frozen-lockfile
+            - name: Knip
+              run: pnpm knip
             - name: Format Check
               run: pnpm format:check
             - name: Type Check
               run: pnpm types:check
             - name: Lint
               run: pnpm lint
+            - name: Claude Lint
+              run: pnpm lint:claude
             - name: Test
               run: pnpm test
+            - name: Build
+              run: pnpm build
+            - name: Package Check
+              run: pnpm package:check
     publish-npm:
         needs: test
         runs-on: ubuntu-latest

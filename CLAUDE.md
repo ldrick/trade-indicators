@@ -29,7 +29,7 @@ pnpm exec vitest run tests/averages/sma.spec.ts
 pnpm exec vitest run -t "test name"
 ```
 
-These checks mirror the `build` job in `.github/workflows/test.yml`, run in this order: knip → format:check → types:check → lint → lint:claude → test. The `update-dependencies` skill (`.claude/skills/update-dependencies/`) automates a full dependency bump following this same order with self-healing retries.
+These checks mirror the `build` job in `.github/workflows/test.yml`, run in this order: knip → format:check → types:check → lint → lint:claude → test → build → package:check. The `test` job in `publish.yml` runs the same sequence before publishing. The `update-dependencies` skill (`.claude/skills/update-dependencies/`) automates a full dependency bump following this same order with self-healing retries.
 
 ## Architecture
 

@@ -40,6 +40,10 @@ jobs:
               run: pnpm lint:claude
             - name: Test
               run: pnpm test
+            - name: Build
+              run: pnpm build
+            - name: Package Check
+              run: pnpm package:check
             - name: Codecov
               if: github.actor != 'dependabot[bot]'
               uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
