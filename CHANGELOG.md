@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.9.1](https://github.com/ldrick/trade-indicators/compare/0.9.0...0.9.1) (2026-11-06)
+
+
+### Bug Fixes
+
+* allow require() of the package from CommonJS ([3e2c4a9](https://github.com/ldrick/trade-indicators/commit/3e2c4a911df15fcb55373db875a847b9af8775c1))
+
+
+### Build
+
+* describe the package better on npm ([84df01f](https://github.com/ldrick/trade-indicators/commit/84df01f3e60160a7766e7e5a649dd9b792e2b456))
+* require Node.js 22.12 for require() of the ESM-only package ([4f524c4](https://github.com/ldrick/trade-indicators/commit/4f524c4bd7f99d5b8a03e3078a39389d60209e95))
+
 ## [0.9.0](https://github.com/ldrick/trade-indicators/compare/0.8.0...0.9.0) (2026-11-06)
 
 
