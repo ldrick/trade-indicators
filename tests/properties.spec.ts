@@ -11,6 +11,7 @@ import { tema } from '../src/averages/tema.js';
 import { wma } from '../src/averages/wma.js';
 import { adx } from '../src/movements/adx.js';
 import { atr } from '../src/movements/atr.js';
+import { rsi } from '../src/oscillators/rsi.js';
 import { type HighLowClose } from '../src/types.js';
 
 const price = fc.double({ max: 1e6, min: 0.01, noDefaultInfinity: true, noNaN: true });
@@ -216,6 +217,23 @@ describe('adx properties', () => {
 					expect(result.adx).toHaveLength(result.pdi.length);
 					for (const value of [...result.pdi, ...result.mdi, ...result.adx]) {
 						expect(value === null || isBetween(value, 0, 100)).toBe(true);
+					}
+				},
+			),
+		);
+	});
+});
+
+describe('rsi properties', () => {
+	it('returns values.length - period values within 0 and 100', () => {
+		fc.assert(
+			fc.property(
+				pricesWithPeriod((p) => p + 1),
+				({ p, v }) => {
+					const result = getRight(rsi(v, p));
+					expect(result).toHaveLength(v.length - p);
+					for (const value of result) {
+						expect(isBetween(value, 0, 100)).toBe(true);
 					}
 				},
 			),

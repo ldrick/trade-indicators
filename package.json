@@ -3,11 +3,16 @@
 	"version": "0.8.0",
 	"description": "Trade Indicators",
 	"keywords": [
+		"adx",
+		"atr",
 		"average",
 		"dema",
 		"ema",
 		"indicators",
+		"macd",
 		"moving",
+		"oscillator",
+		"rsi",
 		"signals",
 		"sma",
 		"smma",
@@ -87,6 +92,10 @@
 		"./movements/atr.js": {
 			"types": "./dist/movements/atr.d.ts",
 			"import": "./dist/movements/atr.js"
+		},
+		"./oscillators/rsi.js": {
+			"types": "./dist/oscillators/rsi.d.ts",
+			"import": "./dist/oscillators/rsi.js"
 		},
 		"./package.json": "./package.json",
 		"./toPromise.js": {

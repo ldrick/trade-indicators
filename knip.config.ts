@@ -12,6 +12,7 @@ const config: KnipConfig = {
 		'src/averages/wma.ts',
 		'src/movements/adx.ts',
 		'src/movements/atr.ts',
+		'src/oscillators/rsi.ts',
 		'src/errors/*.ts',
 		'src/types.ts',
 	],

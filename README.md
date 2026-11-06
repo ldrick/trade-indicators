@@ -17,6 +17,7 @@
 > - Double Exponential Moving Average (dema)
 > - Exponential Moving Average (ema)
 > - Moving Average Convergence / Divergence (macd)
+> - Relative Strength Index (rsi)
 > - Simple Moving Average (sma)
 > - Smoothed Moving Average (smma)
 > - Triple Exponential Moving Average (tema)

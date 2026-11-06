@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-`@ldrick/trade-indicators` — trading indicators (SMA, EMA, DEMA, TEMA, WMA, MACD, ATR, ADX) written in pure functional TypeScript with `fp-ts`, using plain `number` math (big.js was dropped for performance: unrounded decimal growth made EMA-based indicators quadratic/OOM). Every public function returns `Either<Error, Result>` instead of throwing.
+`@ldrick/trade-indicators` — trading indicators (SMA, EMA, DEMA, TEMA, WMA, MACD, ATR, ADX, RSI) written in pure functional TypeScript with `fp-ts`, using plain `number` math (big.js was dropped for performance: unrounded decimal growth made EMA-based indicators quadratic/OOM). Every public function returns `Either<Error, Result>` instead of throwing.
 
 ## Commands
 
@@ -33,14 +33,15 @@ These checks mirror the `build` job in `.github/workflows/test.yml`, run in this
 
 ## Architecture
 
-**Calculation pipeline.** Every public indicator (`src/averages/*.ts`, `src/movements/*.ts`) follows the same shape: validate inputs with `fp-ts` `Either` (via `AP.sequenceS`), then check all values are finite (`validateFinite` in `src/utils/array.ts` / `src/utils/record.ts`, failing with `NotFiniteNumberError`), then run the calculation. Validation failures short-circuit as one of the `Error` subclasses in `src/errors/` (`NotEnoughDataError`, `NotPositiveIntegerError`, `UnequalArraySizesError`, `EmptyArrayError`, `PeriodSizeMismatchError`, `NotFiniteNumberError`) — never a thrown exception.
+**Calculation pipeline.** Every public indicator (`src/averages/*.ts`, `src/movements/*.ts`, `src/oscillators/*.ts`) follows the same shape: validate inputs with `fp-ts` `Either` (via `AP.sequenceS`), then check all values are finite (`validateFinite` in `src/utils/array.ts` / `src/utils/record.ts`, failing with `NotFiniteNumberError`), then run the calculation. Validation failures short-circuit as one of the `Error` subclasses in `src/errors/` (`NotEnoughDataError`, `NotPositiveIntegerError`, `UnequalArraySizesError`, `EmptyArrayError`, `PeriodSizeMismatchError`, `NotFiniteNumberError`) — never a thrown exception.
 
 **Composition over duplication.** Indicators are built from smaller internal primitives, not implemented independently:
 
 - `src/averages/ma.ts` (generic moving average) + `src/averages/amean.ts` (arithmetic mean) → `sma`. The same `src/averages/wamean.ts` (weighted mean) feeds `wma`.
 - `src/averages/dma.ts` (generic exponential smoothing given a factor) is the base for both `ema` and `smma` (different `factor`).
 - `src/averages/ema.ts` exports an unchecked `emaC` (no validation) alongside the public, validated `ema`. `dema`, `tema`, `macd` all chain `emaC` internally (e.g. `dema` = 2×EMA − EMA(EMA)) rather than duplicating validation/conversion.
-- `src/movements/atr.ts` exports `atrC` (unchecked True Range + `smmaC`) the same way; `src/movements/adx.ts` builds PDI/MDI/ADX on top of `atrC` and `smmaC`.
+- `src/movements/atr.ts` exports `atrC` (unchecked True Range + `smmaC`) the same way; `src/movements/adx.ts` builds PDI/MDI/ADX on top of `atrC` and `smmaC`; `src/oscillators/rsi.ts` smooths gains and losses with `smmaC` (Wilder).
+- Map over arrays with `E.traverseReadonlyNonEmptyArrayWithIndex`, never the generic `RNEA.traverse(E.Applicative)`/`RNEA.traverseWithIndex(E.Applicative)`: the generic ones are O(n²) in fp-ts.
 
 This `xC` (checked-core) naming convention — public validated wrapper + internal `*C` function taking already-validated values — is how new EMA/SMMA-derived indicators should be added.
 
