@@ -39,6 +39,12 @@ describe('adx', () => {
 		);
 	});
 
+	it('fails if close has more values than high and low', () => {
+		expect(
+			adx({ close: [1, 2, 3, 4, 5, 6], high: [2, 3, 4, 5, 6], low: [0, 1, 2, 3, 4] }, 2),
+		).toStrictEqual(E.left(new UnequalArraySizesError()));
+	});
+
 	it.each([
 		{ v: { close: [0, 0, 0, 0, 0], high: [0, 0, NaN, 0, 0], low: [0, 0, 0, 0, 0] } },
 		{

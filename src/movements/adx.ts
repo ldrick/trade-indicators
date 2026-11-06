@@ -51,6 +51,7 @@ const directionalMovement = (
 						const down = previousLow - low;
 						return movement(up, down, move);
 					}),
+					// v8 ignore next -- all series are validated to have equal length, so every lookup succeeds
 					E.fromOption(() => new UnequalArraySizesError()),
 				),
 			),
@@ -111,6 +112,7 @@ export const adx = (values: HighLowClose<number>, period = 14): E.Either<Error, 
 	F.pipe(
 		AP.sequenceS(E.Applicative)({
 			periodV: number_.validatePositiveInteger(period),
+			sizesV: rec.validateEqualSizes(values),
 			valuesV: rec.validateRequiredSize(2 * period)(values),
 		}),
 		E.bind('valuesF', ({ valuesV }) => rec.validateFinite(valuesV)),

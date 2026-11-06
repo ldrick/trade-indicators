@@ -33,6 +33,12 @@ describe('atr', () => {
 		).toStrictEqual(E.left(new UnequalArraySizesError()));
 	});
 
+	it('fails if close has more values than high and low', () => {
+		expect(
+			atr({ close: [1, 2, 3, 4, 5], high: [2, 3, 4, 5], low: [0, 1, 2, 3] }, 2),
+		).toStrictEqual(E.left(new UnequalArraySizesError()));
+	});
+
 	it.each([
 		{ v: { close: [0, 0, 0, 0], high: [0, 0, NaN, 0], low: [0, 0, 0, 0] } },
 		{

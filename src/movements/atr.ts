@@ -32,6 +32,7 @@ const trueRange = (
 							Math.abs(currentLow - previousClose),
 						),
 					),
+					// v8 ignore next -- all series are validated to have equal length, so every lookup succeeds
 					E.fromOption(() => new UnequalArraySizesError()),
 				),
 			),
@@ -66,6 +67,7 @@ export const atr = (
 	F.pipe(
 		AP.sequenceS(E.Applicative)({
 			periodV: number_.validatePositiveInteger(period),
+			sizesV: rec.validateEqualSizes(values),
 			valuesV: rec.validateRequiredSize(period + 1)(values),
 		}),
 		E.bind('valuesF', ({ valuesV }) => rec.validateFinite(valuesV)),

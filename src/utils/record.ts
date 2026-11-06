@@ -1,5 +1,6 @@
 import { either as E, function as F, readonlyRecord as RR } from 'fp-ts';
 
+import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
 import { type HighLowClose, type NonEmptyHighLowClose } from '../types.js';
 import * as array from './array.js';
 
@@ -11,6 +12,15 @@ export const validateFinite = (
 	record: NonEmptyHighLowClose<number>,
 ): E.Either<Error, NonEmptyHighLowClose<number>> =>
 	F.pipe(record, RR.traverse(E.Applicative)(array.validateFinite));
+
+/**
+ * Validates if all Arrays in Record have the same length.
+ * @internal
+ */
+export const validateEqualSizes = <A>(record: HighLowClose<A>): E.Either<Error, HighLowClose<A>> =>
+	record.high.length === record.low.length && record.low.length === record.close.length
+		? E.right(record)
+		: E.left(new UnequalArraySizesError());
 
 /**
  * Validates if every Array in Record has the required size.
