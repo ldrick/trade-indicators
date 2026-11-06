@@ -1,28 +1,36 @@
 {
 	"name": "@ldrick/trade-indicators",
 	"version": "0.9.0",
-	"description": "Trade Indicators",
+	"description": "Technical analysis indicators (SMA, EMA, WMA, SMMA, DEMA, TEMA, MACD, RSI, ATR, ADX) in purely functional TypeScript: batch functions and incremental variants for live data, returning results instead of throwing",
 	"keywords": [
 		"adx",
 		"atr",
-		"average",
+		"crypto",
 		"dema",
 		"effect",
 		"ema",
+		"finance",
+		"functional",
+		"incremental",
 		"indicators",
 		"macd",
-		"moving",
 		"oscillator",
 		"rsi",
-		"signals",
 		"sma",
 		"smma",
+		"stocks",
+		"streaming",
 		"technical",
-		"trade",
+		"technical-analysis",
+		"tema",
 		"trading",
-		"true-range"
+		"typescript",
+		"wma"
 	],
-	"homepage": "https://github.com/ldrick/trade-indicators",
+	"homepage": "https://ldrick.github.io/trade-indicators/",
+	"bugs": {
+		"url": "https://github.com/ldrick/trade-indicators/issues"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/ldrick/trade-indicators.git"
