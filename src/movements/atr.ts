@@ -1,4 +1,3 @@
-import { Big } from 'big.js';
 import {
 	apply as AP,
 	either as E,
@@ -12,27 +11,26 @@ import { smmaC } from '../averages/smma.js';
 import { UnequalArraySizesError } from '../errors/UnequalArraySizesError.js';
 import { type HighLowClose, type NonEmptyHighLowClose } from '../types.js';
 import * as array from '../utils/array.js';
-import * as big from '../utils/big.js';
 import * as number_ from '../utils/number.js';
 import * as rec from '../utils/record.js';
 
 const trueRange = (
-	values: NonEmptyHighLowClose<Big>,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
+	values: NonEmptyHighLowClose<number>,
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
 	F.pipe(
 		values.high,
 		array.tail,
 		E.chain(
-			RNEA.traverseWithIndex(E.Applicative)((index, high) =>
+			E.traverseReadonlyNonEmptyArrayWithIndex((index, high) =>
 				F.pipe(
 					O.bindTo('previousClose')(RA.lookup(index)(values.close)),
 					O.bind('currentLow', () => RA.lookup(index + 1)(values.low)),
 					O.map(({ currentLow, previousClose }) =>
-						big.max([
-							high.sub(currentLow),
-							high.sub(previousClose).abs(),
-							currentLow.sub(previousClose).abs(),
-						]),
+						Math.max(
+							high - currentLow,
+							Math.abs(high - previousClose),
+							Math.abs(currentLow - previousClose),
+						),
 					),
 					E.fromOption(() => new UnequalArraySizesError()),
 				),
@@ -41,17 +39,17 @@ const trueRange = (
 	);
 
 /**
- * ATR without checks and conversion.
+ * ATR without checks.
  * @internal
  */
 export const atrC = (
-	values: NonEmptyHighLowClose<Big>,
+	values: NonEmptyHighLowClose<number>,
 	period: number,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
 	F.pipe(
 		values,
 		trueRange,
-		E.chain((tr) => smmaC(tr, period)),
+		E.map((tr) => smmaC(tr, period)),
 	);
 
 /**
@@ -70,7 +68,6 @@ export const atr = (
 			periodV: number_.validatePositiveInteger(period),
 			valuesV: rec.validateRequiredSize(period + 1)(values),
 		}),
-		E.bind('valuesB', ({ valuesV }) => rec.toBig(valuesV)),
-		E.chain(({ periodV, valuesB }) => atrC(valuesB, periodV)),
-		E.map(array.toNumber),
+		E.bind('valuesF', ({ valuesV }) => rec.validateFinite(valuesV)),
+		E.chain(({ periodV, valuesF }) => atrC(valuesF, periodV)),
 	);

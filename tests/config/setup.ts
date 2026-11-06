@@ -36,13 +36,26 @@ const format =
 const areArraysEqual = <A>(exp: readonly A[], rec: readonly A[]) =>
 	exp.length === rec.length && exp.every((entry, index) => entry === rec[index]);
 
+// Plain `number` math reproduces the fixtures up to 12 decimals; 10 leaves headroom
+// for refactorings that change the order of floating point operations.
+const DEFAULT_DECIMALS = 10;
+
+const isWithinTolerance = (
+	exp: null | number,
+	rec: null | number | undefined,
+	decimals: number,
+): boolean =>
+	exp === null || rec === null || rec === undefined
+		? exp === rec
+		: Math.abs(exp - rec) < 10 ** -decimals;
+
 const areResultArraysEqual = (
 	exp: TestResultArray,
 	rec: TestResultArray,
 	decimals: number,
 ): boolean =>
 	exp.length === rec.length &&
-	exp.every((entry, index) => entry?.toFixed(decimals) === rec[index]?.toFixed(decimals));
+	exp.every((entry, index) => isWithinTolerance(entry, rec[index], decimals));
 
 const areResultRecordsEqual = (
 	exp: TestResultRecord,
@@ -66,8 +79,9 @@ expect.extend({
 	eitherRightToEqualFixedPrecision(
 		received: E.Either<Error, TestResult>,
 		expected: TestResult,
-		decimals: number,
+		decimalsOption?: number,
 	) {
+		const decimals = decimalsOption ?? DEFAULT_DECIMALS;
 		const { isNot, promise } = this;
 
 		const options = { isNot, promise };

@@ -1,17 +1,16 @@
-import { Big } from 'big.js';
 import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts';
 
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
 
 const calculation = (
-	values: RNEA.ReadonlyNonEmptyArray<Big>,
+	values: RNEA.ReadonlyNonEmptyArray<number>,
 	period: number,
-	callback: (v: RNEA.ReadonlyNonEmptyArray<Big>) => Big,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
+	callback: (v: RNEA.ReadonlyNonEmptyArray<number>) => number,
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
 	F.pipe(
 		RNEA.range(0, values.length - period),
-		RNEA.traverse(E.Applicative)((r) =>
+		E.traverseReadonlyNonEmptyArrayWithIndex((_index, r) =>
 			F.pipe(
 				values.slice(r, period + r),
 				array.validateRequiredSize(period),
@@ -27,14 +26,13 @@ const calculation = (
 export const ma = (
 	values: readonly number[],
 	period: number,
-	callback: (v: RNEA.ReadonlyNonEmptyArray<Big>) => Big,
+	callback: (v: RNEA.ReadonlyNonEmptyArray<number>) => number,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
 	F.pipe(
 		AP.sequenceS(E.Applicative)({
 			periodV: number_.validatePositiveInteger(period),
 			valuesV: array.validateRequiredSize(period)(values),
 		}),
-		E.bind('valuesB', ({ valuesV }) => array.toBig(valuesV)),
-		E.chain(({ periodV, valuesB }) => calculation(valuesB, periodV, callback)),
-		E.map(array.toNumber),
+		E.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
+		E.chain(({ periodV, valuesF }) => calculation(valuesF, periodV, callback)),
 	);

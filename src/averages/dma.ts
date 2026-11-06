@@ -1,4 +1,3 @@
-import { Big } from 'big.js';
 import { function as F, readonlyArray as RA, readonlyNonEmptyArray as RNEA } from 'fp-ts';
 
 import { amean } from './amean.js';
@@ -9,16 +8,13 @@ import { amean } from './amean.js';
  * @internal
  */
 export const dma = (
-	values: RNEA.ReadonlyNonEmptyArray<Big>,
+	values: RNEA.ReadonlyNonEmptyArray<number>,
 	period: number,
-	factor: Big,
-): RNEA.ReadonlyNonEmptyArray<Big> => {
+	factor: number,
+): RNEA.ReadonlyNonEmptyArray<number> => {
 	const [init, rest] = RNEA.splitAt(period)(values);
 	return F.pipe(
 		rest,
-		RA.reduce([amean(init)] as RNEA.ReadonlyNonEmptyArray<Big>, (reduced, value) => {
-			const previous = RNEA.last(reduced);
-			return RA.append(value.sub(previous).mul(factor).add(previous))(reduced);
-		}),
+		RA.scanLeft(amean(init), (previous, value) => (value - previous) * factor + previous),
 	);
 };

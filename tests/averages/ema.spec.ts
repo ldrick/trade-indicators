@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { ema } from '../../src/averages/ema.js';
 import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';
+import { NotFiniteNumberError } from '../../src/errors/NotFiniteNumberError.js';
 import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
 import * as prices from '../prices.json' with { type: 'json' };
 
@@ -21,7 +22,7 @@ describe('ema', () => {
 	it.each([{ v: [0, 0, NaN, 0] }, { v: [0, 0, Infinity, 0] }, { v: [0, 0, -Infinity, 0] }])(
 		'fails if values contains a infinit value $v',
 		({ v }) => {
-			expect(ema(v, 2)).toStrictEqual(E.left(new Error('[big.js] Invalid number')));
+			expect(ema(v, 2)).toStrictEqual(E.left(new NotFiniteNumberError()));
 		},
 	);
 

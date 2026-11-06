@@ -1,4 +1,3 @@
-import { Big } from 'big.js';
 import {
 	apply as AP,
 	either as E,
@@ -13,18 +12,18 @@ import * as number_ from '../utils/number.js';
 import { emaC } from './ema.js';
 
 const calculate = (
-	one: RNEA.ReadonlyNonEmptyArray<Big>,
-	two: RNEA.ReadonlyNonEmptyArray<Big>,
+	one: RNEA.ReadonlyNonEmptyArray<number>,
+	two: RNEA.ReadonlyNonEmptyArray<number>,
 	period: number,
 ): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
 	F.pipe(
 		two,
-		RNEA.traverseWithIndex(E.Applicative)((index, value) =>
+		E.traverseReadonlyNonEmptyArrayWithIndex((index, value) =>
 			F.pipe(
 				RA.lookup(index + period - 1)(one),
 				// v8 ignore next -- `one` and `two` are both derived from the same EMA chain, so their lengths are always in sync
 				E.fromOption(() => new UnequalArraySizesError()),
-				E.map((oneValue) => oneValue.mul(2).sub(value).toNumber()),
+				E.map((oneValue) => 2 * oneValue - value),
 			),
 		),
 	);
@@ -44,8 +43,8 @@ export const dema = (
 			periodV: number_.validatePositiveInteger(period),
 			valuesV: array.validateRequiredSize(2 * period - 1)(values),
 		}),
-		E.bind('valuesB', ({ valuesV }) => array.toBig(valuesV)),
-		E.bind('emaOne', ({ periodV, valuesB }) => emaC(valuesB, periodV)),
-		E.bind('emaTwo', ({ emaOne, periodV }) => emaC(emaOne, periodV)),
+		E.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
+		E.let('emaOne', ({ periodV, valuesF }) => emaC(valuesF, periodV)),
+		E.let('emaTwo', ({ emaOne, periodV }) => emaC(emaOne, periodV)),
 		E.chain(({ emaOne, emaTwo, periodV }) => calculate(emaOne, emaTwo, periodV)),
 	);

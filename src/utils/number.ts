@@ -1,17 +1,14 @@
-import { Big } from 'big.js';
 import { either as E } from 'fp-ts';
 
+import { NotFiniteNumberError } from '../errors/NotFiniteNumberError.js';
 import { NotPositiveIntegerError } from '../errors/NotPositiveIntegerError.js';
 
 /**
- * Safely convert `number` to `Big`.
+ * Validate finite Number (not `NaN`, `Infinity` or `-Infinity`).
  * @internal
  */
-export const toBig = (value: number): E.Either<Error, Big> =>
-	E.tryCatch(
-		() => new Big(value),
-		(error) => E.toError(error),
-	);
+export const validateFinite = (value: number): E.Either<Error, number> =>
+	Number.isFinite(value) ? E.right(value) : E.left(new NotFiniteNumberError());
 
 /**
  * Validate positive Integer.

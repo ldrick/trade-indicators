@@ -1,18 +1,16 @@
-import { Big } from 'big.js';
 import { either as E, function as F, readonlyRecord as RR } from 'fp-ts';
 
 import { type HighLowClose, type NonEmptyHighLowClose } from '../types.js';
 import * as array from './array.js';
 
 /**
- * Safely convert `RR.ReadonlyRecord<string, RNEA.ReadonlyNonEmptyArray<number>>>`
- * to `RR.ReadonlyRecord<string, RNEA.ReadonlyNonEmptyArray<Big>>>`.
+ * Validates if every value of every Array in Record is a finite Number.
  * @internal
  */
-export const toBig = (
+export const validateFinite = (
 	record: NonEmptyHighLowClose<number>,
-): E.Either<Error, NonEmptyHighLowClose<Big>> =>
-	F.pipe(record, RR.traverse(E.Applicative)(array.toBig));
+): E.Either<Error, NonEmptyHighLowClose<number>> =>
+	F.pipe(record, RR.traverse(E.Applicative)(array.validateFinite));
 
 /**
  * Validates if every Array in Record has the required size.

@@ -2,6 +2,7 @@ import { either as E } from 'fp-ts';
 import { describe, expect, it } from 'vitest';
 
 import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';
+import { NotFiniteNumberError } from '../../src/errors/NotFiniteNumberError.js';
 import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
 import { UnequalArraySizesError } from '../../src/errors/UnequalArraySizesError.js';
 import { adx } from '../../src/movements/adx.js';
@@ -55,7 +56,7 @@ describe('adx', () => {
 			},
 		},
 	])('fails if any value is a infinit value $v', ({ v }) => {
-		expect(adx(v, 2)).toStrictEqual(E.left(new Error('[big.js] Invalid number')));
+		expect(adx(v, 2)).toStrictEqual(E.left(new NotFiniteNumberError()));
 	});
 
 	it('calculates the Average Directional Index with default period', () => {

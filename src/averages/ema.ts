@@ -1,30 +1,17 @@
-import { Big } from 'big.js';
 import { apply as AP, either as E, function as F, readonlyNonEmptyArray as RNEA } from 'fp-ts';
 
 import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
 import { dma } from './dma.js';
 
-const factor = (period: number): E.Either<Error, Big> =>
-	F.pipe(
-		period,
-		number_.toBig,
-		E.map((periodB) => new Big(2).div(periodB.add(1))),
-	);
-
 /**
- * EMA without checks and conversion.
+ * EMA without checks.
  * @internal
  */
 export const emaC = (
-	values: RNEA.ReadonlyNonEmptyArray<Big>,
+	values: RNEA.ReadonlyNonEmptyArray<number>,
 	period: number,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
-	F.pipe(
-		period,
-		factor,
-		E.map((factorB) => dma(values, period, factorB)),
-	);
+): RNEA.ReadonlyNonEmptyArray<number> => dma(values, period, 2 / (period + 1));
 
 /**
  * The Exponential Moving Average (EMA) takes newer values weighted into account
@@ -42,7 +29,6 @@ export const ema = (
 			periodV: number_.validatePositiveInteger(period),
 			valuesV: array.validateRequiredSize(period)(values),
 		}),
-		E.bind('valuesB', ({ valuesV }) => array.toBig(valuesV)),
-		E.chain(({ periodV, valuesB }) => emaC(valuesB, periodV)),
-		E.map(array.toNumber),
+		E.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
+		E.map(({ periodV, valuesF }) => emaC(valuesF, periodV)),
 	);

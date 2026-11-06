@@ -1,4 +1,3 @@
-import { Big } from 'big.js';
 import {
 	apply as AP,
 	either as E,
@@ -24,17 +23,17 @@ const validatePeriodSizes = (slowPeriod: number, fastPeriod: number): E.Either<E
 		: E.left(new PeriodSizeMissmatchError('slowPeriod', 'fastPeriod'));
 
 const calculate = (
-	fast: RNEA.ReadonlyNonEmptyArray<Big>,
-	slow: RNEA.ReadonlyNonEmptyArray<Big>,
-): E.Either<Error, RNEA.ReadonlyNonEmptyArray<Big>> =>
+	fast: RNEA.ReadonlyNonEmptyArray<number>,
+	slow: RNEA.ReadonlyNonEmptyArray<number>,
+): E.Either<Error, RNEA.ReadonlyNonEmptyArray<number>> =>
 	F.pipe(
 		slow,
-		RNEA.traverseWithIndex(E.Applicative)((index, value) =>
+		E.traverseReadonlyNonEmptyArrayWithIndex((index, value) =>
 			F.pipe(
 				RA.lookup(fast.length - slow.length + index)(fast),
 				// v8 ignore next -- `fast` is always at least as long as `slow`, guaranteed by validatePeriodSizes
 				E.fromOption(() => new UnequalArraySizesError()),
-				E.map((fastValue) => fastValue.sub(value)),
+				E.map((fastValue) => fastValue - value),
 			),
 		),
 	);
@@ -62,13 +61,13 @@ export const macd = (
 			periodSizes: validatePeriodSizes(slowPeriod, fastPeriod),
 			valuesV: array.validateRequiredSize(slowPeriod + signalPeriod - 1)(values),
 		}),
-		E.bind('valuesB', ({ valuesV }) => array.toBig(valuesV)),
-		E.bind('emaSlow', ({ slowPeriodV, valuesB }) => emaC(valuesB, slowPeriodV)),
-		E.bind('emaFast', ({ fastPeriodV, valuesB }) => emaC(valuesB, fastPeriodV)),
+		E.bind('valuesF', ({ valuesV }) => array.validateFinite(valuesV)),
+		E.let('emaSlow', ({ slowPeriodV, valuesF }) => emaC(valuesF, slowPeriodV)),
+		E.let('emaFast', ({ fastPeriodV, valuesF }) => emaC(valuesF, fastPeriodV)),
 		E.bind('macdResult', ({ emaFast, emaSlow }) => calculate(emaFast, emaSlow)),
-		E.bind('signal', ({ macdResult, signalPeriodV }) => emaC(macdResult, signalPeriodV)),
+		E.let('signal', ({ macdResult, signalPeriodV }) => emaC(macdResult, signalPeriodV)),
 		E.map(({ macdResult, signal }) => ({
-			macd: array.toNumber(macdResult),
-			signal: F.pipe(signal, array.toNumber, array.fillLeftW(macdResult.length, null)),
+			macd: macdResult,
+			signal: F.pipe(signal, array.fillLeftW(macdResult.length, null)),
 		})),
 	);

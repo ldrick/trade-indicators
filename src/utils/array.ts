@@ -1,4 +1,3 @@
-import { Big } from 'big.js';
 import {
 	either as E,
 	function as F,
@@ -8,22 +7,15 @@ import {
 
 import { EmptyArrayError } from '../errors/EmptyArrayError.js';
 import { NotEnoughDataError } from '../errors/NotEnoughDataError.js';
-import * as big from './big.js';
 import * as number_ from './number.js';
 
 /**
- * Safely convert `RNEA.ReadonlyNonEmptyArray<number>` to `RNEA.ReadonlyNonEmptyArray<Big>`.
+ * Validates if every value of an Array is a finite Number.
  * @internal
  */
-export const toBig = RNEA.traverse(E.Applicative)(number_.toBig);
-
-/**
- * Convert `RNEA.ReadonlyNonEmptyArray<Big>` to `RNEA.ReadonlyNonEmptyArray<number>`.
- * @internal
- */
-export const toNumber = (
-	values: RNEA.ReadonlyNonEmptyArray<Big>,
-): RNEA.ReadonlyNonEmptyArray<number> => RNEA.map(big.toNumber)(values);
+export const validateFinite = E.traverseReadonlyNonEmptyArrayWithIndex((_index, value: number) =>
+	number_.validateFinite(value),
+);
 
 /**
  * Create new Array from given and fill left with value up to given size.

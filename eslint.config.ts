@@ -159,15 +159,6 @@ export default defineConfig(
 			immutability: {
 				overrides: [
 					{
-						// Always treat big.js's Big as Immutable.
-						to: 'Immutable',
-						type: {
-							from: 'package',
-							package: 'big.js',
-							pattern: /^Big.BigConstructor.Big$/,
-						},
-					},
-					{
 						// Always treat TypeScript's ReadonlyArrays as Immutable.
 						to: 'Immutable',
 						type: { from: 'lib', name: 'ReadonlyArray' },

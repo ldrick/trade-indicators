@@ -9,9 +9,8 @@
 > Trade Indicators written in pure functional Typescript. \
 > Results will be \
 > `Either<Error, ReadonlyArray<number> | Readonly<Record<string, ReadonlyArray<number>>>>` \
-> depending on what is returned using these amazing libraries: \
-> 🚀 [fp-ts](https://github.com/gcanti/fp-ts) \
-> 🌟 [big.js](https://github.com/MikeMcl/big.js/)
+> depending on what is returned using this amazing library: \
+> 🚀 [fp-ts](https://github.com/gcanti/fp-ts)
 >
 > - Average Directional Index (adx)
 > - Average True Range (atr)
@@ -25,9 +24,9 @@
 
 ## Install
 
-`npm install @ldrick/trade-indicators fp-ts big.js` \
+`npm install @ldrick/trade-indicators fp-ts` \
 or \
-`yarn add @ldrick/trade-indicators fp-ts big.js`
+`yarn add @ldrick/trade-indicators fp-ts`
 
 ## Usage
 

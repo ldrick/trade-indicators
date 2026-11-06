@@ -96,7 +96,6 @@
 		"*": "oxfmt --no-error-on-unmatched-pattern"
 	},
 	"dependencies": {
-		"big.js": "^7.0.1",
 		"fp-ts": "^2.16.11"
 	},
 	"devDependencies": {
@@ -108,7 +107,6 @@
 		"@tsconfig/node-ts": "^23.6.4",
 		"@tsconfig/recommended": "^1.0.13",
 		"@tsconfig/strictest": "^2.0.8",
-		"@types/big.js": "^7.0.0",
 		"@types/node": "^26.6.2",
 		"@vitest/coverage-v8": "^5.0.1",
 		"@vitest/eslint-plugin": "^1.6.27",

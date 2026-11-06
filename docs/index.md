@@ -11,9 +11,8 @@ has_toc: false
 > Trade Indicators written in pure functional Typescript. \
 > Results will be \
 > `Either<Error, ReadonlyArray<number> | Readonly<Record<string, ReadonlyArray<number>>>>` \
-> depending on what is returned using these amazing libraries: \
-> 🚀 [fp-ts](https://github.com/gcanti/fp-ts) \
-> 🌟 [big.js](https://github.com/MikeMcl/big.js/)
+> depending on what is returned using this amazing library: \
+> 🚀 [fp-ts](https://github.com/gcanti/fp-ts)
 
 ## Ideas
 
@@ -22,5 +21,6 @@ Calculation of common indicators used for stock market trading, commodity tradin
 To achieve this goal, `trade-indicators` uses fp-ts. \
 For convenience use, it provides the possibility to unwrap to Promise, still enforcing an Error-Handling.
 
-Besides that the maximum possible precision of results shall be delivered. \
-JavaScript Ecosystem uses `Number`, which has some unprecise effects. To mitigate these, `trade-indicators` uses big.js internally.
+Calculations use plain JavaScript `Number` (IEEE 754 double precision). \
+Inputs are already `Number`s, so arbitrary-precision decimals would not add meaningful accuracy, but cost a lot of performance.
+Rounding differences are far below any price resolution (around 1e-12 relative).

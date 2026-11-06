@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { macd } from '../../src/averages/macd.js';
 import { NotEnoughDataError } from '../../src/errors/NotEnoughDataError.js';
+import { NotFiniteNumberError } from '../../src/errors/NotFiniteNumberError.js';
 import { NotPositiveIntegerError } from '../../src/errors/NotPositiveIntegerError.js';
 import { PeriodSizeMissmatchError } from '../../src/errors/PeriodSizeMissmatchError.js';
 import * as prices from '../prices.json' with { type: 'json' };
@@ -44,7 +45,7 @@ describe('macd', () => {
 	it.each([{ v: [0, 0, NaN, 0] }, { v: [0, 0, Infinity, 0] }, { v: [0, 0, -Infinity, 0] }])(
 		'fails if values contains a infinit value $v',
 		({ v }) => {
-			expect(macd(v, 2, 3, 1)).toStrictEqual(E.left(new Error('[big.js] Invalid number')));
+			expect(macd(v, 2, 3, 1)).toStrictEqual(E.left(new NotFiniteNumberError()));
 		},
 	);
 
