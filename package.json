@@ -32,17 +32,9 @@
 			"types": "./dist/averages/dema.d.ts",
 			"import": "./dist/averages/dema.js"
 		},
-		"./averages/dma.js": {
-			"types": "./dist/averages/dma.d.ts",
-			"import": "./dist/averages/dma.js"
-		},
 		"./averages/ema.js": {
 			"types": "./dist/averages/ema.d.ts",
 			"import": "./dist/averages/ema.js"
-		},
-		"./averages/ma.js": {
-			"types": "./dist/averages/ma.d.ts",
-			"import": "./dist/averages/ma.js"
 		},
 		"./averages/macd.js": {
 			"types": "./dist/averages/macd.d.ts",
@@ -64,6 +56,30 @@
 			"types": "./dist/averages/wma.d.ts",
 			"import": "./dist/averages/wma.js"
 		},
+		"./errors/EmptyArrayError.js": {
+			"types": "./dist/errors/EmptyArrayError.d.ts",
+			"import": "./dist/errors/EmptyArrayError.js"
+		},
+		"./errors/NotEnoughDataError.js": {
+			"types": "./dist/errors/NotEnoughDataError.d.ts",
+			"import": "./dist/errors/NotEnoughDataError.js"
+		},
+		"./errors/NotFiniteNumberError.js": {
+			"types": "./dist/errors/NotFiniteNumberError.d.ts",
+			"import": "./dist/errors/NotFiniteNumberError.js"
+		},
+		"./errors/NotPositiveIntegerError.js": {
+			"types": "./dist/errors/NotPositiveIntegerError.d.ts",
+			"import": "./dist/errors/NotPositiveIntegerError.js"
+		},
+		"./errors/PeriodSizeMissmatchError.js": {
+			"types": "./dist/errors/PeriodSizeMissmatchError.d.ts",
+			"import": "./dist/errors/PeriodSizeMissmatchError.js"
+		},
+		"./errors/UnequalArraySizesError.js": {
+			"types": "./dist/errors/UnequalArraySizesError.d.ts",
+			"import": "./dist/errors/UnequalArraySizesError.js"
+		},
 		"./movements/adx.js": {
 			"types": "./dist/movements/adx.d.ts",
 			"import": "./dist/movements/adx.js"
@@ -72,9 +88,14 @@
 			"types": "./dist/movements/atr.d.ts",
 			"import": "./dist/movements/atr.js"
 		},
+		"./package.json": "./package.json",
 		"./toPromise.js": {
 			"types": "./dist/utils/toPromise.d.ts",
 			"import": "./dist/utils/toPromise.js"
+		},
+		"./types.js": {
+			"types": "./dist/types.d.ts",
+			"import": "./dist/types.js"
 		}
 	},
 	"files": [
@@ -88,6 +109,7 @@
 		"lint": "eslint --max-warnings 0 .",
 		"lint:claude": "claudelint check-all --strict",
 		"lint:claude:fix": "claudelint format --fix",
+		"package:check": "publint --strict && attw --pack . --profile esm-only",
 		"prepare": "husky",
 		"test": "vitest run --coverage",
 		"types:check": "tsc --noEmit"
@@ -99,6 +121,7 @@
 		"fp-ts": "^2.16.11"
 	},
 	"devDependencies": {
+		"@arethetypeswrong/cli": "^0.18.5",
 		"@eslint-community/eslint-plugin-eslint-comments": "^4.8.1",
 		"@eslint/js": "^10.0.1",
 		"@eslint/json": "^2.1.0",
@@ -125,6 +148,7 @@
 		"knip": "^6.37.0",
 		"lint-staged": "^17.5.1",
 		"oxfmt": "^0.75.0",
+		"publint": "^0.3.25",
 		"rimraf": "^6.1.3",
 		"typescript": "npm:@typescript/typescript6@^6.0.2",
 		"typescript-7": "npm:typescript@^7.0.2",

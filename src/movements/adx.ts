@@ -15,7 +15,11 @@ import * as number_ from '../utils/number.js';
 import * as rec from '../utils/record.js';
 import { atrC } from './atr.js';
 
-interface ADXReturn {
+/**
+ * Result of `adx`. `adx` is left-padded with `null` to the length of `pdi` and `mdi`.
+ * @public
+ */
+export interface ADXReturn {
 	adx: RNEA.ReadonlyNonEmptyArray<null | number>;
 	mdi: RNEA.ReadonlyNonEmptyArray<number>;
 	pdi: RNEA.ReadonlyNonEmptyArray<number>;

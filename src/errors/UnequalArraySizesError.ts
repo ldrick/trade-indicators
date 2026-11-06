@@ -1,6 +1,6 @@
 /**
  * Error if two `Array` do not have the same length.
- * @internal
+ * @public
  */
 export class UnequalArraySizesError extends Error {
 	constructor(message = 'Amounts of given values are not equal.') {

@@ -1,6 +1,6 @@
 /**
  * Error for an empty Array.
- * @internal
+ * @public
  */
 export class EmptyArrayError extends Error {
 	constructor() {

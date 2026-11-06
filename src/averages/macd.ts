@@ -12,7 +12,11 @@ import * as array from '../utils/array.js';
 import * as number_ from '../utils/number.js';
 import { emaC } from './ema.js';
 
-interface MACDReturn {
+/**
+ * Result of `macd`. `signal` is left-padded with `null` to the length of `macd`.
+ * @public
+ */
+export interface MACDReturn {
 	macd: RNEA.ReadonlyNonEmptyArray<number>;
 	signal: RNEA.ReadonlyNonEmptyArray<null | number>;
 }

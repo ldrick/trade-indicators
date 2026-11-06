@@ -1,6 +1,6 @@
 /**
  * Error for any `Number` being `NaN`, `Infinity` or `-Infinity`.
- * @internal
+ * @public
  */
 export class NotFiniteNumberError extends Error {
 	constructor() {

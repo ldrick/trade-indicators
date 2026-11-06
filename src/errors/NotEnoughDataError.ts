@@ -1,6 +1,6 @@
 /**
  * Error for `Array.length` not at least as required.
- * @internal
+ * @public
  */
 export class NotEnoughDataError extends Error {
 	constructor(given: number, required: number) {

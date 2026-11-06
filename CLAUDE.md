@@ -11,6 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 pnpm install              # install deps (frozen lockfile in CI)
 pnpm build                # tsc build to dist/ using tsconfig.build.json
+pnpm package:check        # publint + arethetypeswrong on the packed package (needs pnpm build first)
 pnpm test                 # vitest run --coverage (100% coverage enforced)
 pnpm format               # oxfmt --write
 pnpm format:check         # oxfmt --check
@@ -43,7 +44,7 @@ These checks mirror the `build` job in `.github/workflows/test.yml`, run in this
 
 This `xC` (checked-core) naming convention — public validated wrapper + internal `*C` function taking already-validated values — is how new EMA/SMMA-derived indicators should be added.
 
-**Module boundaries via JSDoc, not folders.** There's no barrel/index file. `@public` on a JSDoc comment marks the npm package's public API (enforced by `jsdoc/require-jsdoc` with `publicOnly: true`); `@internal` marks helpers exported only for reuse across `src/` and for direct unit testing. Every new public indicator needs a matching subpath entry in `package.json`'s `exports` map (source path → `dist/.../*.js` + `.d.ts`) and, if it's an entry point, in `knip.config.ts`'s `entry` list.
+**Module boundaries via JSDoc, not folders.** There's no barrel/index file. `@public` on a JSDoc comment marks the npm package's public API (enforced by `jsdoc/require-jsdoc` with `publicOnly: true`); `@internal` marks helpers exported only for reuse across `src/` and for direct unit testing; `stripInternal` removes them from the published `.d.ts`. Error classes in `src/errors/`, `HighLowClose` and the indicator return types (`MACDReturn`, `ADXReturn`) are `@public` so consumers can use `instanceof` and import the types. Every new public indicator or error class needs a matching subpath entry in `package.json`'s `exports` map (source path → `dist/.../*.js` + `.d.ts`) and, if it's an entry point, in `knip.config.ts`'s `entry` list. Internal-only modules (`dma`, `ma`) are deliberately not in `exports`.
 
 **HighLowClose shape.** Indicators needing more than a single price series (`atr`, `adx`) take a `HighLowClose<number>` record (`src/types.ts`); `src/utils/record.ts` validates it the same way `src/utils/array.ts` does for plain arrays.
 
