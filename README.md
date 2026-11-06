@@ -9,7 +9,7 @@
 > Trade Indicators written in pure functional TypeScript. \
 > No function throws: every indicator returns a `Result`, \
 > either `{ ok: true, value }` or `{ ok: false, error }`. \
-> The public API exposes no third-party types; adapters for Promises and [Effect](https://effect.website) are included.
+> Indicators expose no third-party types; adapters for Promises and [Effect](https://effect.website) are included.
 >
 > - Average Directional Index (adx)
 > - Average True Range (atr)

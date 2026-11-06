@@ -11,7 +11,7 @@ has_toc: false
 > Trade Indicators written in pure functional TypeScript. \
 > No function throws: every indicator returns a `Result`, \
 > either `{ ok: true, value }` or `{ ok: false, error }`. \
-> The public API exposes no third-party types; adapters for Promises and [Effect](https://effect.website) are included.
+> Indicators expose no third-party types; adapters for Promises and [Effect](https://effect.website) are included.
 
 ## Ideas
 
@@ -23,5 +23,4 @@ For convenience, `toPromise` unwraps a `Result` to a Promise (still enforcing er
 and `toEffectResult` converts it to an Effect `Result`.
 
 Calculations use plain JavaScript `Number` (IEEE 754 double precision). \
-Inputs are already `Number`s, so arbitrary-precision decimals would not add meaningful accuracy, but cost a lot of performance.
-Rounding differences are far below any price resolution (around 1e-12 relative).
+Rounding differences are around 1e-12 relative, far below any price resolution.
