@@ -6,6 +6,7 @@
 [![npm license](https://img.shields.io/npm/l/@ldrick/trade-indicators)](https://www.npmjs.com/package/@ldrick/trade-indicators)
 [![made with](https://img.shields.io/github/languages/top/ldrick/trade-indicators)](https://www.typescriptlang.org/)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/ldrick/trade-indicators/badge)](https://scorecard.dev/viewer/?uri=github.com/ldrick/trade-indicators)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/16386/badge)](https://www.bestpractices.dev/projects/16386)
 
 > Trade Indicators written in pure functional TypeScript. \
 > No function throws: every indicator returns a `Result`, \
