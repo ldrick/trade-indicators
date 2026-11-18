@@ -47,7 +47,9 @@ in `.github/workflows/publish.yml`:
    both derived from the Conventional Commits since the last release.
    While the version is below 1.0.0, breaking changes raise the minor version.
 2. Merging the release pull request creates the Git tag (e.g. `0.9.0`) and a draft GitHub release,
-   runs all checks and publishes the package to npm (trusted publishing). The published tarball and its signed build provenance are attached to the draft, which is then published as an immutable release.
+   runs all checks and stages the package on npm (trusted publishing, stage only). The staged tarball and its signed build provenance are attached to the draft, which is then published as an immutable release.
+3. A maintainer approves the staged version with 2FA (`npm stage list @ldrick/trade-indicators`,
+   then `npm stage approve <stage-id>`). Only then is it available on npm.
 
 Merge pull requests with a merge commit, not squashed, when their individual commits should
 appear in the changelog.
