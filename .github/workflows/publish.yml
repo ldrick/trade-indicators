@@ -101,10 +101,21 @@ jobs:
             - name: Pack Package
               id: pack
               run: echo "tarball=$(pnpm pack --pack-destination "$RUNNER_TEMP" --json | jq -r .filename)" >> "$GITHUB_OUTPUT"
-            - name: Publish Package to npmjs.org
+            # staged publishing: the trusted publisher may only stage, the version goes live
+            # after a maintainer approves it with 2FA (`npm stage approve <stage-id>`)
+            - name: Stage Package on npmjs.org
               env:
                   TARBALL: ${{ steps.pack.outputs.tarball }}
-              run: pnpm publish "$TARBALL" --access=public --no-git-checks --provenance
+              run: |
+                  npm stage publish "$TARBALL" --access=public --provenance
+                  {
+                      echo "### npm: ${TARBALL##*/} staged, approval required"
+                      echo
+                      echo '```sh'
+                      echo 'npm stage list @ldrick/trade-indicators'
+                      echo 'npm stage approve <stage-id>'
+                      echo '```'
+                  } >> "$GITHUB_STEP_SUMMARY"
             - name: Attest build provenance
               id: attest
               uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
