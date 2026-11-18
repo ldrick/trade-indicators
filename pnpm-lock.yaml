@@ -204,8 +204,8 @@ importers:
         specifier: ^8.0.3
         version: 8.0.3(supports-color@7.2.0)
       '@tsconfig/node-lts':
-        specifier: ^24.0.1
-        version: 24.0.1
+        specifier: ^26.0.1
+        version: 26.0.1
       '@tsconfig/node-ts':
         specifier: ^23.6.4
         version: 23.6.5
@@ -1406,8 +1406,8 @@ packages:
   '@ts-morph/common@0.29.0':
     resolution: {integrity: sha512-35oUmphHbJvQ/+UTwFNme/t2p3FoKiGJ5auTjjpNTop2dyREspirjMy82PLSC1pnDJ8ah1GU98hwpVt64YXQsg==}
 
-  '@tsconfig/node-lts@24.0.1':
-    resolution: {integrity: sha512-xo+1KtV5zVb90fyyeglG1n5cqg3cQXLlCkEpLptYlZUNk28xmwhuD5GmxoXwmrVtUTvaMyclun9kAd0TK7H+Pg==}
+  '@tsconfig/node-lts@26.0.1':
+    resolution: {integrity: sha512-Z8DWX8MgVR006YMHZYf7d2lzWMBfYAhW4lMyhdeMG9+KGAgbJuGYuoWOAlYipfggCkiHCAZVm/Wiw6IuG5lcnw==}
 
   '@tsconfig/node-ts@23.6.5':
     resolution: {integrity: sha512-Wi2qMgKqBddhC/rN1CfYAB+Ayk5KxR8i8bVOQGPI26+2URbY435D9f28pRKmplWOIR0Ii/MmyWPDH12P38pRXw==}
@@ -4667,7 +4667,7 @@ snapshots:
       path-browserify: 1.0.1
       tinyglobby: 0.2.17
 
-  '@tsconfig/node-lts@24.0.1': {}
+  '@tsconfig/node-lts@26.0.1': {}
 
   '@tsconfig/node-ts@23.6.5': {}
 
