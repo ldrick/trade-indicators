@@ -1,0 +1,13 @@
+remote_theme: just-the-docs/just-the-docs@v0.12.0
+
+# Enable or disable the site search
+search_enabled: true
+
+# Aux links for the upper right navigation
+aux_links:
+    'Docs':
+        - '//ldrick.github.io/trade-indicators/'
+    'API Reference':
+        - '//ldrick.github.io/trade-indicators/modules/'
+    'GitHub':
+        - '//github.com/ldrick/trade-indicators'

@@ -1,0 +1,61 @@
+name: Test
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+permissions:
+    contents: read
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        strategy:
+            matrix:
+                node-version: [22.x, 24.x, 26.x]
+        steps:
+            - name: Checkout
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+            - name: Install pnpm
+              uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: 'pnpm'
+            - name: Install Dependencies
+              run: pnpm i --frozen-lockfile
+            - name: Knip
+              run: pnpm knip
+            - name: Format Check
+              run: pnpm format:check
+            - name: Type Check
+              run: pnpm types:check
+            - name: Lint
+              run: pnpm lint
+            - name: Claude Lint
+              run: pnpm lint:claude
+            - name: Test
+              run: pnpm test
+            - name: Build
+              run: pnpm build
+            - name: Package Check
+              run: pnpm package:check
+            - name: Docs Up To Date
+              run: |
+                  pnpm docgen
+                  git diff --exit-code -- docs
+                  test -z "$(git status --porcelain -- docs)"
+            - name: Codecov
+              if: github.actor != 'dependabot[bot]'
+              uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+              with:
+                  token: ${{ secrets.CODECOV_TOKEN }}
+                  directory: ./coverage
+                  flags: unittests
+                  # an unavailable Codecov must not fail the required build checks;
+                  # the 100% coverage threshold is enforced by `pnpm test` itself
+                  fail_ci_if_error: false

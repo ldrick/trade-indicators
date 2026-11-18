@@ -1,0 +1,118 @@
+{
+	"name": "@ldrick/trade-indicators",
+	"version": "0.9.3",
+	"description": "Technical analysis indicators (SMA, EMA, WMA, SMMA, DEMA, TEMA, MACD, RSI, ATR, ADX) in purely functional TypeScript: batch functions and incremental variants for live data, returning results instead of throwing",
+	"keywords": [
+		"adx",
+		"atr",
+		"crypto",
+		"dema",
+		"effect",
+		"ema",
+		"finance",
+		"functional",
+		"incremental",
+		"indicators",
+		"macd",
+		"oscillator",
+		"rsi",
+		"sma",
+		"smma",
+		"stocks",
+		"streaming",
+		"technical",
+		"technical-analysis",
+		"tema",
+		"trading",
+		"typescript",
+		"wma"
+	],
+	"homepage": "https://ldrick.github.io/trade-indicators/",
+	"bugs": {
+		"url": "https://github.com/ldrick/trade-indicators/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ldrick/trade-indicators.git"
+	},
+	"license": "MIT",
+	"author": {
+		"name": "Ricky Lippmann"
+	},
+	"sideEffects": false,
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./package.json": "./package.json"
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "rimraf dist && tsc --project tsconfig.build.json",
+		"docgen": "docgen && node scripts/fixDocgenSourceLinks.ts",
+		"format": "oxfmt",
+		"format:check": "oxfmt --check",
+		"knip": "knip",
+		"lint": "eslint --max-warnings 0 .",
+		"lint:claude": "claudelint check-all --strict",
+		"lint:claude:fix": "claudelint format --fix",
+		"package:check": "publint --strict && attw --pack . --profile esm-only",
+		"prepare": "husky",
+		"test": "vitest run --coverage",
+		"types:check": "tsc --noEmit"
+	},
+	"lint-staged": {
+		"*": "oxfmt --no-error-on-unmatched-pattern"
+	},
+	"dependencies": {
+		"effect": "^4.1.2"
+	},
+	"devDependencies": {
+		"@arethetypeswrong/cli": "^0.18.5",
+		"@commitlint/cli": "^21.2.4",
+		"@commitlint/config-conventional": "^21.2.4",
+		"@commitlint/types": "^21.2.3",
+		"@effect/docgen": "^4.1.2",
+		"@eslint-community/eslint-plugin-eslint-comments": "^4.8.1",
+		"@eslint/js": "^10.0.1",
+		"@eslint/json": "^2.1.1",
+		"@eslint/markdown": "^8.0.3",
+		"@tsconfig/node-lts": "^24.0.1",
+		"@tsconfig/node-ts": "^23.6.4",
+		"@tsconfig/recommended": "^1.0.13",
+		"@tsconfig/strictest": "^2.0.8",
+		"@types/node": "^26.6.6",
+		"@typescript/native": "npm:typescript@^7.0.2",
+		"@vitest/coverage-v8": "^5.1.0",
+		"@vitest/eslint-plugin": "^1.6.28",
+		"claude-code-lint": "^0.10.0",
+		"eslint": "^10.14.0",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-import-resolver-typescript": "^4.4.5",
+		"eslint-plugin-functional": "^10.0.1",
+		"eslint-plugin-import-x": "^4.17.1",
+		"eslint-plugin-jsdoc": "^65.4.2",
+		"eslint-plugin-package-json": "^1.14.0",
+		"eslint-plugin-perfectionist": "^5.13.0",
+		"eslint-plugin-unicorn": "^79.0.0",
+		"fast-check": "^4.10.2",
+		"globals": "^17.14.0",
+		"husky": "^9.1.7",
+		"knip": "^6.44.1",
+		"lint-staged": "^17.6.0",
+		"oxfmt": "^0.78.0",
+		"publint": "^0.3.25",
+		"rimraf": "^6.1.4",
+		"typescript": "npm:@typescript/typescript6@^6.0.2",
+		"typescript-eslint": "^8.72.1",
+		"vitest": "^5.1.0"
+	},
+	"packageManager": "pnpm@12.18.0",
+	"engines": {
+		"node": ">=22.12"
+	}
+}

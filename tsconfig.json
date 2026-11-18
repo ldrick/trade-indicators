@@ -1,0 +1,16 @@
+{
+	"extends": "./tsconfig.build.json",
+	"compilerOptions": {
+		"rootDir": "./"
+	},
+	"include": [
+		"src",
+		"tests",
+		"scripts",
+		"vitest.config.ts",
+		"eslint.config.ts",
+		"oxfmt.config.ts",
+		"knip.config.ts",
+		"commitlint.config.ts"
+	]
+}

@@ -1,0 +1,33 @@
+name: Bug report
+description: An indicator returns a wrong value or an unexpected error.
+labels: [bug]
+body:
+    - type: input
+      id: version
+      attributes:
+          label: Version
+          description: Version of @ldrick/trade-indicators.
+          placeholder: 0.9.0
+      validations:
+          required: true
+    - type: textarea
+      id: reproduction
+      attributes:
+          label: Reproduction
+          description: Minimal code including the input values and period(s).
+          render: ts
+      validations:
+          required: true
+    - type: textarea
+      id: expected
+      attributes:
+          label: Expected result
+          description: Expected values and their source (e.g. TradingView, TA-Lib, Finnhub).
+      validations:
+          required: true
+    - type: textarea
+      id: actual
+      attributes:
+          label: Actual result
+      validations:
+          required: true

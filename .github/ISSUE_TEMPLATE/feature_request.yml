@@ -1,0 +1,16 @@
+name: Feature request
+description: Suggest a new indicator or an API improvement.
+labels: [enhancement]
+body:
+    - type: textarea
+      id: proposal
+      attributes:
+          label: Proposal
+          description: The indicator or change you would like to see.
+      validations:
+          required: true
+    - type: textarea
+      id: reference
+      attributes:
+          label: Reference
+          description: Formula source and reference values to test against, if available.
