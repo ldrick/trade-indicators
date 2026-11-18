@@ -98,7 +98,7 @@
 		"eslint-plugin-jsdoc": "^65.4.2",
 		"eslint-plugin-package-json": "^1.14.0",
 		"eslint-plugin-perfectionist": "^5.13.0",
-		"eslint-plugin-unicorn": "^79.0.0",
+		"eslint-plugin-unicorn": "^80.0.0",
 		"fast-check": "^4.10.2",
 		"globals": "^17.14.0",
 		"husky": "^9.1.7",
