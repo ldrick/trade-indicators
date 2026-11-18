@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0](https://github.com/ldrick/trade-indicators/compare/0.9.3...1.0.0) (2026-11-18)
+
+
+### Miscellaneous
+
+* release 1.0.0 ([531aa97](https://github.com/ldrick/trade-indicators/commit/531aa978ec26046a58cfe97ff3e9ce4fe333d26a))
+
 ## [0.9.3](https://github.com/ldrick/trade-indicators/compare/0.9.2...0.9.3) (2026-11-17)
 
 
