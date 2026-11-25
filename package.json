@@ -80,7 +80,7 @@
 		"@eslint-community/eslint-plugin-eslint-comments": "^4.8.1",
 		"@eslint/js": "^10.0.1",
 		"@eslint/json": "^2.1.1",
-		"@eslint/markdown": "^8.0.3",
+		"@eslint/markdown": "^9.0.0",
 		"@tsconfig/node-lts": "^26.0.1",
 		"@tsconfig/node-ts": "^23.6.4",
 		"@tsconfig/recommended": "^1.0.13",
